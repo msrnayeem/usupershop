@@ -806,6 +806,10 @@
 
             var url = mode === 'guest' ? "{{ route('guest.order.checkout') }}" : "{{ route('customer.order.checkout') }}";
 
+            // Show preloader and disable checkout button to indicate processing
+            $('#preloader').show();
+            $('.checkout-btn').prop('disabled', true).text('Processing...');
+
             $.ajax({
                 type: "POST",
                 dataType: "json",
@@ -828,6 +832,10 @@
                         }, 1000);
 
                     } else {
+                        // Hide preloader and enable checkout button on failure
+                        $('#preloader').hide();
+                        $('.checkout-btn').prop('disabled', false).text('Order as Guest');
+
                         // Show error message for failed checkout
                         error_msg('' + res.message);
                         
@@ -846,11 +854,14 @@
                             } else if (res.type === 'cart') {
                                 window.location.href = "{{ route('show.cart') }}";
                             }
-                            // Don't redirect on general errors, let user retry
                         }, 2000);
                     }
                 },
                 error: function(error) {
+                    // Hide preloader and enable checkout button on network/server error
+                    $('#preloader').hide();
+                    $('.checkout-btn').prop('disabled', false).text('Order as Guest');
+
                     if (error.statusText === "Unauthorized") {
                         warning_msg('Customer Login Required!');
                         setTimeout(() => {
@@ -858,10 +869,9 @@
                         }, 1000);
                     } else {
                         console.log('Checkout error:', error);
+                        error_msg('Something went wrong! Please try again.');
                     }
                 }
-
-
             });
         }
     </script>
