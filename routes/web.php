@@ -35,6 +35,11 @@ use App\Http\Controllers\Frontend\SitemapController;
 // Dynamic Sitemap (replaces static sitemap.xml)
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
+Route::get('/optimize-clear', function () {
+    Artisan::call('optimize:clear');
+    return 'Optimization cache cleared successfully!';
+});
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
