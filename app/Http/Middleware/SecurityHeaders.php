@@ -27,9 +27,9 @@ class SecurityHeaders
         // Content Security Policy - allow same origin + CDNs used
         $response->headers->set('Content-Security-Policy',
             "default-src 'self'; " .
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://embed.tawk.to; " .
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; " .
-            "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; " .
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://ajax.googleapis.com https://embed.tawk.to; " .
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.ionicframework.com; " .
+            "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://code.ionicframework.com data:; " .
             "img-src 'self' data: blob: https:; " .
             "connect-src 'self' https://embed.tawk.to wss://ws.tawk.to; " .
             "frame-src 'self' https://pgw.bkash.com https://checkout.bkash.com; " .
