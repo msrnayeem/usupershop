@@ -300,7 +300,7 @@
     @foreach($orderItems as $item)
     <div class="item-row">
         @if(!empty($item->product->image))
-            <img src="{{ url('upload/product_images/'.$item- loading="lazy">product->image) }}"
+            <img src="{{ url('upload/product_images/'.$item->product->image) }}"
                  onerror="this.src='{{ asset('frontend/no-image-icon.jpg') }}'"
                  class="item-img" alt="">
         @else

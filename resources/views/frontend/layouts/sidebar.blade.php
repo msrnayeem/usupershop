@@ -23,7 +23,7 @@
                                             <div class="image" style="border:1px solid #eee">
                                                 <a href="#">
                                                     @if (!empty($items->image))
-                                                        <img src="{{ asset('upload/product_images/' . $items- loading="lazy">image) }}"
+                                                        <img src="{{ asset('upload/product_images/' . $items->image) }}"
                                                             alt="{{ $items->name }}">
                                                     @else
                                                         <img src="{{ asset('frontend/assets/images/no-image.png') }}"
@@ -112,7 +112,7 @@
                                             <div class="image" style="border:1px solid #eee">
                                                 <a href="#">
                                                     @if (!empty($items->image))
-                                                        <img src="{{ asset('upload/product_images/' . $items- loading="lazy">image) }}"
+                                                        <img src="{{ asset('upload/product_images/' . $items->image) }}"
                                                             alt="{{ $items->name }}">
                                                     @else
                                                         <img src="{{ asset('frontend/assets/images/no-image.png') }}"

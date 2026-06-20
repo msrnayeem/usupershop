@@ -195,7 +195,7 @@
 
                                     <div class="cart-product">
                                         <div class="product-image">
-                                            <img src="{{ url('upload/product_images/' . $content- loading="lazy">options->image) }}"
+                                            <img src="{{ url('upload/product_images/' . $content->options->image) }}"
                                                 alt="{{ $content->name }}">
                                         </div>
                                         <div class="product-info">

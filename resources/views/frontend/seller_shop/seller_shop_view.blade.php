@@ -151,7 +151,7 @@ $banners = Helper::bannerImage()
                                                             <a href="{{ route('product.details.info', $product->slug) }}">
                                                                 <button>
                                                                     @if ($product->image)
-                                                                        <img src="{{ asset('upload/product_images/' . $product- loading="lazy">image) }}"
+                                                                        <img src="{{ asset('upload/product_images/' . $product->image) }}"
                                                                             alt="{{ $product->slug }}" onerror="this.onerror=null;this.src='{{ asset('frontend/no-image-icon.jpg') }}';"/>
                                                                     @else
                                                                         <img src="{{ asset('frontend/assets/images/no-image.png') }}"
