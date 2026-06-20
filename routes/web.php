@@ -157,8 +157,10 @@ Route::get('/get-variant-price', [ProductController::class, 'getVariantPrice'])-
 Route::get('/customer-login', [CheckoutController::class, 'customerLogin'])->name('customer.login');
 Route::get('/customer-otp', [CheckoutController::class, 'SendCustomerOtp'])->name('send.otp');
 Route::post('/customer-otp/save', [CheckoutController::class, 'SendCustomerOtpSubmit'])->name('send.customer.otp');
-// Customer signup disabled — guest checkout used instead
-// Route::get('/customer-signup', [CheckoutController::class, 'customerSignup'])->name('customer.signup');
+// Customer signup disabled — guest checkout used instead (added fallback to prevent RouteNotFoundException)
+Route::get('/customer-signup', function () {
+    return redirect()->route('customer.login')->with('message', 'Registration is disabled. You can checkout as a guest.');
+})->name('customer.signup');
 // Route::post('/signup-store', [CheckoutController::class, 'signupStore'])->name('signup.store');
 Route::get('/email-verify', [CheckoutController::class, 'emailVerify'])->name('email.verify');
 //Route::post('/verify-store', [CheckoutController::class, 'verifyStore'])->name('verify.store');
@@ -181,9 +183,13 @@ Route::prefix('/verify')->as('verify.')->group(function () {
     Route::post('/store/{id}', [OtpVerifyController::class, 'store'])->name('store');
 });
 
-//seller code here...........
-// Route::get('/seller-customer-login', [CheckoutController::class, 'sellerCustomerLogin'])->name('seller.customer.login');
-// Route::get('/seller-customer-signup', [CheckoutController::class, 'sellerCustomerSignup'])->name('seller.customer.signup');
+// seller code here........... (added fallbacks to prevent RouteNotFoundException)
+Route::get('/seller-customer-login', function () {
+    return redirect()->route('customer.login');
+})->name('seller.customer.login');
+Route::get('/seller-customer-signup', function () {
+    return redirect()->route('customer.login')->with('message', 'Registration is disabled. You can checkout as a guest.');
+})->name('seller.customer.signup');
 // Route::post('/seller-signup-store', [CheckoutController::class, 'sellerSignupStore'])->name('seller.signup.store');
 Route::get('/seller-email-verify', [CheckoutController::class, 'sellerOtpVerify'])->name('seller.email.verify');
 Route::get('/seller-verify', [CheckoutController::class, 'sellerVerify'])->name('seller.a.verify');
