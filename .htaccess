@@ -1,0 +1,47 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+    RewriteEngine On
+
+    # Block direct access to sensitive files
+    RewriteRule ^(\.env|\.git|composer\.(json|lock)|phpunit\.xml|server\.php|artisan)$ - [F,L,NC]
+    RewriteRule \.(sql|bak|log|sh|bash)$ - [F,L,NC]
+
+    # Block access to app directories
+    RewriteCond %{REQUEST_URI} !^/vendor/flasher/.*
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|storage|tests|lang)/ - [F,L,NC]
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Trailing Slash
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Front Controller
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# Security
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always unset Server
+    Header always unset X-Powered-By
+</IfModule>
+
+# PHP Security
+<IfModule mod_php.c>
+    php_flag expose_php Off
+    php_flag display_errors Off
+    php_value session.cookie_httponly 1
+    php_value session.cookie_secure 1
+    php_value session.use_strict_mode 1
+</IfModule>
+
+ServerSignature Off

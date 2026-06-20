@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /admin
+Disallow: /backend
+Disallow: /cart*
+Disallow: /checkout
+Disallow: /login
+Disallow: /register
+Allow: /
+
+Sitemap: https://usupershop.com/sitemap.xml 

@@ -1,0 +1,530 @@
+@extends('frontend.layouts.master')
+@section('title')
+    {{ config('app.name') }} | Best Online Shop In Bangladesh
+@endsection
+
+@section('meta_description', 'U Super Shop | Best Online Shop কেনাকাটা আর আয়ের সেরা ঠিকানা! সেরা ডিলে প্রিমিয়াম শপিং করুন অথবা সেলার ও ড্রপশিপার হয়ে ইনভেস্টমেন্ট ছাড়াই ব্যবসা শুরু করুন। দ্রুত ডেলিভারি ও বিশ্বস্ততার নিশ্চয়তা। আজই যোগ দিন | আনলিমিটেড রেফার বোনাসের সেরা প্ল্যাটফর্ম। এখনই ভিজিট করুন!')
+@section('meta_keywords', 'online shop, ecommerce, bangladesh, grocery, fashion, electronics, ' . config('app.name'))
+@section('meta_author', config('app.name'))
+
+@push('meta')
+    <meta property="og:title" content="{{ config('app.name') }} | Best Online Shop In Bangladesh" />
+    <meta property="og:description" content="U Super Shop | Best Online Shop কেনাকাটা আর আয়ের সেরা ঠিকানা! সেরা ডিলে প্রিমিয়াম শপিং করুন অথবা সেলার ও ড্রপশিপার হয়ে ইনভেস্টমেন্ট ছাড়াই ব্যবসা শুরু করুন। আজই যোগ দিন | আনলিমিটেড রেফার বোনাসের সেরা প্ল্যাটফর্ম।" />
+    <meta property="og:image" content="{{ asset('frontend/assets/images/banners/home-banner1212.jpg') }}" />
+    <meta property="og:url" content="{{ url('/') }}" />
+    <meta property="og:type" content="website" />
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ config('app.name') }} | Best Online Shop">
+    <meta name="twitter:description" content="বেস্ট অনলাইন শপিং প্ল্যাটফর্ম। আপনার কেনাকাটা আর আয়ের সেরা ঠিকানা।">
+    {{-- ── SEO: Organization + WebSite + LocalBusiness Schema ── --}}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://usuper.shop/#organization",
+          "name": "U Super Shop",
+          "alternateName": ["উ সুপার শপ", "U Super Shop BD"],
+          "url": "https://usuper.shop",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://usuper.shop/frontend/assets/images/logo.png",
+            "width": 200,
+            "height": 60
+          },
+          "description": "কেনাকাটা আর আয়ের সেরা ঠিকানা — Bangladesh's best online shop for dropshipping, reselling and shopping.",
+          "foundingDate": "2024",
+          "areaServed": "BD",
+          "contactPoint": [
+            {
+              "@type": "ContactPoint",
+              "telephone": "+8801816622128",
+              "contactType": "customer service",
+              "areaServed": "BD",
+              "availableLanguage": ["Bengali", "English"]
+            }
+          ],
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "BD",
+            "addressRegion": "Dhaka"
+          },
+          "sameAs": [
+            "https://www.facebook.com/share/1VjqK6xoDm/",
+            "https://youtube.com/@usupershop",
+            "https://www.instagram.com/usupershop",
+            "https://t.me/usupershop1",
+            "https://tiktok.com/@usupershop"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://usuper.shop/#website",
+          "url": "https://usuper.shop",
+          "name": "U Super Shop",
+          "description": "Best Online Shop in Bangladesh — কেনাকাটা আর আয়ের সেরা ঠিকানা",
+          "publisher": {"@id": "https://usuper.shop/#organization"},
+          "inLanguage": ["bn-BD", "en"],
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://usuper.shop/product-list?search={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "Store",
+          "@id": "https://usuper.shop/#store",
+          "name": "U Super Shop",
+          "url": "https://usuper.shop",
+          "image": "https://usuper.shop/frontend/assets/images/logo.png",
+          "description": "U Super Shop — Bangladesh's trusted online shopping platform for fashion, electronics, cosmetics and more.",
+          "priceRange": "৳৳",
+          "areaServed": "BD",
+          "currenciesAccepted": "BDT",
+          "paymentAccepted": "Cash, bKash",
+          "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+            "opens": "09:00",
+            "closes": "22:00"
+          },
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "BD",
+            "addressRegion": "Dhaka"
+          },
+          "telephone": "+8801816622128",
+          "sameAs": ["https://usuper.shop"]
+        }
+      ]
+    }
+    </script>
+    {{-- FAQ Schema — helps rank for "U Super Shop কি?" searches --}}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "U Super Shop কি?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "U Super Shop (usuper.shop) বাংলাদেশের একটি বিশ্বস্ত অনলাইন শপিং প্ল্যাটফর্ম যেখানে আপনি কেনাকাটা করতে পারবেন এবং সেলার, ভেন্ডর বা ড্রপশিপার হিসেবে আয় করতে পারবেন।"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "U Super Shop-এ কিভাবে সেলার হওয়া যায়?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "usuper.shop/seller/signup পেজে গিয়ে রেজিস্ট্রেশন করুন। সেলার প্যাকেজ নিন এবং আপনার পণ্য বিক্রি শুরু করুন। ড্রপশিপার হিসেবে ইনভেস্টমেন্ট ছাড়াই ব্যবসা করা সম্ভব।"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "U Super Shop-এ ডেলিভারি কতদিনে হয়?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "U Super Shop থেকে সাধারণত ঢাকার মধ্যে ১-২ কার্যদিবসে এবং ঢাকার বাইরে ২-৫ কার্যদিবসে ডেলিভারি দেওয়া হয়।"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "U Super Shop-এর রিটার্ন পলিসি কি?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "পণ্য গ্রহণের সময় ডেলিভারি ম্যান সামনে থাকা অবস্থায় পণ্য চেক করুন। কোনো সমস্যা থাকলে সাথে সাথে জানান। ডেলিভারি ম্যান চলে যাওয়ার পর অভিযোগ গ্রহণযোগ্য নয়।"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "U Super Shop-এ পেমেন্ট কিভাবে করবো?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "U Super Shop-এ bKash এবং Cash on Delivery (COD) পেমেন্ট গ্রহণযোগ্য। COD অর্ডারেও ডেলিভারি চার্জ bKash-এ আগে পরিশোধ করতে হয়।"
+          }
+        }
+      ]
+    }
+    </script>
+
+@endpush
+@section('custom_css')
+    <style>
+
+        #categorySliderSection .category-slide-new {
+            padding: 10px 0px 0px 0px;
+            background: #fff;
+        }
+        #categorySliderSection .owl-item {
+            text-align: center;
+            margin: 0px;
+        }
+
+        #categorySliderSection .owl-item a {
+            /* margin: 8px; */
+            text-align: center;
+        }
+
+        #categorySliderSection .category_area img {
+            width: 80px;
+            height: 80px;
+        }
+
+        #categorySliderSection .category_area h5{
+            text-align: center;
+            font-size: 12px;
+            margin-top: 6px !important;
+        }
+
+        #categorySliderSection .category-slide-new .item {
+            opacity: 1 !important;
+            filter: none !important;
+        }
+
+
+        #categorySliderSection .category_area img {
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            padding: 2px;
+            text-align: center;
+            margin: auto;
+            text-align: center;
+        }
+
+        @media (max-width: 1140px) {
+            #categorySliderSection .category_area img {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            #categorySliderSection .category_area img {
+                width: 70px;
+                height: 70px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #categorySliderSection .category_area img {
+                width: 60px;
+                height: 60px;
+            }
+
+            #categorySliderSection .col-xs-12{
+                padding: 0px;
+            }
+
+            .homebanner-holder{
+                padding: 0px;
+            }
+
+            #categorySliderSection .category_area h5{
+                width:70px;
+                font-size:8px !important;
+                margin-bottom:10px;
+                text-align:center;
+            }
+
+
+        }
+
+        /* @media (min-width: 598px) and (max-width: 875px) {
+            #hero {
+                margin-top: 0 !important;
+            }
+
+        } */
+        .home-banner-row{
+            margin-top: 5px;
+        }
+        .left_advertisement img {
+            width: 100%;
+        }
+    </style>
+@endsection
+@section('content')
+    <div class="body-content" id="top-banner-and-menu">
+        <h1 class="sr-only" style="position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;">U Super Shop - Best Online Shop কেনাকাটা আর আয়ের সেরা ঠিকানা!</h1>
+        <div class="container">
+            <div class="row home-banner-row">
+                <div class="col-xs-12 col-sm-12 col-md-8 sliderFixed">
+                    @include('frontend.layouts.slider')
+                    {{-- <div class="info-boxes wow fadeInUp">
+                        <div class="desktop_show">
+                            <div class="info-boxes-inner">
+
+                                <div class="info-box">
+                                    <h4 class="info-box-heading green english_lang">money back</h4>
+                                    <h4 style="display:none" class="info-box-heading green bangla_lang">টাকা ফেরত
+                                    </h4>
+
+                                    <h6 class="text english_lang">30 Days Money Back Guarantee</h6>
+                                    <h6 style="display:none" class="text bangla_lang">৩০ দিনের মধ্যে টাকা ফেরত
+                                        নিশ্চয়তা</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div> --}}
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-4" >
+                    @php
+                        $banners = Helper::bannerImage();
+                    @endphp
+                    <div class="left_advertisement">
+                        <img 
+                            src="{{ !empty($banners->banner_small_image_one) ? url('upload/banner/' . $banners->banner_small_image_one) : url('upload/slider_images/slider-2.png') }}"
+                            alt="Banner Advertisement" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" id="categorySliderSection">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <div class="owl-carousel owl-theme category-slide-new "style="margin: 0px;">
+
+                        @php
+                            $categories = App\Models\Category::orderBy('id', 'ASC')->get();
+                            
+                        @endphp
+
+                        @foreach ($categories as $key => $category)
+                            <div class="item category_area">
+                                <a href="{{ route('category.wise.product', $category->id) }}">
+                                    <img class="img-circle" src="{{ !empty($category->image) ? url('upload/category_images/' . $category->image) : url('frontend/no-image-icon.jpg') }}" alt="{{ $category->name }}" />
+                                    <h5 style="margin: 0px;">{{ substr($category->name, 0, 10) }}</h5>
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- ====================== CONTENT ===================== -->
+                <div class="col-xs-12 col-sm-12 col-md-12 homebanner-holder">
+
+                    {{-- ── Homepage Feature Sections ─────────────── --}}
+                    @include('frontend.layouts.home_sections')
+
+                    <!-- =============== SCROLL TABS ================ -->
+                    @include('frontend.layouts.product_tab')
+                    @include('frontend.layouts.special_offer_products')
+
+                    @include('frontend.layouts.special_deals_products')
+
+                    @include('frontend.layouts.featured_product')
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href="{{ route('speacial.offers') }}">
+                                <div class="wide-banner cnt-strip">
+                                    <div class="image">
+                                        <img style="width:100%; height:100px" class="img-responsive"
+                                            src="{{ !empty($banners->category_banner_image) ? url('upload/banner/' . $banners->category_banner_image) : url('frontend/assets/images/banners/home-banner1212.jpg') }}"
+                                            alt="Category Offer Banner" />
+                                    </div>
+
+                                    <!-- /.new-label -->
+                                </div>
+                            </a>
+
+                            <!-- /.wide-banner -->
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+
+
+                    <!-- =============== CATEGORY PRODUCTS ================ -->
+                 
+                    @include('frontend.layouts.category_product')
+
+
+                    @include('frontend.layouts.best_selling_products')
+
+
+                </div>
+                <!-- ====================== CONTENT : END =================== -->
+            </div>
+
+        </div>
+    </div>
+@endsection
+
+@push('custom_script')
+    <script>
+        $('.category-slide-new').owlCarousel({
+            nav: false,
+            loop: true,
+            autoplay: true,
+            autoplayTimeout: 3000,
+            autoplayHoverPause: true,
+            margin: 10,
+            dots: false,
+            responsive: {
+                0: {
+                    items: 5,
+                    margin: 0
+                },
+                480: {
+                    items: 7,
+                    margin: 0
+                },
+                768: {
+                    items: 8,
+                    margin: 0
+                },
+                992: {
+                    items: 9,
+                    margin: 0
+                },
+                1200: {
+                    items: 11,
+                    margin: 0
+                }
+            }
+        });
+
+
+        $('.categoryProducts').owlCarousel({
+            loop: true,
+            autoplay: true,
+            autoplayTimeout: 2000, // Adjust autoplay speed (3 seconds)
+            autoplayHoverPause: true, // Pause autoplay when hovering
+            dots: false,
+            nav: false, // Updated from `navigation: false`
+            pagination: false,
+            responsive: {
+                0: {
+                    items: 2
+                },
+                350: {
+                    items: 2
+                },
+                380: {
+                    items: 2
+                },
+                450: {
+                    items: 2
+                },
+                480: {
+                    items: 2
+                },
+                556: {
+                    items: 3
+                },
+                650: {
+                    items: 3
+                },
+                768: {
+                    items: 4
+                },
+                1000: {
+                    items: 6
+                }
+            }
+        });
+      
+          
+
+              $('.best_selling').owlCarousel({
+                loop: true, // ✅ Must be true for autoplay to loop
+                autoplay: true,
+                autoplayTimeout: 2000,
+                autoplayHoverPause: false,
+                dots: false,
+                nav: false,
+                responsive: {
+                    0: {
+                        items: 2
+                    },
+                    350: {
+                        items: 2
+                    },
+                    380: {
+                        items: 2
+                    },
+                    450: {
+                        items: 2
+                    },
+                    480: {
+                        items: 2
+                    },
+                    556: {
+                        items: 3
+                    },
+                    650: {
+                        items: 3
+                    },
+                    768: {
+                        items: 4
+                    },
+                    1000: {
+                        items: 6
+                    }
+                }
+            });
+          
+           $('.featuredProducts').owlCarousel({
+                loop: true, // ✅ Must be true for autoplay to loop
+                autoplay: true,
+                autoplayTimeout: 2000,
+                autoplayHoverPause: false,
+                dots: false,
+                nav: false,
+                responsive: {
+                    0: {
+                        items: 2
+                    },
+                    350: {
+                        items: 2
+                    },
+                    380: {
+                        items: 2
+                    },
+                    450: {
+                        items: 2
+                    },
+                    480: {
+                        items: 2
+                    },
+                    556: {
+                        items: 3
+                    },
+                    650: {
+                        items: 3
+                    },
+                    768: {
+                        items: 4
+                    },
+                    1000: {
+                        items: 6
+                    }
+                }
+            });
+    </script>
+    <!--Start of Tawk.to Script-->
+     <script type="text/javascript">
+        var Tawk_API = Tawk_API || {},
+            Tawk_LoadStart = new Date();
+        (function() {
+            var s1 = document.createElement("script"),
+                s0 = document.getElementsByTagName("script")[0];
+            s1.async = true;
+            s1.src = 'https://embed.tawk.to/67769592af5bfec1dbe5cfa4/1igjjqi4t';
+            s1.charset = 'UTF-8';
+            s1.setAttribute('crossorigin', '*');
+            s0.parentNode.insertBefore(s1, s0);
+        })();
+    </script> 
+    <!--End of Tawk.to Script-->
+@endpush

@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: usuper-shop-app
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+      # Exclude node_modules and vendor from volume mounting to avoid host clashing, or keep them mounted if developing
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=u802647247_usupershop
+      - DB_USERNAME=root
+      - DB_PASSWORD=rootpassword
+      - APP_ENV=local
+      - APP_DEBUG=true
+
+networks:
+  default:
+    external: true
+    name: shared-network

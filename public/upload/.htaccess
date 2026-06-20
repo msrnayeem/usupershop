@@ -1,0 +1,5 @@
+# ===== Block dangerous file access in upload directories =====
+<FilesMatch "\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|sh|cgi|htaccess|htpasswd|ini|log|sql|bak|tar|gz|zip)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
