@@ -10,7 +10,7 @@ services:
       - "8000:80"
     volumes:
       - .:/var/www/html
-      # Exclude node_modules and vendor from volume mounting to avoid host clashing, or keep them mounted if developing
+      - ./php.ini:/usr/local/etc/php/conf.d/custom.ini
     environment:
       - APP_ENV=local
       - APP_DEBUG=true

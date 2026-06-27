@@ -320,14 +320,13 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
         Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('products.edit');
         Route::post('/update/{id}', [ProductController::class, 'update'])->name('products.update');
         Route::get('/delete/{id}', [ProductController::class, 'delete'])->name('products.delete');
-        
+        // Stock management
         Route::get('/stockout/view', [ProductController::class, 'stockOutList'])->name('products.stockout.view');
         Route::get('/stockout/list', [ProductController::class, 'getStockOutList'])->name('products.stockout.list');
         Route::get('/lowstock/view', [ProductController::class, 'lowStockList'])->name('products.lowstock.view');
         Route::get('/lowstock/list', [ProductController::class, 'getLowStockList'])->name('products.lowstock.list');
-        
+        // Toggle active/inactive
         Route::post('/toggle-status/{id}', [ProductController::class, 'toggleStatus'])->name('products.toggle.status');
-    });
     });
 
     Route::prefix('customers')->group(function () {
@@ -551,3 +550,4 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
         Route::patch('/toggle/{id}', [\App\Http\Controllers\Backend\StaffController::class, 'toggleActive'])->name('staff.toggle');
         Route::delete('/destroy/{id}', [\App\Http\Controllers\Backend\StaffController::class, 'destroy'])->name('staff.destroy');
     });
+});
