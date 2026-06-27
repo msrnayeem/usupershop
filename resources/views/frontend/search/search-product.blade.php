@@ -22,7 +22,7 @@
     @forelse ($products as $product)
         <a href="{{ route('product.details.info', $product->slug) }}">
             <li class="design-li">
-                <img src="{{ url('upload/product_images/' . $product- loading="lazy">image) }}" alt="{{ $product->name }}" height="40px;"
+                <img src="{{ url('upload/product_images/' . $product->image) }}" alt="{{ $product->name }}" height="40px;"
                     width="40px;">
                 <strong>{{ $product->name }}</strong>
                 <hr>

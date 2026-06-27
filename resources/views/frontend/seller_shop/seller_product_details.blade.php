@@ -31,7 +31,7 @@
                                         <div class="products" style="border:1px solid #eee;">
                                             <div class="hot-deal-wrapper">
                                                 <div class="image">
-                                                    <img src="{{ url('upload/product_images/' . $items- loading="lazy">image) }}"
+                                                    <img src="{{ url('upload/product_images/' . $items->image) }}"
                                                         alt="{{ $items->name }}">
                                                 </div>
                                                 <div class="sale-offer-tag"><span>35%<br>off</span></div>
@@ -330,7 +330,7 @@
                                                 <div class="image">
                                                     <a href="{{ route('seller.product.details',['slug'=>$items->slug,'shopID'=>$shopID]) }}">
                                                         <img
-                                                            src="{{ url('upload/product_images/' . $items- loading="lazy">image) }}"
+                                                            src="{{ url('upload/product_images/' . $items->image) }}"
                                                             alt="{{ $items->name }}" style="max-height:200px;"></a>
                                                 </div><!-- /.image -->
 

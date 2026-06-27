@@ -25,7 +25,7 @@ class Category extends Model
         $search = strip_tags(htmlspecialchars(request()->input('search.value', ''), ENT_QUOTES, 'UTF-8'));
         $Query = null;
         $i = 0;
-        $$1 = strip_tags(request()->input('customFilter.$2', ''));
+        $accountType = strip_tags(request()->input('customFilter.accountType', ''));
         if (!empty($accountType)) {
             $Query = self::where('created_by', $accountType);
         }

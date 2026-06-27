@@ -35,8 +35,8 @@ class FrontendController extends Controller
         $data = \Illuminate\Support\Facades\Cache::remember($cacheKey, 600, function () {
             return $this->buildHomepageData();
         });
-        return $data;
-    } // end buildHomepageData
+        return view('frontend.layouts.home', $data);
+    }
 
     /**
      * Build homepage data — called once, then cached
@@ -111,7 +111,7 @@ class FrontendController extends Controller
 
         $data['topProducts'] = $topProducts;
 
-        return view('frontend.layouts.home', $data);
+        return $data;
     }
 
     public function productList()

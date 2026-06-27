@@ -347,7 +347,7 @@ Usupershop
                                                             <div class="image">
                                                                 <a
                                                                     href="{{ route('product.details.info', $product->slug) }}"><img
-                                                                        src="{{ url('upload/product_images/' . $product- loading="lazy">image) }}"
+                                                                        src="{{ url('upload/product_images/' . $product->image) }}"
                                                                         alt="{{ $product->name }}"></a>
                                                             </div><!-- /.image -->
                                                             <div class="tag new"><span>new</span></div>
@@ -432,7 +432,7 @@ Usupershop
                                                         <div class="col col-sm-4 col-lg-4">
                                                             <div class="product-image">
                                                                 <div class="image">
-                                                                    <img src="{{ url('upload/product_images/' . $product- loading="lazy">image) }}"
+                                                                    <img src="{{ url('upload/product_images/' . $product->image) }}"
                                                                         alt="{{ $product->name }}">
                                                                 </div>
                                                             </div><!-- /.product-image -->

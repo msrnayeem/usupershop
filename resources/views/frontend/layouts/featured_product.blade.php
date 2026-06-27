@@ -12,7 +12,7 @@
                                     <button>
                                         @if (!empty($items->image))
                                             <img style="max-height:200px"
-                                                src="{{ asset('upload/product_images/' . $items- loading="lazy">image) }}"
+                                                src="{{ asset('upload/product_images/' . $items->image) }}"
                                                 alt="{{ $items->slug }}" onerror="this.src='{{ asset('/frontend/no-image-icon.jpg') }}'"
 />
                                         @else

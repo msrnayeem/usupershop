@@ -76,7 +76,7 @@ class User extends Authenticatable
         $Query = null;
         $i = 0;
 
-        $$1 = strip_tags(request()->input('customFilter.$2', ''));
+        $accountType = strip_tags(request()->input('customFilter.accountType', ''));
         if (!empty($accountType)) {
             $Query = self::where('usertype', $accountType);
         }

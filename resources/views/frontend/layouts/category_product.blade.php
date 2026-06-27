@@ -14,7 +14,7 @@
                                         <a href="{{ route('product.details.info', $product->slug) }}">
                                             <button>
                                                 @if (!empty($product->image))
-                                                    <img loading="lazy" src="{{ asset('upload/product_images/' . $product- loading="lazy">image) }}"
+                                                    <img loading="lazy" src="{{ asset('upload/product_images/' . $product->image) }}"
                                                         alt="{{ $product->slug }}"
                                                         onerror="this.src='{{ asset('/frontend/no-image-icon.jpg') }}'" />
                                                 @else
