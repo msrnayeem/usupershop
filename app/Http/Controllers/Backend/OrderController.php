@@ -541,6 +541,8 @@ class OrderController extends Controller
                         $this->sendOrderShipmentSms($order);
                     } elseif ($delivery_status === 'delivered') {
                         $this->sendOrderDeliveredSms($order);
+                    } elseif ($delivery_status === 'return') {
+                        $this->sendOrderReturnSms($order);
                     }
                 } catch (\Exception $e) {
                     Log::error('Failed to send order status SMS', [
@@ -548,6 +550,16 @@ class OrderController extends Controller
                         'status' => $delivery_status,
                         'error' => $e->getMessage()
                     ]);
+
+                // ── Admin WhatsApp notify on delivery/cancel ──────────────
+                try {
+                    if (in_array($delivery_status, ['delivered', 'canceled', 'return'])) {
+                        $wa = new \App\Services\WhatsAppService();
+                        $wa->sendOrderStatusNotification($order, $delivery_status);
+                    }
+                } catch (\Exception $waEx) {
+                    Log::warning('Admin WhatsApp order status notify failed: ' . $waEx->getMessage());
+                }
                 }
 
                 // ── DELIVERED: distribute all commissions ──────────────────
@@ -560,6 +572,19 @@ class OrderController extends Controller
                             'order_id' => $order->id,
                             'error' => $e->getMessage()
                         ]);
+                    }
+
+                    // ── Seller Share Link Commission ──────────────────────────
+                    // If order came via seller's share link → give 10% commission
+                    if (!empty($order->seller_ref_id) && $order->seller_ref_paid == 0) {
+                        try {
+                            $this->distributeSellerRefCommission($order);
+                        } catch (\Exception $e) {
+                            Log::error('Seller ref commission failed', [
+                                'order_id' => $order->id,
+                                'error' => $e->getMessage()
+                            ]);
+                        }
                     }
 
                     // Dropshipper profit — add on delivered (not at order time)
@@ -577,6 +602,14 @@ class OrderController extends Controller
 
                 // ── CANCELED or RETURN: reverse all commissions ────────────
                 if ($delivery_status === 'canceled' || $delivery_status === 'return') {
+                    // Reverse seller ref commission if paid
+                    if (!empty($order->seller_ref_id) && $order->seller_ref_paid == 1) {
+                        try {
+                            $this->reverseSellerRefCommission($order);
+                        } catch (\Exception $e) {
+                            Log::error('Seller ref commission reversal failed', ['order_id' => $order->id, 'error' => $e->getMessage()]);
+                        }
+                    }
                     try {
                         $this->reverseOrderCommissions($order);
                     } catch (\Exception $e) {
@@ -633,6 +666,21 @@ class OrderController extends Controller
 
         // Add to dropshipper balance
         $dropshipper->increment('balance', $profit);
+
+        // ── Transaction log for dropshipper profit ─────────────────
+        \App\Models\Transaction::create([
+            'user_id'      => $order->dropshipper_id,
+            'from_user_id' => $order->user_id,
+            'wallet_type'  => 1, // balance wallet
+            'tnx_type'     => 7, // dropshipper profit (add to constants if needed)
+            'credit'       => $profit,
+            'debit'        => 0,
+            'note'         => 'Dropshipper Profit — Order: ' . ($order->order_no ?? $order->id),
+            'description'  => json_encode(['order_id' => (string)$order->id]),
+            'status'       => 1,
+            'in_status'    => 1,
+            'date'         => time(),
+        ]);
 
         // Record in DropshipperProfit
         \App\Models\DropshipperProfit::updateOrCreate(
@@ -1340,5 +1388,90 @@ class OrderController extends Controller
     }
 
 
+
+
+    /**
+     * Seller share link commission — 10% of order total on delivery
+     */
+    private function distributeSellerRefCommission(Order $order): void
+    {
+        if (empty($order->seller_ref_id)) return;
+
+        // Prevent double payment
+        if ($order->seller_ref_paid == 1) return;
+
+        $seller = User::find($order->seller_ref_id);
+        if (!$seller || $seller->status != 1 || $seller->payment_status != 1) return;
+
+        $commissionRate = 10; // 10% of order total
+        $commissionAmt  = round((float)$order->order_total * $commissionRate / 100, 2);
+        if ($commissionAmt <= 0) return;
+
+        $seller->increment('balance', $commissionAmt);
+        $seller->increment('refer_commission', $commissionAmt);
+
+        \App\Models\Transaction::create([
+            'user_id'      => $seller->id,
+            'from_user_id' => $order->user_id,
+            'wallet_type'  => 1,
+            'tnx_type'     => \App\utilities\Constant::TRANSACTION_TYPE['refer_commission'],
+            'credit'       => $commissionAmt,
+            'debit'        => 0,
+            'note'         => "Share Link Commission (10%) — Order: " . ($order->order_no ?? $order->id),
+            'description'  => json_encode(['order_id' => (string)$order->id, 'type' => 'seller_share_link']),
+            'status'       => \App\utilities\Constant::STATUS['approved'],
+            'in_status'    => \App\utilities\Constant::IN_STATUS['active'],
+            'date'         => time(),
+        ]);
+
+        // Mark as paid
+        $order->update(['seller_ref_commission' => $commissionAmt, 'seller_ref_paid' => 1]);
+
+        Log::info('Seller share link commission paid', [
+            'seller_id'  => $seller->id,
+            'order_id'   => $order->id,
+            'commission' => $commissionAmt,
+        ]);
+    }
+
+    /**
+     * Reverse seller share link commission on cancel/return
+     */
+    private function reverseSellerRefCommission(Order $order): void
+    {
+        if (empty($order->seller_ref_id) || $order->seller_ref_paid != 1) return;
+
+        $seller = User::find($order->seller_ref_id);
+        if (!$seller) return;
+
+        $commissionAmt = (float)$order->seller_ref_commission;
+        if ($commissionAmt <= 0) return;
+
+        $newBalance = max(0, ($seller->balance ?? 0) - $commissionAmt);
+        $newRefer   = max(0, ($seller->refer_commission ?? 0) - $commissionAmt);
+        $seller->update(['balance' => $newBalance, 'refer_commission' => $newRefer]);
+
+        \App\Models\Transaction::create([
+            'user_id'      => $seller->id,
+            'from_user_id' => $order->user_id,
+            'wallet_type'  => 1,
+            'tnx_type'     => \App\utilities\Constant::TRANSACTION_TYPE['refer_commission'],
+            'credit'       => 0,
+            'debit'        => $commissionAmt,
+            'note'         => "Share Link Commission Reversed — Order Cancelled: " . ($order->order_no ?? $order->id),
+            'description'  => json_encode(['order_id' => (string)$order->id, 'type' => 'seller_share_link_reverse']),
+            'status'       => \App\utilities\Constant::STATUS['approved'],
+            'in_status'    => \App\utilities\Constant::IN_STATUS['active'],
+            'date'         => time(),
+        ]);
+
+        $order->update(['seller_ref_paid' => 0]);
+
+        Log::info('Seller share link commission reversed', [
+            'seller_id' => $seller->id,
+            'order_id'  => $order->id,
+            'reversed'  => $commissionAmt,
+        ]);
+    }
 
 }

@@ -345,7 +345,7 @@
                                                 {{ $waSetting->whatsapp_notify_number }}
                                             </strong>
                                         </div>
-                                        <div style="color:rgba(255,255,255,.7); font-size:11px; margin-top:3px;">
+                                        <div style="color:rgba(255,255,255,.7); font-size:13px; margin-top:3px;">
                                             নতুন order ও member payment-এ এই নম্বরে WhatsApp message আসবে
                                         </div>
                                     @else

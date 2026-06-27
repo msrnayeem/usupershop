@@ -1,51 +1,15 @@
 User-agent: *
 Allow: /
-Allow: /product-list
-Allow: /product-details/
-Allow: /category-wise-product/
-Allow: /hot-deals
-Allow: /speacial-offers
-Allow: /about-us
-Allow: /contact-us
-Allow: /pricing
-Allow: /return-policy
-Allow: /privacy-policy
-Allow: /terms-and-condition
-Allow: /seller/signup
 
-# Block private/admin areas
-Disallow: /home
-Disallow: /users/
-Disallow: /orders/
-Disallow: /products/add
-Disallow: /sellers/
-Disallow: /vendors/
-Disallow: /settings/
-Disallow: /wallets/
-Disallow: /customer/
-Disallow: /dropshipper/
-Disallow: /seller-dashboard
-Disallow: /dropshipper-dashboard
+# Block admin/private areas
+Disallow: /admin/
+Disallow: /seller-panel/
 Disallow: /api/
-Disallow: /smsgateways/
-Disallow: /checkout
-Disallow: /shopping-cart
-Disallow: /bkash/
-Disallow: /callback/
-Disallow: /userlogin
-Disallow: /adminlogin
-Disallow: /auth/
-Disallow: /forget/
-Disallow: /password_changes/
-Disallow: /guest/
-Disallow: /cache-clear
-Disallow: /whatsapp/
+Disallow: /checkout/
+Disallow: /order/
+Disallow: /cart/
+Disallow: /*.env
+Disallow: /storage/
 
-# Allow Googlebot to crawl faster
-User-agent: Googlebot
-Crawl-delay: 1
-
-User-agent: Bingbot
-Crawl-delay: 2
-
+# Sitemap
 Sitemap: https://usuper.shop/sitemap.xml

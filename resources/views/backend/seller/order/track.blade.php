@@ -296,11 +296,11 @@
                                                             };
                                                         @endphp
                                                         @if($timestampField && $order->$timestampField)
-                                                            <div style="font-size: 11px; color: #888; margin-top: 5px; font-weight: 400;">
+                                                            <div style="font-size:13px; color: #888; margin-top: 5px; font-weight: 400;">
                                                                 {{ \Carbon\Carbon::parse($order->$timestampField)->format('d M Y, h:i A') }}
                                                             </div>
                                                         @elseif($index > $currentStep)
-                                                            <div style="font-size: 11px; color: #ccc; margin-top: 5px; font-weight: 400;">
+                                                            <div style="font-size:13px; color: #ccc; margin-top: 5px; font-weight: 400;">
                                                                 Not yet
                                                             </div>
                                                         @endif

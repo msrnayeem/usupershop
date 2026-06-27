@@ -153,7 +153,7 @@
                                                                 <a
                                                                     href="{{ route('seller.product.details', ['slug' => $product->slug, 'shopID' => $shopID]) }}">
                                                                     @if ($product->image)
-                                                                        <img src="{{ asset('upload/product_images/' . $product->image) }}"
+                                                                        <img src="{{ asset('upload/product_images/' . $product- loading="lazy">image) }}"
                                                                             alt="{{ $product->name }}"
                                                                             style="height:200px;" />
                                                                     @else
@@ -264,7 +264,7 @@
                                                             <div class="product-image">
                                                                 <div class="image">
                                                                     @if (!empty($product->image))
-                                                                        <img src="{{ url('upload/product_images/' . $product->image) }}"
+                                                                        <img src="{{ url('upload/product_images/' . $product- loading="lazy">image) }}"
                                                                             alt="{{ $product->name }}"
                                                                             style="height: 200px;" />
                                                                     @else

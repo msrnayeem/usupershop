@@ -4,65 +4,77 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Courier;
+use App\Services\CourierService;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Cache;
 
 class CourierController extends Controller
 {
-    public function index(Request $request)
-{
-    if ($request->ajax()) {
-        $data = \App\Models\Courier::select(['id','name','client_id','store_id','is_active']);
-        return DataTables::of($data)
-            ->addColumn('status', function($row){
-                return $row->is_active 
-                    ? '<span class="badge badge-success">Active</span>'
-                    : '<span class="badge badge-danger">Inactive</span>';
-            })
-            ->addColumn('action', function($row){
-                return '
-                    <a href="'.route('couriers.edit', $row->id).'" class="btn btn-sm btn-primary">Edit</a>
-                    <form action="'.route('couriers.destroy',$row->id).'" method="POST" style="display:inline-block;">
-                        '.csrf_field().method_field("DELETE").'
-                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm(\'Delete?\')">Delete</button>
-                    </form>
-                ';
-            })
-            ->rawColumns(['status','action'])
-            ->make(true);
-    }
-
-    return view('backend.couriers.index');
-}
-
-
-    public function create()
+    public function settings()
     {
-        return view('backend.couriers.create');
-    }
+        $couriers = Courier::all();
 
-    public function store(Request $request)
-    {
-        Courier::create($request->all());
-        return redirect()->route('couriers.index')->with('success','Courier created successfully');
-    }
-
-    public function edit($id)
-    {
-        $courier = Courier::findOrFail($id);
-        return view('backend.couriers.edit', compact('courier'));
+        // Create defaults if not exist
+        foreach (['Steadfast', 'Pathao'] as $name) {
+            if (!$couriers->where('name', $name)->first()) {
+                Courier::create([
+                    'name'      => $name,
+                    'is_active' => 0,
+                    'base_url'  => $name === 'Steadfast'
+                        ? 'https://portal.packzy.com/api/v1'
+                        : 'https://courier-api.pathao.com',
+                    'is_sandbox'=> 0,
+                ]);
+            }
+        }
+        $couriers = Courier::all();
+        return view('backend.couriers.settings', compact('couriers'));
     }
 
     public function update(Request $request, $id)
     {
         $courier = Courier::findOrFail($id);
-        $courier->update($request->all());
-        return redirect()->route('couriers.index')->with('success','Courier updated successfully');
+
+        $data = [
+            'is_active'  => $request->has('is_active') ? 1 : 0,
+            'base_url'   => $request->base_url ?? $courier->base_url,
+            'is_sandbox' => $request->is_sandbox ?? 0,
+        ];
+
+        if ($courier->name === 'Steadfast') {
+            $data['api_key']    = $request->api_key    ?? '';
+            $data['secret_key'] = $request->secret_key ?? '';
+        }
+
+        if ($courier->name === 'Pathao') {
+            $data['client_id']     = $request->client_id     ?? '';
+            $data['client_secret'] = $request->client_secret ?? '';
+            $data['username']      = $request->username       ?? '';
+            $data['password']      = $request->password       ?? '';
+            $data['store_id']      = $request->store_id       ?? '';
+        }
+
+        $courier->update($data);
+
+        // Clear courier caches
+        Cache::forget('pathao_access_token_' . md5($request->client_id ?? ''));
+        Cache::forget('pathao_cities_' . md5($request->client_id ?? ''));
+        Cache::forget('pathao_store_id_' . md5($request->client_id ?? ''));
+
+        $status = $data['is_active'] ? 'Active' : 'Inactive';
+        return redirect()->route('couriers.settings')
+            ->with('success', "✅ {$courier->name} settings saved! Status: {$status}");
     }
 
-    public function destroy($id)
+    public function testConnection(Request $request)
     {
-        Courier::findOrFail($id)->delete();
-        return redirect()->route('couriers.index')->with('success','Courier deleted successfully');
+        $courier = $request->input('courier');
+        try {
+            $service = new CourierService();
+            $result  = $service->testConnection($courier);
+            return response()->json($result);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => '❌ Error: ' . $e->getMessage()]);
+        }
     }
 }

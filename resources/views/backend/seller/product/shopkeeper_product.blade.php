@@ -82,7 +82,11 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
+                                    @empty
+                                        <div class="col-12 text-center py-4 text-muted">
+                                            কোনো পণ্য পাওয়া যায়নি।
+                                        </div>
+                                    @endforelse
 
                                 </div>
                             </div>

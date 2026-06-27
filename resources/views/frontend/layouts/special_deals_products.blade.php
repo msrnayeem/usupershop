@@ -52,7 +52,8 @@
                                         @php
                                             // Check if user is dropshipper and product has hole sale price
                                             if (auth()->check() && auth()->user()->usertype === 'dropshipper' && isset($items->sale_price) && $items->sale_price > 0) {
-                                                $displayPrice = $items->sale_price;
+                                                $isDropshipper = auth()->check() && auth()->user()->usertype === 'dropshipper';
+                            $displayPrice = ($isDropshipper && !empty($items->sale_price)) ? $items->sale_price : $items->price;
                                                 $showOriginal = false;
                                             } else {
                                                 // Regular customer pricing

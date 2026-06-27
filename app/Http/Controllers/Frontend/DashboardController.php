@@ -50,25 +50,27 @@ class DashboardController extends Controller
     {
         $user = User::find(Auth::user()->id);
         $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|unique:users,email,' . $user->id,
-            'mobile' => ['required', 'unique:users,mobile,' . $user->id, new BdPhoneNumber()],
+            'name'  => 'required|string|max:100',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->mobile = $request->mobile;
+        // ── Phone & Email are READONLY — never update ────────────────────
+        $user->name    = $request->name;
         $user->address = $request->address;
-        $user->gender = $request->gender;
+        $user->gender  = $request->gender;
+
+        // Profile image
         if ($request->file('image')) {
             $file = $request->file('image');
-            @unlink(public_path('upload/user_images/' . $user->image));
+            if (!empty($user->image)) {
+                @unlink(public_path('upload/user_images/' . $user->image));
+            }
             $filename = date('YmdHi') . $file->getClientOriginalName();
             $file->move(public_path('upload/user_images'), $filename);
-            $user['image'] = $filename;
+            $user->image = $filename;
         }
         $user->save();
-        return redirect()->route('dashboard')->with('success', 'Profile update successfully !!!');
+        return redirect()->route('dashboard')->with('success', 'Profile সফলভাবে আপডেট হয়েছে!');
     }
 
     public function passwordChange()

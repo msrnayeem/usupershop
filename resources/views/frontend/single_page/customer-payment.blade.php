@@ -137,7 +137,7 @@
 
         .product-info p {
             margin: 0px;
-            font-size: 10px;
+            font-size:13px;
         }
 
         /* Quantity input */
@@ -172,7 +172,7 @@
             background: #007bff;
             color: #fff;
             border: none;
-            font-size: 12px;
+            font-size:14px;
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.2s;
@@ -269,7 +269,7 @@
 
                                 <div class="cart-product">
                                     <div class="product-image" style="margin-right: 5px;">
-                                        <img src="{{ url('upload/product_images/' . $content->options->image) }}"
+                                        <img src="{{ url('upload/product_images/' . $content- loading="lazy">options->image) }}"
                                             alt="{{ $content->name }}">
                                     </div>
                                     <div class="product-info">
@@ -306,6 +306,14 @@
                             </div>
                         @endif
 
+                        @php
+                            $FREE_THRESHOLD = 1000;
+                            $isFreeDelivery = $total >= $FREE_THRESHOLD;
+                            $effectiveDelivery = $isFreeDelivery ? 0 : $deliveryCharged;
+                            $grandTotal = $total - $cDiss + $effectiveDelivery;
+                            $remaining = $FREE_THRESHOLD - $total;
+                        @endphp
+
                         <div class="payment-method">
                             @if (Session::get('message'))
                                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -315,55 +323,292 @@
                                     </button>
                                 </div>
                             @endif
-                            <form action="{{ route('customer.payment.store') }}" method="POST" id="paymentForm"
-                                class="form">
+
+                            {{-- ── FREE DELIVERY BANNER ── --}}
+                            @if($isFreeDelivery)
+                            <div style="background:linear-gradient(135deg,#00a855,#007a3d);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;">
+                                <div style="font-size:28px;flex-shrink:0;">🎉</div>
+                                <div>
+                                    <strong style="color:#fff;font-size:14px;display:block;margin-bottom:2px;">আপনি FREE DELIVERY পেয়েছেন!</strong>
+                                    <span style="color:rgba(255,255,255,.88);font-size:14px;">১,০০০ টাকার উপরে অর্ডারে ডেলিভারি সম্পূর্ণ বিনামূল্যে।</span>
+                                </div>
+                            </div>
+                            @else
+                            <div style="background:#fff5f5;border:1.5px solid #ffb3b3;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
+                                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                                    <span style="font-size:22px;">🚚</span>
+                                    <strong style="color:#e8001d;font-size:13px;">ডেলিভারি চার্জ প্রযোজ্য</strong>
+                                </div>
+                                <p style="color:#555;font-size:14px;margin:0 0 8px;line-height:1.6;">
+                                    ১,০০০ টাকার কম অর্ডারে ডেলিভারি চার্জ <strong>bKash-এ আগে পরিশোধ</strong> করতে হবে।<br>
+                                    Cash on Delivery বা bKash — যেকোনো মেথডে অর্ডার করলেও ডেলিভারি চার্জ আগেই দিতে হবে।
+                                </p>
+                                <div style="background:#e8001d;color:#fff;border-radius:8px;padding:8px 12px;font-size:14px;font-weight:700;">
+                                    আরও ৳{{ number_format($remaining, 0) }} টাকার কেনাকাটা করলে FREE DELIVERY পাবেন! 🎁
+                                </div>
+                            </div>
+                            @endif
+
+                            {{-- ── ORDER SUMMARY ── --}}
+                            <div style="background:#f8f9fa;border:1px solid #eee;border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+                                <div style="display:flex;justify-content:space-between;font-size:14px;color:#666;margin-bottom:6px;">
+                                    <span>পণ্যের মোট দাম</span>
+                                    <span>৳{{ number_format($total, 0) }}</span>
+                                </div>
+                                @if($cDiss > 0)
+                                <div style="display:flex;justify-content:space-between;font-size:14px;color:#00a855;margin-bottom:6px;">
+                                    <span>কুপন ছাড়</span>
+                                    <span>-৳{{ number_format($cDiss, 0) }}</span>
+                                </div>
+                                @endif
+                                <div style="display:flex;justify-content:space-between;font-size:14px;color:#666;margin-bottom:8px;">
+                                    <span>ডেলিভারি চার্জ</span>
+                                    @if($isFreeDelivery)
+                                        <span style="color:#00a855;font-weight:700;">বিনামূল্যে 🎉</span>
+                                    @else
+                                        <span style="color:#e8001d;">৳{{ number_format($effectiveDelivery, 0) }}</span>
+                                    @endif
+                                </div>
+                                <div style="border-top:1px solid #ddd;padding-top:8px;display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:#111;">
+                                    <span>সর্বমোট</span>
+                                    <span style="color:#e8001d;">৳{{ number_format($grandTotal, 0) }}</span>
+                                </div>
+                                @if(!$isFreeDelivery)
+                                <div style="margin-top:8px;padding:6px 10px;background:#fff3cd;border-radius:6px;font-size:13px;color:#856404;">
+                                    ⚠️ bKash-এ এখন পরিশোধ করতে হবে: <strong>৳{{ number_format($effectiveDelivery, 0) }}</strong> (ডেলিভারি চার্জ)
+                                </div>
+                                @endif
+                            </div>
+
+                            <form action="{{ route('customer.payment.store') }}" method="POST" id="paymentForm" class="form">
                                 @csrf
                                 @foreach ($contents as $content)
                                     <input type="hidden" name="product_id" value="{{ $content->id }}">
                                 @endforeach
-
-                                <div style="background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:12px 14px; margin-bottom:14px;">
-                                    <strong style="color:#856404; font-size:14px; display:block; margin-bottom:4px;">⚠️ ডেলিভারি চার্জ পেমেন্ট বাধ্যতামূলক</strong>
-                                    <p style="color:#856404; font-size:12px; margin:0; line-height:1.6;">
-                                        অর্ডার কনফার্ম করতে অবশ্যই ডেলিভারি চার্জ পেমেন্ট করতে হবে।<br>
-                                        <strong>Cash on Delivery</strong> অর্ডারেও bKash-এ ডেলিভারি চার্জ পেমেন্ট করুন।
-                                    </p>
-                                </div>
                                 <input type="hidden" name="order_total" value="{{ $total }}">
+                                <input type="hidden" name="free_delivery" value="{{ $isFreeDelivery ? '1' : '0' }}">
 
-                                <div class="payment-options">
-                                    <div class="payment-item">
-                                        <label for="cash_on_delivery">
-                                            <img class="img-fluid" src="{{ asset('/') }}frontend/cash-on-delivery.png" alt="cash on delivery" style="margin-top: 10px;">
-                                        </label>
-                                        <input type="radio" id="cash_on_delivery" name="payment_method"
-                                            value="Cash on Delivery">
-                                    </div>
 
-                                    <div class="payment-item">
-                                        <label for="bkash">
-                                            <img class="img-fluid" src="{{ asset('/') }}frontend/bkash.png"
-                                                alt="bKash">
-                                        </label>
-                                        <input type="radio" id="bkash" name="payment_method" value="Bkash">
+                                {{-- ── Coupon Section (Optional) ──────────────────────── --}}
+                                @php $appliedCoupon = Session::get('coupon_code'); $cDiscount = Session::get('coupon_discount', 0); @endphp
+                                <div style="margin-bottom:14px">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                                        <div style="font-size:13px;font-weight:800;color:#111">🎟️ কুপন কোড <span style="background:#f0f0f0;color:#888;font-size:13px;padding:2px 8px;border-radius:10px;font-weight:600;margin-left:4px">Optional</span></div>
+                                        @if($appliedCoupon)
+                                        <a href="{{ route('remove.coupon') }}" style="font-size:13px;color:#e8001d;font-weight:700;text-decoration:none">✕ সরান</a>
+                                        @endif
                                     </div>
+                                    @if($appliedCoupon && $cDiscount > 0)
+                                    <div style="background:#e8f5e9;border:1.5px solid #a5d6a7;border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px">
+                                        <div style="font-size:20px">✅</div>
+                                        <div>
+                                            <div style="font-size:13px;font-weight:800;color:#2e7d32">{{ $appliedCoupon }} — কুপন প্রয়োগ হয়েছে!</div>
+                                            <div style="font-size:14px;color:#388e3c">৳{{ number_format($cDiscount, 0) }} ছাড় পাচ্ছেন</div>
+                                        </div>
+                                    </div>
+                                    @else
+                                    <div style="display:flex;gap:8px">
+                                        <input type="text" id="couponInput"
+                                            placeholder="কুপন কোড দিন (যেমন: SAVE100)"
+                                            style="flex:1;padding:11px 14px;border:1.5px solid #e5e5e5;border-radius:10px;font-size:13px;font-family:'Hind Siliguri',sans-serif;outline:none;transition:border-color .2s"
+                                            onfocus="this.style.borderColor='#e8001d'"
+                                            onblur="this.style.borderColor='#e5e5e5'">
+                                        <button type="button" onclick="applyCoupon()"
+                                            style="background:#e8001d;color:#fff;border:none;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Hind Siliguri',sans-serif;white-space:nowrap">
+                                            Apply
+                                        </button>
+                                    </div>
+                                    <div id="couponMsg" style="font-size:14px;margin-top:5px;display:none"></div>
+                                    @endif
                                 </div>
 
-                                {{-- <label style="border:4px solid #2f2e2e;width:100%;padding:2px;">
-                                    <p class="highlight">ই পি এস এ পেমেন্ট করে অর্ডার কনফার্ম করতে এখানে ক্লিক করুন</p>
-                                    <div class="payment-option">
+                                <script>
+                                function applyCoupon() {
+                                    var code = document.getElementById('couponInput').value.trim();
+                                    var msg  = document.getElementById('couponMsg');
+                                    if (!code) {
+                                        msg.style.display = 'block';
+                                        msg.style.color   = '#e8001d';
+                                        msg.textContent   = '❌ কুপন কোড লিখুন।';
+                                        return;
+                                    }
+                                    msg.style.display = 'block';
+                                    msg.style.color   = '#888';
+                                    msg.textContent   = '⏳ যাচাই করা হচ্ছে...';
+
+                                    fetch('{{ route("ajax.apply.coupon") }}', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                        },
+                                        body: JSON.stringify({ coupon_code: code, total: {{ $total }} })
+                                    })
+                                    .then(function(r){ return r.json(); })
+                                    .then(function(data) {
+                                        msg.style.display = 'block';
+                                        if (data.success) {
+                                            msg.style.color = '#00a855';
+                                            msg.textContent = '✅ ' + data.message;
+                                            setTimeout(function(){ location.reload(); }, 800);
+                                        } else {
+                                            msg.style.color = '#e8001d';
+                                            msg.textContent = '❌ ' + data.message;
+                                        }
+                                    })
+                                    .catch(function() {
+                                        msg.style.color = '#e8001d';
+                                        msg.textContent = '❌ সংযোগ সমস্যা। আবার চেষ্টা করুন।';
+                                    });
+                                }
+                                // Enter key support
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    var inp = document.getElementById('couponInput');
+                                    if (inp) inp.addEventListener('keypress', function(e) {
+                                        if (e.key === 'Enter') { e.preventDefault(); applyCoupon(); }
+                                    });
+                                });
+                                </script>
+
+                                {{-- ── Payment Options ──────────────────────────────────── --}}
+                                @if($isFreeDelivery)
+                                {{-- ≥১,০০০ টাকা: COD ও Full bKash Payment --}}
+                                <p style="font-size:14px;font-weight:700;color:#333;margin-bottom:12px">💳 পেমেন্ট পদ্ধতি বেছে নিন:</p>
+
+                                {{-- COD Button --}}
+                                <div id="codSection">
+                                    <div class="payment-item" id="codCard"
+                                        style="border:2px solid #00a855;background:#f0fff8;border-radius:14px;padding:14px 16px;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;gap:14px"
+                                        onclick="selectCOD()">
+                                        <div style="font-size:32px;flex-shrink:0">🏠</div>
                                         <div>
-                                            <img src="{{ asset('/') }}frontend/assets/images/eps.png" width="40" alt="EPS">
-                                            <label for="eps"><strong>EPS</strong></label>
+                                            <div style="font-size:14px;font-weight:800;color:#1a1a1a">Cash on Delivery-তে অর্ডার করুন</div>
+                                            <div style="font-size:14px;color:#666;margin-top:2px">পণ্য পেয়ে দরজায় পেমেন্ট করুন</div>
                                         </div>
-                                        <input type="radio" id="eps" name="payment_method" value="EPS">
+                                        <div style="margin-left:auto;width:20px;height:20px;border-radius:50%;background:#00a855;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800;flex-shrink:0" id="codCheck">✓</div>
                                     </div>
-                                </label> --}}
+                                    <input type="radio" id="cash_on_delivery" name="payment_method" value="Cash on Delivery" checked style="display:none">
+                                </div>
+
+                                {{-- Full Payment Button --}}
+                                <div id="bkashSection">
+                                    <div class="payment-item" id="bkashCard"
+                                        style="border:2px solid #eee;background:#fff;border-radius:14px;padding:14px 16px;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;gap:14px"
+                                        onclick="selectBkash()">
+                                        <div style="background:#e8001d;color:#fff;font-size:14px;font-weight:800;border-radius:8px;padding:6px 12px;flex-shrink:0">bKash</div>
+                                        <div>
+                                            <div style="font-size:14px;font-weight:800;color:#1a1a1a">Full Payment করে অর্ডার করুন</div>
+                                            <div style="font-size:14px;color:#666;margin-top:2px">bKash-এ এখনই সম্পূর্ণ পেমেন্ট করুন</div>
+                                        </div>
+                                        <div style="margin-left:auto;width:20px;height:20px;border-radius:50%;border:2px solid #eee;flex-shrink:0" id="bkashCheck"></div>
+                                    </div>
+                                    <input type="radio" id="bkash" name="payment_method" value="Bkash" style="display:none">
+                                </div>
+
+                                @else
+                                {{-- <১,০০০ টাকা: দুটো option — COD (delivery bKash) অথবা Full bKash --}}
+                                <p style="font-size:14px;font-weight:700;color:#333;margin-bottom:12px">💳 বিকাশে পেমেন্ট করুন:</p>
+
+                                <div style="background:#fff3cd;border:1.5px solid #ffd54f;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#856404;line-height:1.7">
+                                    ⚠️ ১,০০০ টাকার কম অর্ডারে ডেলিভারি চার্জ <strong>bKash-এ আগে</strong> পরিশোধ করতে হবে।
+                                </div>
+
+                                {{-- Option 1: COD — delivery charge bKash --}}
+                                <div id="codSection">
+                                    <div class="payment-item" id="codCard"
+                                        style="border:2px solid #00a855;background:#f0fff8;border-radius:14px;padding:14px 16px;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;gap:14px"
+                                        onclick="selectCOD()">
+                                        <div style="font-size:32px;flex-shrink:0">🏠</div>
+                                        <div>
+                                            <div style="font-size:13px;font-weight:800;color:#1a1a1a">Cash on Delivery-তে অর্ডার করতে</div>
+                                            <div style="font-size:14px;font-weight:700;color:#e8001d;margin-top:2px">ডেলিভারি চার্জ (৳{{ number_format($effectiveDelivery, 0) }}) বিকাশে পে করুন</div>
+                                        </div>
+                                        <div style="margin-left:auto;width:20px;height:20px;border-radius:50%;background:#00a855;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800;flex-shrink:0" id="codCheck">✓</div>
+                                    </div>
+                                    <input type="radio" id="cash_on_delivery" name="payment_method" value="Cash on Delivery" checked style="display:none">
+                                </div>
+
+                                {{-- Option 2: Full bKash payment --}}
+                                <div id="bkashSection">
+                                    <div class="payment-item" id="bkashCard"
+                                        style="border:2px solid #eee;background:#fff;border-radius:14px;padding:14px 16px;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;gap:14px"
+                                        onclick="selectBkash()">
+                                        <div style="background:#e8001d;color:#fff;font-size:14px;font-weight:800;border-radius:8px;padding:6px 12px;flex-shrink:0">bKash</div>
+                                        <div>
+                                            <div style="font-size:13px;font-weight:800;color:#1a1a1a">Full Payment করে অর্ডার করতে এখানে ক্লিক করুন</div>
+                                            <div style="font-size:14px;color:#666;margin-top:2px">সম্পূর্ণ ৳{{ number_format($grandTotal, 0) }} bKash-এ এখনই পে করুন</div>
+                                        </div>
+                                        <div style="margin-left:auto;width:20px;height:20px;border-radius:50%;border:2px solid #eee;flex-shrink:0" id="bkashCheck"></div>
+                                    </div>
+                                    <input type="radio" id="bkash" name="payment_method" value="Bkash" style="display:none">
+                                </div>
+                                @endif
 
                                 <font color="red">
                                     {{ $errors->has('payment_method') ? $errors->first('payment_method') : '' }}
                                 </font>
-                                <button type="submit" class="btn btn-primary text-center">Confirm Order</button>
+
+                                <script>
+                                function selectCOD() {
+                                    // Activate COD
+                                    document.getElementById('cash_on_delivery').checked = true;
+                                    document.getElementById('codCard').style.borderColor = '#00a855';
+                                    document.getElementById('codCard').style.background = '#f0fff8';
+                                    document.getElementById('codCheck').style.background = '#00a855';
+                                    document.getElementById('codCheck').innerHTML = '✓';
+                                    // Deactivate bKash
+                                    document.getElementById('bkashCard').style.borderColor = '#eee';
+                                    document.getElementById('bkashCard').style.background = '#fff';
+                                    document.getElementById('bkashCheck').style.background = 'transparent';
+                                    document.getElementById('bkashCheck').innerHTML = '';
+                                    document.getElementById('bkashCheck').style.border = '2px solid #eee';
+                                    // Update submit button
+                                    @if($isFreeDelivery)
+                                    document.getElementById('orderSubmitBtn').innerHTML = '✅ Cash on Delivery-তে Order করুন';
+                                    document.getElementById('orderSubmitBtn').style.background = '#00a855';
+                                    document.getElementById('orderSubmitBtn').style.borderColor = '#00a855';
+                                    @else
+                                    document.getElementById('orderSubmitBtn').innerHTML = '💳 ডেলিভারি চার্জ ৳{{ number_format($effectiveDelivery, 0) }} bKash-এ পে করুন';
+                                    document.getElementById('orderSubmitBtn').style.background = '#e8001d';
+                                    document.getElementById('orderSubmitBtn').style.borderColor = '#e8001d';
+                                    @endif
+                                }
+
+                                function selectBkash() {
+                                    // Activate bKash
+                                    document.getElementById('bkash').checked = true;
+                                    document.getElementById('bkashCard').style.borderColor = '#e8001d';
+                                    document.getElementById('bkashCard').style.background = '#fff5f5';
+                                    document.getElementById('bkashCheck').style.background = '#e8001d';
+                                    document.getElementById('bkashCheck').innerHTML = '✓';
+                                    document.getElementById('bkashCheck').style.border = 'none';
+                                    // Deactivate COD
+                                    document.getElementById('codCard').style.borderColor = '#eee';
+                                    document.getElementById('codCard').style.background = '#fff';
+                                    document.getElementById('codCheck').style.background = 'transparent';
+                                    document.getElementById('codCheck').innerHTML = '';
+                                    document.getElementById('codCheck').style.background = '#eee';
+                                    // Update submit button
+                                    @if($isFreeDelivery)
+                                    document.getElementById('orderSubmitBtn').innerHTML = '💳 Full Payment করে Order করুন';
+                                    @else
+                                    document.getElementById('orderSubmitBtn').innerHTML = '💳 Full Payment ৳{{ number_format($grandTotal, 0) }} bKash-এ পে করুন';
+                                    @endif
+                                    document.getElementById('orderSubmitBtn').style.background = '#e8001d';
+                                    document.getElementById('orderSubmitBtn').style.borderColor = '#e8001d';
+                                }
+                                </script>
+
+                                <button type="submit" class="btn btn-primary text-center"
+                                    style="width:100%;padding:14px;font-size:15px;font-weight:700;border-radius:12px;background:#00a855;border-color:#00a855;margin-top:4px"
+                                    id="orderSubmitBtn">
+                                    @if($isFreeDelivery)
+                                        ✅ Cash on Delivery-তে Order করুন
+                                    @else
+                                        💳 ডেলিভারি চার্জ ৳{{ number_format($effectiveDelivery, 0) }} bKash-এ পে করুন
+                                    @endif
+                                </button>
+
                             </form>
                         </div>
                     </div>

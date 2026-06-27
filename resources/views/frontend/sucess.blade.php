@@ -58,15 +58,11 @@
                     @php
                       $userType = $returnData['user']->usertype ?? null;
                       $paymentType = $returnData['payment_type'] ?? null;
+                      $orderInvoice = $returnData['order']->invoice_no ?? null;
                     @endphp
                     @if ($paymentType === 'customer_order')
-                      @if ($userType === 'customer')
-                        window.location.href = "{{ route('customer.order.list') }}";
-                      @elseif ($userType === 'seller' || $userType === 'vendor' || $userType === 'dropshipper')
-                        window.location.href = "{{ route('seller.customer.order.list') }}";
-                      @else
-                        window.location.href = "{{ route('frontend.home') }}";
-                      @endif
+                      {{-- After successful payment → go to order tracking --}}
+                      window.location.href = "{{ route('order.track') }}" + (@if($orderInvoice)"?invoice={{ $orderInvoice }}"@else""@endif);
                     @elseif ($paymentType === 'user_subscription')
                       @if ($userType === 'seller' || $userType === 'vendor')
                         window.location.href = "{{ route('seller.dashboard') }}";
@@ -76,10 +72,11 @@
                         window.location.href = "{{ route('frontend.home') }}";
                       @endif
                     @else
-                      window.location.href = "{{ route('frontend.home') }}";
+                      window.location.href = "{{ route('order.track') }}";
                     @endif
                   @else
-                    window.location.href = "{{ route('frontend.home') }}";
+                    {{-- Guest order → order tracking --}}
+                    window.location.href = "{{ route('order.track') }}";
                   @endif
                 }
             }, 1000);

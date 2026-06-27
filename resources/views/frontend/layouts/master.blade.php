@@ -4,7 +4,37 @@
 <head>
     <meta charset="utf-8" />
     {{-- Google Search Console Verification --}}
-    <meta name="google-site-verification" content="ADD_YOUR_VERIFICATION_CODE_HERE" />
+    @php
+        try {
+            $seoSettings = \App\Models\Setting::first();
+            $seoTitle       = $seoSettings->seo_site_title ?? 'U Super Shop | Best Online Shop in Bangladesh';
+            $seoDesc        = $seoSettings->seo_meta_description ?? '';
+            $seoKeywords    = $seoSettings->seo_meta_keywords ?? '';
+            $seoGoogleVerif = $seoSettings->seo_google_verification ?? '';
+            $seoOgImage     = !empty($seoSettings->seo_og_image) ? asset('upload/seo/' . $seoSettings->seo_og_image) : asset('frontend/images/og-default.jpg');
+            $socialFb       = $seoSettings->social_facebook ?? '';
+            $socialYt       = $seoSettings->social_youtube ?? '';
+            $socialIg       = $seoSettings->social_instagram ?? '';
+            $socialTg       = $seoSettings->social_telegram ?? '';
+            $socialTk       = $seoSettings->social_tiktok ?? '';
+            $bizAddress     = $seoSettings->business_address ?? 'Dhaka, Bangladesh';
+            $bizEmail       = $seoSettings->business_email ?? 'usupershopbd@gmail.com';
+            $seoFavicon     = !empty($seoSettings->seo_favicon) ? asset('upload/seo/' . $seoSettings->seo_favicon) : asset('frontend/images/favicon.ico');
+            $seoLogo        = !empty($seoSettings->seo_logo) ? asset('upload/seo/' . $seoSettings->seo_logo) : asset('upload/logo/' . (\App\Models\Logo::first()->image ?? 'logo.png'));
+        } catch (\Exception $e) {
+            $seoTitle = 'U Super Shop | Best Online Shop in Bangladesh';
+            $seoDesc = $seoKeywords = $seoGoogleVerif = '';
+            $seoOgImage = asset('frontend/images/og-default.jpg');
+            $socialFb = $socialYt = $socialIg = $socialTg = $socialTk = '';
+            $bizAddress = 'Dhaka, Bangladesh'; $bizEmail = 'usupershopbd@gmail.com';
+            $seoFavicon = asset('frontend/images/favicon.ico');
+            $seoLogo = asset('frontend/images/logo.png');
+        }
+    @endphp
+
+    @if($seoGoogleVerif && $seoGoogleVerif !== 'ADD_YOUR_VERIFICATION_CODE_HERE')
+    <meta name="google-site-verification" content="{{ $seoGoogleVerif }}" />
+    @endif
     {{-- Preconnect for performance --}}
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,12 +42,11 @@
     <link rel="dns-prefetch" href="https://embed.tawk.to">
     {{-- PWA / Mobile App Meta --}}
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#1e25fa">
+    <meta name="theme-color" content="#e8001d">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="U Super Shop">
-    <link rel="apple-touch-icon" href="{{ asset('frontend/assets/images/logo.png') }}">
     <meta name="msapplication-TileColor" content="#1e25fa">
     {{-- Mobile UX --}}
     <meta name="format-detection" content="telephone=yes">
@@ -64,7 +93,7 @@
     <meta property="og:site_name" content="U Super Shop" />
     <meta property="og:title" content="@yield('og_title', 'U Super Shop | Best Online Shop in Bangladesh')" />
     <meta property="og:description" content="@yield('og_description', 'মানসম্মত পণ্য, দ্রুত ডেলিভারি, বিশ্বস্ত সেবা — U Super Shop-এ কেনাকাটা করুন। সেলার বা ড্রপশিপার হিসেবে আজই যোগ দিন!')" />
-    <meta property="og:image" content="@yield('og_image', asset('frontend/images/og-default.jpg'))" />
+    <meta property="og:image" content="@yield('og_image', $seoOgImage)" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:url" content="{{ url()->current() }}" />
@@ -77,7 +106,7 @@
     <meta name="twitter:site" content="@usupershop" />
     <meta name="twitter:title" content="@yield('twitter_title', 'U Super Shop | Best Online Shop in Bangladesh')" />
     <meta name="twitter:description" content="@yield('twitter_description', 'U Super Shop — আপনার নির্ভরযোগ্য অনলাইন শপ। সেরা দামে কেনাকাটা করুন!')" />
-    <meta name="twitter:image" content="@yield('twitter_image', asset('frontend/images/og-default.jpg'))" />
+    <meta name="twitter:image" content="@yield('twitter_image', $seoOgImage)" />
 
     {{-- Per-page extra meta --}}
     @stack('meta')
@@ -91,7 +120,7 @@
       "@type": "Organization",
       "name": "U Super Shop",
       "url": "https://usuper.shop",
-      "logo": "{{ asset('frontend/images/logo.png') }}",
+      "logo": "{{ $seoLogo }}",
       "description": "U Super Shop — বাংলাদেশের বিশ্বস্ত অনলাইন শপিং প্ল্যাটফর্ম। সেলার, ভেন্ডর ও ড্রপশিপার হওয়ার সুযোগ।",
       "address": {
         "@type": "PostalAddress",
@@ -115,10 +144,22 @@
     }
     </script>
 
+    @if(!empty($seoSettings->google_analytics_id) && $seoSettings->google_analytics_id !== '')
+    {{-- Google Analytics --}}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ $seoSettings->google_analytics_id }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '{{ $seoSettings->google_analytics_id }}');
+    </script>
+    @endif
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="{{ asset('frontend') }}/assets/css/bootstrap.min.css" />
     <!-- Customizable CSS -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('frontend') }}/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="{{ $seoFavicon }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ $seoFavicon }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ $seoLogo }}">
     <link rel="stylesheet" href="{{ asset('frontend') }}/assets/css/main.css" />
     <link rel="stylesheet" href="{{ asset('frontend') }}/assets/css/blue.css" />
     <link rel="stylesheet" href="{{ asset('frontend') }}/assets/owl-carousel/css/owl.carousel.min.css" />
@@ -1204,21 +1245,37 @@
 
 
 
+
+    {{-- ── Live Chat (Tawk.to) — Admin Panel থেকে ON/OFF করা যাবে ── --}}
+    @php
+        try {
+            $livechatSetting = \App\Models\Setting::first();
+            $livechatEnabled  = $livechatSetting->livechat_enabled ?? 1;
+            $tawkPropertyId   = $livechatSetting->tawkto_property_id ?? '67769592af5bfec1dbe5cfa4';
+            $tawkWidgetId     = $livechatSetting->tawkto_widget_id ?? '1j8nukq3o';
+        } catch (\Exception $e) {
+            $livechatEnabled = 1;
+            $tawkPropertyId  = '67769592af5bfec1dbe5cfa4';
+            $tawkWidgetId    = '1j8nukq3o';
+        }
+    @endphp
+
+    @if($livechatEnabled)
     <!--Start of Tawk.to Script-->
     <script type="text/javascript">
-        var Tawk_API = Tawk_API || {},
-            Tawk_LoadStart = new Date();
-        (function() {
+        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+        (function(){
             var s1 = document.createElement("script"),
                 s0 = document.getElementsByTagName("script")[0];
             s1.async = true;
-            s1.src = 'https://embed.tawk.to/67769592af5bfec1dbe5cfa4/1j8nukq3o';
+            s1.src = 'https://embed.tawk.to/{{ $tawkPropertyId }}/{{ $tawkWidgetId }}';
             s1.charset = 'UTF-8';
             s1.setAttribute('crossorigin', '*');
             s0.parentNode.insertBefore(s1, s0);
         })();
     </script>
     <!--End of Tawk.to Script-->
+    @endif
 
     {{-- ── Mobile Bottom Navigation (App-like) ──────────────────────── --}}
     <style>
@@ -1241,7 +1298,7 @@
         align-items: center; gap: 2px;
         text-decoration: none;
         color: #999;
-        font-size: 10px; font-weight: 700;
+        font-size:13px; font-weight: 700;
         padding: 4px 0;
         transition: color .15s, transform .15s;
         font-family: 'Hind Siliguri', sans-serif;
@@ -1272,7 +1329,7 @@
         position: absolute; top: 2px; left: 50%;
         transform: translateX(2px);
         background: #e8001d; color: #fff;
-        font-size: 9px; font-weight: 800;
+        font-size:13px; font-weight: 800;
         min-width: 16px; height: 16px;
         border-radius: 10px;
         display: flex; align-items: center; justify-content: center;
@@ -1365,10 +1422,10 @@
     #pwa-install-banner .pwa-icon { font-size: 32px; flex-shrink: 0; }
     #pwa-install-banner .pwa-text { flex: 1; }
     #pwa-install-banner .pwa-text strong { font-size: 13px; color: #111; display: block; }
-    #pwa-install-banner .pwa-text span   { font-size: 11px; color: #666; }
+    #pwa-install-banner .pwa-text span   { font-size:13px; color: #666; }
     #pwa-install-banner .pwa-btns { display: flex; gap: 6px; flex-shrink: 0; }
-    #pwa-install-banner .pwa-install { background: #1e25fa; color: #fff; border: none; border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
-    #pwa-install-banner .pwa-dismiss { background: transparent; border: 1px solid #ddd; color: #888; border-radius: 20px; padding: 7px 10px; font-size: 12px; cursor: pointer; }
+    #pwa-install-banner .pwa-install { background: #1e25fa; color: #fff; border: none; border-radius: 20px; padding: 7px 14px; font-size:14px; font-weight: 700; cursor: pointer; }
+    #pwa-install-banner .pwa-dismiss { background: transparent; border: 1px solid #ddd; color: #888; border-radius: 20px; padding: 7px 10px; font-size:14px; cursor: pointer; }
     @media (min-width: 769px) { #pwa-install-banner { display: none !important; } }
     </style>
 
@@ -1385,6 +1442,41 @@
     </div>
 
     @stack('custom_script')
+
+    {{-- ── WhatsApp Float Button ─────────────────────────────── --}}
+    @php
+        $waEnabled = $seoSettings->whatsapp_float_enabled ?? 1;
+    @endphp
+    @if($waEnabled)
+    <a href="https://wa.me/8801816622128?text=Hello%20U%20Super%20Shop%2C%20I%20need%20help."
+       target="_blank" rel="noopener"
+       id="wa-float-btn"
+       title="WhatsApp-এ Chat করুন"
+       style="position:fixed;bottom:140px;right:16px;z-index:1000;width:52px;height:52px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(37,211,102,.45);text-decoration:none;transition:transform .2s;"
+       onmouseover="this.style.transform='scale(1.1)'"
+       onmouseout="this.style.transform='scale(1)'">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+        </svg>
+    </a>
+    @endif
+
+    {{-- ── Language Toggle (Floating) ─────────────────────────── --}}
+    @php $currentLang = Session::get('language', request()->cookie('lang', 'english')); @endphp
+    <div style="position:fixed;top:10px;right:62px;z-index:10000">
+        @if($currentLang === 'bangla')
+        <a href="{{ route('english.language') }}" class="lang-toggle-btn" title="Switch to English">
+            <span class="lang-flag">🇺🇸</span>
+            <span class="lang-text">EN</span>
+        </a>
+        @else
+        <a href="{{ route('bangla.language') }}" class="lang-toggle-btn" title="বাংলায় পরিবর্তন করুন">
+            <span class="lang-flag">🇧🇩</span>
+            <span class="lang-text">BN</span>
+        </a>
+        @endif
+    </div>
+
 </body>
 
 </html>

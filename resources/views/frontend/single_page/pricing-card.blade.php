@@ -55,7 +55,7 @@
             color: white;
             padding: 5px 12px;
             border-radius: 16px;
-            font-size: 11px;
+            font-size:13px;
             font-weight: 600;
             z-index: 1;
             white-space: nowrap;
@@ -113,7 +113,7 @@
         }
 
         .pricing-savings {
-            font-size: 12px;
+            font-size:14px;
             color: #10b981;
             font-weight: 600;
             margin-top: 6px;
@@ -151,7 +151,7 @@
             color: #2563eb;
             border-radius: 50%;
             margin-right: 8px;
-            font-size: 10px;
+            font-size:13px;
             font-weight: bold;
             flex-shrink: 0;
         }

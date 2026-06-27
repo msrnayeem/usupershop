@@ -108,7 +108,7 @@
                                                             </td>
                                                             <td>
 
-                                                                {{ $profile->balance ?? '' }}
+                                                                {{ number_format($profile->balance ?? 0, 2) }}
 
                                                             </td>
                                                         </tr>

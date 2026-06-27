@@ -98,7 +98,7 @@
 
 
         <a href="{{ route('product.list') }}"
-            style="color: white; text-align: center; font-size: 10px; vertical-align: middle; margin: auto;">
+            style="color: white; text-align: center; font-size:14px; vertical-align: middle; margin: auto;">
             <img src="{{ asset('frontend/icon/category-svgrepo-com.svg') }}"
                 style="width: 23px; height: 23px;filter: invert(1);" alt="Shop Icon">
             <br>Shop
@@ -106,32 +106,32 @@
 
 
         <a href="javascript::void(0)" data-toggle="modal" data-target="#exampleModal"
-            style="color: white; text-align: center; font-size: 10px; vertical-align: middle; margin: auto;">
+            style="color: white; text-align: center; font-size:14px; vertical-align: middle; margin: auto;">
             <img src="{{ asset('frontend/icon/location-target-svgrepo-com.svg') }}"
                 style="width: 23px; height: 23px;filter: invert(1);" alt="Location Icon">
             <br>Order Track
         </a>
 
         <a href="{{ url('./') }}"
-            style="color: white; text-align: center; font-size: 10px; vertical-align: middle; margin: auto;">
+            style="color: white; text-align: center; font-size:14px; vertical-align: middle; margin: auto;">
             <img src="{{ asset('frontend/icon/home-1-svgrepo-com.svg') }}"
                 style="width: 25px; height: 25px;filter: invert(1);" alt="Home Icon">
             <br>Home
         </a>
 
         <a href="{{ route('show.cart') }}"
-            style="color: white; text-align: center; font-size: 10px; vertical-align: middle; margin: auto;">
+            style="color: white; text-align: center; font-size:14px; vertical-align: middle; margin: auto;">
             <img src="{{ asset('frontend/icon/cart-large-svgrepo-com.svg') }}"
                 style="width: 25px; height: 25px;filter: invert(1);" alt="Cart Icon">
             <br>My Cart
         </a>
-        {{-- <a href="{{ url('/customer/dashboard') }}" style="color: white; text-align: center; font-size: 12px;">
+        {{-- <a href="{{ url('/customer/dashboard') }}" style="color: white; text-align: center; font-size:14px;">
             <img src="{{ asset('frontend/icon/profile-circle-svgrepo-com.svg') }}"
                 style="width: 25px; height: 25px;filter: invert(1);" alt="">
             <br>Profile
         </a> --}}
         <a href="javascript::void(0)" class="profile-nav-btn"
-            style="color: white; text-align: center; font-size: 12px;">
+            style="color: white; text-align: center; font-size:14px;">
             @auth
                 <img src="{{ asset('frontend/icon/profile-circle-svgrepo-com.svg') }}"
                     style="width: 25px; height: 25px;filter: invert(1);" alt="">
@@ -259,14 +259,13 @@
     <div class="footer-bottom">
         <div class="container">
             <div class="row">
+                {{-- ── Contact Us ── --}}
                 <div class="col-xs-6 col-sm-6 col-md-3">
                     <div class="module-heading">
-                        <h4 class="module-title">{{ __('app.contact_us') }}</h4>
+                        <h4 class="module-title">যোগাযোগ করুন</h4>
                     </div>
-                    <!-- /.module-heading -->
-
                     <div class="module-body">
-                        <ul class="toggle-footer" style="">
+                        <ul class="toggle-footer">
                             <li class="media">
                                 <div class="pull-left">
                                     <span class="icon fa-stack fa-lg">
@@ -274,10 +273,9 @@
                                     </span>
                                 </div>
                                 <div class="media-body">
-                                    <p>{{ $footercontent->address ?? 'Dhaka Bangladesh' }}</p>
+                                    <p>{{ $footercontent->address ?? 'Dhaka, Bangladesh' }}</p>
                                 </div>
                             </li>
-
                             <li class="media">
                                 <div class="pull-left">
                                     <span class="icon fa-stack fa-lg">
@@ -285,10 +283,9 @@
                                     </span>
                                 </div>
                                 <div class="media-body">
-                                    <p>{{ $footercontent->mobile ?? '' }}</p>
+                                    <p>{{ $footercontent->mobile ?? '+8801816622128' }}</p>
                                 </div>
                             </li>
-
                             <li class="media">
                                 <div class="pull-left">
                                     <span class="icon fa-stack fa-lg">
@@ -296,66 +293,66 @@
                                     </span>
                                 </div>
                                 <div class="media-body">
-                                    <span><a href="mailto:{{ $footercontent->email ?? 'info@usupershop.com' }}">{{ $footercontent->email ?? 'info@usupershop.com' }}</a></span>
+                                    <span>
+                                        <a href="mailto:{{ $footercontent->email ?? 'usupershopbd@gmail.com' }}">
+                                            {{ $footercontent->email ?? 'usupershopbd@gmail.com' }}
+                                        </a>
+                                    </span>
                                 </div>
                             </li>
                         </ul>
                     </div>
-                    <!-- /.module-body -->
                 </div>
-                <!-- /.col -->
 
+                {{-- ── Customer Service ── --}}
                 <div class="col-xs-6 col-sm-6 col-md-3">
                     <div class="module-heading">
                         <h4 class="module-title">Customer Service</h4>
                     </div>
-                    <!-- /.module-heading -->
-
                     <div class="module-body">
                         <ul class="list-unstyled">
                             <li class="first">
-                                <a title="Your Account" href="{{ route('about.us') }}">About us</a>
+                                <a title="About Us" href="{{ route('about.us') }}">About Us</a>
                             </li>
                             <li>
-                                <a href="{{ route('pricing.cards') }}" class="footer-pricing-link" title="Pricing Plans">Pricing Plans <span class="pricing-mini-badge">NEW</span></a>
+                                <a href="{{ route('pricing.cards') }}" title="Pricing Plans">Pricing Plans <span class="pricing-mini-badge">NEW</span></a>
                             </li>
                             <li>
-                                <a href="{{ route('show.cart') }}" title="Contact us">My Cart</a>
+                                <a href="{{ route('show.cart') }}" title="My Cart">My Cart</a>
                             </li>
-                            <li><a href="{{ route('customer.checkout') }}" title="About us">Checkout</a></li>
-                            @auth
-
-                            @else
-                                <li class="last">
-                                    <a href="{{ route('seller.signup') }}" title="Where is my order?">Become a seller</a>
-                                </li>
-                            @endauth
+                            <li>
+                                <a href="{{ route('customer.checkout') }}" title="Checkout">Checkout</a>
+                            </li>
+                            @guest
+                            <li class="last">
+                                <a href="{{ route('seller.signup') }}" title="Become a Seller">Become a Seller</a>
+                            </li>
+                            @endguest
                         </ul>
                     </div>
-                    <!-- /.module-body -->
                 </div>
-                <!-- /.col -->
 
+                {{-- ── Policies ── --}}
                 <div class="col-xs-6 col-sm-6 col-md-3">
                     <div class="module-heading">
                         <h4 class="module-title">Our Valuable Policies</h4>
                     </div>
-                    <!-- /.module-heading -->
-
                     <div class="module-body">
                         <ul class="list-unstyled">
                             <li class="first">
-                                <a href="{{ route('terms.and.condition') }}" title="Terms abd Condition">{{ __('app.terms_conditions') }}</a>
+                                <a href="{{ route('terms.and.condition') }}" title="Terms & Conditions">Terms &amp; Conditions</a>
                             </li>
-                            <li><a href="{{ route('privacy.policy') }}" title="Privacy Policy">{{ __('app.privacy_policy') }}</a>
+                            <li>
+                                <a href="{{ route('privacy.policy') }}" title="Privacy Policy">Privacy Policy</a>
                             </li>
-                            <li><a href="{{ route('return.policy') }}" title="Return Policy">{{ __('app.return_policy') }}</a></li>
+                            <li>
+                                <a href="{{ route('return.policy') }}" title="Return Policy">Return Policy</a>
+                            </li>
                             <li class="last">
-                                <a href="{{ route('contact.us') }}" title="Contact Us">{{ __('app.contact_us') }}</a>
+                                <a href="{{ route('contact.us') }}" title="Contact Us">Contact Us</a>
                             </li>
                         </ul>
                     </div>
-                    <!-- /.module-body -->
                 </div>
 
                 <div class="col-xs-6 col-sm-6 col-md-3">
@@ -380,14 +377,7 @@
                                         width="30" style="border-radius:10%;" alt="Youtube" />
                                 </a>
                             </li>
-                            <li class="pull-left">
-                                <a target="_blank" rel="nofollow" href="{{ $footercontent->twitter }}"
-                                    title="twitter">
-                                    <img src="{{ asset('upload/contact/' . $footercontent->twitter_icon) }}"
-                                        width="30" style="border-radius:10%;" alt="Twitter" />
-                                </a>
-                            </li>
-                            <li class="pull-left">
+                                                        <li class="pull-left">
                                 <a target="_blank" rel="nofollow" href="{{ $footercontent->instagram ?? 'https://www.instagram.com/usupershop?igsh=MXducXBidGE5NzRsNQ==' }}"
                                     title="Instagram">
                                     <img src="{{ asset('upload/contact/' . $footercontent->instagram_icon) }}"
@@ -406,13 +396,6 @@
                                     title="WhatsApp">
                                     <img src="{{ asset('upload/contact/' . $footercontent->whatsapp_icon) }}"
                                         width="30" style="border-radius:10%;" alt="WhatsApp" />
-                                </a>
-                            </li>
-                            <li class="pull-left">
-                                <a target="_blank" rel="nofollow" href="https://tiktok.com/@usupershop"
-                                    title="TikTok">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png"
-                                        width="30" style="border-radius:10%;" alt="TikTok" />
                                 </a>
                             </li>
 

@@ -4,20 +4,48 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $guarded = [];
+    protected $fillable = [
+        'name', 'email', 'mobile', 'password',
+        'subscription_plan', 'otp', 'otp_expire',
+        'refer_code', 'shop_name', 'shop_address',
+        'profile_image', 'address', 'city', 'country',
+        'bkash_number', 'fcm_token', 'image', 'logo',
+        'gender', 'activated_at', 'account_type',
+    ];
+
+    // ── NEVER allow mass-assigning these sensitive fields ────────────
+    // These can ONLY be changed with explicit code: $user->balance += ...
+    // Prevents privilege escalation via form manipulation
+    protected $guarded = [
+        'id',
+        'remember_token',
+        'usertype',       // account type — never via form
+        'role',           // admin role
+        'status',         // active/inactive — admin only
+        'payment_status', // paid/unpaid — payment gateway only
+        'balance',        // wallet — transaction system only
+        'refer_commission',// refer earnings — system only
+        'reseller_id',    // refer parent — registration only
+        'is_profile_verify', // verification — admin only
+        'is_reseller',    // reseller status — system only
+        'is_admin',       // admin flag
+        // Login block fields — only system can set these
+        // (set via $user->login_blocked_at = now(); $user->save())
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -48,7 +76,7 @@ class User extends Authenticatable
         $Query = null;
         $i = 0;
 
-        $accountType = strip_tags(request()->input('customFilter.accountType', ''));
+        $$1 = strip_tags(request()->input('customFilter.$2', ''));
         if (!empty($accountType)) {
             $Query = self::where('usertype', $accountType);
         }

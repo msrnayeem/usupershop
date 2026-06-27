@@ -145,7 +145,7 @@
 
         .product-info p {
             margin: 0px;
-            font-size: 10px;
+            font-size:13px;
         }
 
         /* Quantity input */
@@ -180,7 +180,7 @@
             background: #007bff;
             color: #fff;
             border: none;
-            font-size: 12px;
+            font-size:14px;
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.2s;
@@ -797,18 +797,11 @@
             }
 
             if (mode !== 'guest' && !{{ auth()->check() && (auth()->user()->usertype === 'customer' || auth()->user()->usertype === 'dropshipper') ? 'true' : 'false' }}) {
-                warning_msg('Customer login required to place an order.');
-                setTimeout(() => {
-                    window.location.href = "{{ route('customer.login') }}";
-                }, 1000);
-                return;
+                // Guest allowed — proceed as guest checkout
+                mode = 'guest';
             }
 
             var url = mode === 'guest' ? "{{ route('guest.order.checkout') }}" : "{{ route('customer.order.checkout') }}";
-
-            // Show preloader and disable checkout button to indicate processing
-            $('#preloader').show();
-            $('.checkout-btn').prop('disabled', true).text('Processing...');
 
             $.ajax({
                 type: "POST",
@@ -832,10 +825,6 @@
                         }, 1000);
 
                     } else {
-                        // Hide preloader and enable checkout button on failure
-                        $('#preloader').hide();
-                        $('.checkout-btn').prop('disabled', false).text('Order as Guest');
-
                         // Show error message for failed checkout
                         error_msg('' + res.message);
                         
@@ -854,14 +843,11 @@
                             } else if (res.type === 'cart') {
                                 window.location.href = "{{ route('show.cart') }}";
                             }
+                            // Don't redirect on general errors, let user retry
                         }, 2000);
                     }
                 },
                 error: function(error) {
-                    // Hide preloader and enable checkout button on network/server error
-                    $('#preloader').hide();
-                    $('.checkout-btn').prop('disabled', false).text('Order as Guest');
-
                     if (error.statusText === "Unauthorized") {
                         warning_msg('Customer Login Required!');
                         setTimeout(() => {
@@ -869,9 +855,10 @@
                         }, 1000);
                     } else {
                         console.log('Checkout error:', error);
-                        error_msg('Something went wrong! Please try again.');
                     }
                 }
+
+
             });
         }
     </script>

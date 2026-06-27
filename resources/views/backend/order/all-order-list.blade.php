@@ -267,7 +267,7 @@
             color: white;
             padding: 2px 8px;
             border-radius: 3px;
-            font-size: 11px;
+            font-size:13px;
         }
         
         .courier-btn:hover {
@@ -281,7 +281,7 @@
             color: #155724;
             padding: 2px 6px;
             border-radius: 3px;
-            font-size: 10px;
+            font-size:12px;
             font-weight: bold;
         }
     </style>

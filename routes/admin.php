@@ -47,6 +47,7 @@ use App\Http\Controllers\Backend\CourierController;
 
 //Admin Dashboard
 Route::post('/adminlogin', [LoginController::class, 'Adminlogin'])->name('adminlogin');
+Route::post('/adminlogin/logout', [LoginController::class, 'AdminLogout'])->name('adminlogin.logout');
 Route::group(['middleware' => ['auth', 'admin']], function () {
 
     Route::resource('couriers', CourierController::class);
@@ -104,6 +105,8 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
         Route::get('/add', [\App\Http\Controllers\Backend\SmsGatewayController::class, 'create'])->name('smsgateways.add');
         Route::post('/store', [\App\Http\Controllers\Backend\SmsGatewayController::class, 'store'])->name('smsgateways.store');
         Route::post('/test-send', [\App\Http\Controllers\Backend\SmsGatewayController::class, 'testSend'])->name('smsgateways.test');
+        Route::get('/templates', [\App\Http\Controllers\Backend\SmsGatewayController::class, 'templates'])->name('sms.templates.view');
+        Route::put('/templates/update', [\App\Http\Controllers\Backend\SmsGatewayController::class, 'updateTemplates'])->name('sms.templates.update');
         Route::get('/edit/{id}', [\App\Http\Controllers\Backend\SmsGatewayController::class, 'edit'])->name('smsgateways.edit');
         Route::post('/update/{id}', [
             \App\Http\Controllers\Backend\SmsGatewayController::class,
@@ -131,6 +134,15 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 
     Route::prefix('settings')->group(function () {
         Route::get('/view', [SettingController::class, 'index'])->name('settings.view');
+        Route::get('/notification', [SettingController::class, 'notificationSettings'])->name('settings.notification');
+        Route::post('/notification/update', [SettingController::class, 'updateNotificationSettings'])->name('settings.notification.update');
+        Route::get('/invoice', [SettingController::class, 'invoiceSettings'])->name('settings.invoice');
+        Route::get('/livechat', [SettingController::class, 'livechatSettings'])->name('settings.livechat');
+        Route::get('/seo', [SettingController::class, 'seoSettings'])->name('settings.seo');
+        Route::put('/seo/update', [SettingController::class, 'updateSeoSettings'])->name('settings.seo.update');
+        Route::put('/livechat/update', [SettingController::class, 'updateLivechatSettings'])->name('settings.livechat.update');
+        Route::put('/invoice/update', [SettingController::class, 'updateInvoiceSettings'])->name('settings.invoice.update');
+        Route::post('/notification/update', [SettingController::class, 'updateNotificationSettings'])->name('settings.notification.update');
         Route::get('/add', [SettingController::class, 'create'])->name('settings.add');
         Route::post('/store', [SettingController::class, 'store'])->name('settings.store');
         Route::get('/edit/{id}', [SettingController::class, 'edit'])->name('settings.edit');
@@ -308,6 +320,14 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
         Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('products.edit');
         Route::post('/update/{id}', [ProductController::class, 'update'])->name('products.update');
         Route::get('/delete/{id}', [ProductController::class, 'delete'])->name('products.delete');
+        
+        Route::get('/stockout/view', [ProductController::class, 'stockOutList'])->name('products.stockout.view');
+        Route::get('/stockout/list', [ProductController::class, 'getStockOutList'])->name('products.stockout.list');
+        Route::get('/lowstock/view', [ProductController::class, 'lowStockList'])->name('products.lowstock.view');
+        Route::get('/lowstock/list', [ProductController::class, 'getLowStockList'])->name('products.lowstock.list');
+        
+        Route::post('/toggle-status/{id}', [ProductController::class, 'toggleStatus'])->name('products.toggle.status');
+    });
     });
 
     Route::prefix('customers')->group(function () {
@@ -489,4 +509,45 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
             : redirect()->route('home')->with('error', '❌ WhatsApp failed — .env এ WHATSAPP_TOKEN ও WHATSAPP_PHONE_NUMBER_ID সঠিকভাবে দিন');
     })->name('whatsapp.test');
 
-});
+
+    // ── Recycle Bin ───────────────────────────────────────────────────
+    Route::prefix('recycle-bin')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Backend\RecycleBinController::class, 'index'])->name('recycle.bin');
+        Route::patch('/restore/{type}/{id}', [\App\Http\Controllers\Backend\RecycleBinController::class, 'restore'])->name('recycle.restore');
+        Route::patch('/restore-all/{type}', [\App\Http\Controllers\Backend\RecycleBinController::class, 'restoreAll'])->name('recycle.restore-all');
+        Route::delete('/force-delete/{type}/{id}', [\App\Http\Controllers\Backend\RecycleBinController::class, 'forceDelete'])->name('recycle.force-delete');
+        Route::delete('/empty', [\App\Http\Controllers\Backend\RecycleBinController::class, 'emptyBin'])->name('recycle.empty');
+    });
+
+    // ── Blocked Accounts ──────────────────────────────────────────────
+    Route::get('/blocked-accounts', [\App\Http\Controllers\Backend\ManageSellerController::class, 'blockedAccounts'])->name('sellers.blocked');
+    Route::patch('/unblock-login/{id}', [\App\Http\Controllers\Backend\ManageSellerController::class, 'unblockLogin'])->name('sellers.unblock');
+
+    // ── Courier API Settings ─────────────────────────────────────────
+    Route::prefix('couriers')->group(function () {
+        Route::get('/settings', [\App\Http\Controllers\Backend\CourierController::class, 'settings'])->name('couriers.settings');
+        Route::put('/update/{id}', [\App\Http\Controllers\Backend\CourierController::class, 'update'])->name('couriers.update');
+        Route::post('/test', [\App\Http\Controllers\Backend\CourierController::class, 'testConnection'])->name('couriers.test');
+    });
+
+    // ── Withdrawal Payment Methods ──────────────────────────────────
+    Route::prefix('withdrawal-methods')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Backend\WithdrawalMethodController::class, 'index'])->name('withdrawal.methods.index');
+        Route::get('/create', [\App\Http\Controllers\Backend\WithdrawalMethodController::class, 'create'])->name('withdrawal.methods.create');
+        Route::post('/store', [\App\Http\Controllers\Backend\WithdrawalMethodController::class, 'store'])->name('withdrawal.methods.store');
+        Route::get('/edit/{id}', [\App\Http\Controllers\Backend\WithdrawalMethodController::class, 'edit'])->name('withdrawal.methods.edit');
+        Route::put('/update/{id}', [\App\Http\Controllers\Backend\WithdrawalMethodController::class, 'update'])->name('withdrawal.methods.update');
+        Route::patch('/toggle/{id}', [\App\Http\Controllers\Backend\WithdrawalMethodController::class, 'toggleActive'])->name('withdrawal.methods.toggle');
+        Route::delete('/destroy/{id}', [\App\Http\Controllers\Backend\WithdrawalMethodController::class, 'destroy'])->name('withdrawal.methods.destroy');
+    });
+
+    // ── Staff Management (Main Admin Only) ─────────────────────────────
+    Route::prefix('staff')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Backend\StaffController::class, 'index'])->name('staff.index');
+        Route::get('/create', [\App\Http\Controllers\Backend\StaffController::class, 'create'])->name('staff.create');
+        Route::post('/store', [\App\Http\Controllers\Backend\StaffController::class, 'store'])->name('staff.store');
+        Route::get('/edit/{id}', [\App\Http\Controllers\Backend\StaffController::class, 'edit'])->name('staff.edit');
+        Route::put('/update/{id}', [\App\Http\Controllers\Backend\StaffController::class, 'update'])->name('staff.update');
+        Route::patch('/toggle/{id}', [\App\Http\Controllers\Backend\StaffController::class, 'toggleActive'])->name('staff.toggle');
+        Route::delete('/destroy/{id}', [\App\Http\Controllers\Backend\StaffController::class, 'destroy'])->name('staff.destroy');
+    });

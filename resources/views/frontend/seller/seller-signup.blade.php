@@ -100,7 +100,7 @@
             }
 
             .signup-link {
-                font-size: 11px;
+                font-size:13px;
                 display: inline-block;
                 margin-top: 10px;
             }
@@ -213,13 +213,28 @@
                                 @enderror
                             </div>
 
+                            {{-- ── Refer Code ──────────────────────────────────── --}}
                             <div class="form-group">
-                                <label for="code" class="mb-2 text-info">Referral Code </label>
-                                <input type="text" name="code" class="form-control" placeholder="Referral Code"
-                                    value="{{ request()->has('refer') ? request()->refer : '' }}"
-                                    @if (request()->has('refer')) readonly @endif>
+                                <label style="font-size:14px;font-weight:700;color:#333;display:block;margin-bottom:6px">
+                                    🔗 Refer Code
+                                    <span style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px">Optional</span>
+                                </label>
+                                <div style="position:relative">
+                                    <input type="text" name="code"
+                                        class="form-control"
+                                        placeholder="কারো Refer Code থাকলে এখানে দিন"
+                                        value="{{ request()->has('refer') ? request()->refer : '' }}"
+                                        @if(request()->has('refer')) readonly @endif
+                                        style="padding-left:40px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;font-family:'Hind Siliguri',sans-serif;height:48px;transition:border-color .2s"
+                                        onfocus="this.style.borderColor='#1e25fa'"
+                                        onblur="this.style.borderColor='#e0e0e0'">
+                                    <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:17px">🔗</span>
+                                </div>
+                                <div style="font-size:13px;color:#888;margin-top:5px;line-height:1.5">
+                                    ✨ Refer Code দিলে <strong style="color:#00a855">উভয়ই ৳200 বোনাস</strong> পাবেন
+                                </div>
                                 @error('code')
-                                    <span class="text-danger">{{ $message }}</span>
+                                    <div style="color:#e8001d;font-size:13px;margin-top:4px">❌ {{ $message }}</div>
                                 @enderror
                             </div>
 
@@ -230,6 +245,37 @@
                                     placeholder="subscription plan" value="{{ date('d M Y') }}" readonly>
                                 @error('subscription_plan')
                                     <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            {{-- ── Coupon Code (Optional) ──────────────────────── --}}
+                            <div class="form-group">
+                                <label style="font-size:14px;font-weight:700;color:#333;display:block;margin-bottom:6px">
+                                    🎟️ Coupon Code
+                                    <span style="background:#fff8e1;color:#856404;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px;border:1px solid #ffd54f">Optional</span>
+                                </label>
+                                <div style="display:flex;gap:8px;align-items:stretch">
+                                    <div style="position:relative;flex:1">
+                                        <input type="text" name="coupon_code" id="coupon_code"
+                                            class="form-control"
+                                            placeholder="Coupon code থাকলে এখানে দিন"
+                                            value="{{ old('coupon_code') }}"
+                                            style="padding-left:40px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;font-family:'Hind Siliguri',sans-serif;height:48px;transition:border-color .2s"
+                                            onfocus="this.style.borderColor='#e8001d'"
+                                            onblur="this.style.borderColor='#e0e0e0'">
+                                        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:17px">🎟️</span>
+                                    </div>
+                                    <button type="button" onclick="checkCoupon()"
+                                        style="background:#e8001d;color:#fff;border:none;padding:0 18px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Hind Siliguri',sans-serif;white-space:nowrap;height:48px;flex-shrink:0">
+                                        Check
+                                    </button>
+                                </div>
+                                <div id="couponFeedback" style="font-size:13px;margin-top:6px;display:none;padding:8px 12px;border-radius:8px"></div>
+                                <div style="font-size:13px;color:#888;margin-top:5px;line-height:1.5">
+                                    🏷️ সঠিক Coupon দিলে <strong style="color:#e8001d">Registration-এ ছাড়</strong> পাবেন
+                                </div>
+                                @error('coupon_code')
+                                    <div style="color:#e8001d;font-size:13px;margin-top:4px">❌ {{ $message }}</div>
                                 @enderror
                             </div>
 

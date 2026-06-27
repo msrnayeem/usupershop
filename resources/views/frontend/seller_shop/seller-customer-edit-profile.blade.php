@@ -43,13 +43,13 @@
                         </div>
                         <div class="col-md-4">
                             <label for="email">Email :</label>
-                            <input type="email" name="email" value="{{ $editData->email }}" id="email"
+                            <input type="email" name="email" value="{{ $editData- readonly>email }}" id="email"
                                 class="form-control">
                             <font color="red">{{ $errors->has('email') ? $errors->first('email') : '' }}</font>
                         </div>
                         <div class="col-md-4">
                             <label for="mobile">Phone No :</label>
-                            <input type="text" name="mobile" value="{{ $editData->mobile }}" id="mobile"
+                            <input type="text" name="mobile" value="{{ $editData- readonly>mobile }}" id="mobile"
                                 class="form-control">
                             <font color="red">{{ $errors->has('mobile') ? $errors->first('mobile') : '' }}</font>
                         </div>

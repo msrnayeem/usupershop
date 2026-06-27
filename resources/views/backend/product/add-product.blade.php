@@ -325,21 +325,46 @@
                                             <span style="color: red;">{{ $errors->first('discount') }}</span>
                                         </div>
                                         <div class="form-group col-md-3">
-                                            <label>Hole Sale Price</label>
-                                            <input type="number" name="sale_price" class="form-control" step="0.01"
-                                                placeholder="Enter sale price">
+                                            <label class="font-weight-bold">
+  Wholesale Price (Dropshipper-এর Cost) 
+  <span style="color:#e8001d">*</span>
+</label>
+<div class="input-group">
+  <div class="input-group-prepend"><span class="input-group-text">৳</span></div>
+  <input type="number" name="sale_price" class="form-control" step="0.01" min="0"
+    placeholder="যেমন: 1000" id="wholesalePrice"
+    onchange="updatePriceHints()">
+</div>
+<small class="text-muted">এই দামে Dropshipper product কিনবে</small>
                                             <span style="color: red;">{{ $errors->first('sale_price') }}</span>
                                         </div>
                                         <div class="form-group col-md-3">
-                                            <label>Min Price</label>
-                                            <input type="number" name="min_price" class="form-control" step="0.01"
-                                                placeholder="Enter minimum price">
+                                            <label class="font-weight-bold">
+  Min Selling Price
+  <span style="color:#e8001d">*</span>
+</label>
+<div class="input-group">
+  <div class="input-group-prepend"><span class="input-group-text">৳</span></div>
+  <input type="number" name="min_price" class="form-control" step="0.01" min="0"
+    placeholder="যেমন: 1000" id="minPrice"
+    onchange="updatePriceHints()">
+</div>
+<small class="text-muted">Dropshipper সর্বনিম্ন এই দামে বিক্রি করতে পারবে</small>
                                             <span style="color: red;">{{ $errors->first('sale_price') }}</span>
                                         </div>
                                         <div class="form-group col-md-3">
-                                            <label>Max Price</label>
-                                            <input type="number" name="max_price" class="form-control" step="0.01"
-                                                placeholder="Enter max price">
+                                            <label class="font-weight-bold">Max Selling Price</label>
+<div class="input-group">
+  <div class="input-group-prepend"><span class="input-group-text">৳</span></div>
+  <input type="number" name="max_price" class="form-control" step="0.01" min="0"
+    placeholder="যেমন: 1500" id="maxPrice"
+    onchange="updatePriceHints()">
+</div>
+<small class="text-muted">Dropshipper সর্বোচ্চ এই দামে বিক্রি করতে পারবে</small>
+<div id="priceHintBox" style="display:none;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;padding:10px;margin-top:8px;font-size:13px">
+  <strong>🧮 Profit Preview:</strong><br>
+  Min profit: <strong id="minProfit">-</strong> | Max profit: <strong id="maxProfit">-</strong>
+</div>
                                             <span style="color: red;">{{ $errors->first('sale_price') }}</span>
                                         </div>
 
@@ -638,10 +663,10 @@
                                 <input type="hidden" name="combinations[${combinationIndex}][size_name]" value="${sizeName}">
                             </div>
                             <div class="col-md-2">
-                                <label class="form-label">Additional Price (৳)</label>
+                                <label class="form-label">Extra Amount (৳) <span style="background:#f0f0f0;color:#888;font-size:10px;padding:1px 6px;border-radius:8px;font-weight:600">Optional</span></label>
                                 <input type="number" name="combinations[${combinationIndex}][additional_price]" 
-                                       class="form-control" step="0.01" value="0" min="0"
-                                       placeholder="Extra price">
+                                       class="form-control" step="0.01" value="" min="0"
+                                       placeholder="০ (খালি = কোনো extra নেই)">
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label">Stock Quantity *</label>
@@ -748,7 +773,7 @@
 
         // Bulk operations
         function setAllAdditionalPrices() {
-            const price = prompt('Enter additional price for all combinations:');
+            const price = prompt('Extra amount for all variants (৳)\n0 লিখুন বা blank রাখুন = কোনো extra নেই:');
             if (price !== null && !isNaN(price) && price >= 0) {
                 $('input[name*="additional_price"]').val(parseFloat(price).toFixed(2));
                 toastr.success('Additional price set for all combinations!');
@@ -949,7 +974,8 @@
                                 <label>Additional Price</label>
                                 <input type="number" name="combinations[${combinationIndex}][additional_price]" 
                                        class="form-control form-control-sm" step="0.01" value="0" 
-                                       placeholder="Extra price">
+                                       placeholder="০ (খালি = কোনো extra নেই)">
+                                <small style="color:#aaa;font-size:11px">ফাঁকা রাখলে extra charge হবে না</small>
                             </div>
                             <div class="col-md-2">
                                 <label>Stock Qty</label>
@@ -1034,7 +1060,7 @@
 
         // Bulk operations for combinations
         function setAllAdditionalPrices() {
-            const price = prompt('Enter additional price for all combinations:');
+            const price = prompt('Extra amount for all variants (৳)\n0 লিখুন বা blank রাখুন = কোনো extra নেই:');
             if (price !== null && !isNaN(price)) {
                 $('input[name*="additional_price"]').val(price);
                 toastr.success('Additional price set for all combinations!');

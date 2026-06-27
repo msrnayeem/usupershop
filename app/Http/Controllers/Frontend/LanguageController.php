@@ -14,7 +14,9 @@ class LanguageController extends Controller
         Session::put('language', 'bangla');
         Session::put('locale', 'bn');
         App::setLocale('bn');
-        return redirect()->back()->withCookie(cookie()->forever('lang', 'bangla'));
+        return redirect()->back()
+            ->withCookie(cookie()->forever('lang', 'bangla'))
+            ->with('lang_changed', 'বাংলা ভাষা নির্বাচিত হয়েছে ✅');
     }
 
     public function english()
@@ -22,6 +24,8 @@ class LanguageController extends Controller
         Session::put('language', 'english');
         Session::put('locale', 'en');
         App::setLocale('en');
-        return redirect()->back()->withCookie(cookie()->forever('lang', 'english'));
+        return redirect()->back()
+            ->withCookie(cookie()->forever('lang', 'english'))
+            ->with('lang_changed', 'English language selected ✅');
     }
 }

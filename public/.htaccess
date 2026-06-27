@@ -31,6 +31,12 @@
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
 </IfModule>
 
+# ===== Block dangerous file access in upload directories =====
+<FilesMatch "\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|sh|cgi|htaccess|htpasswd|ini|log|sql|bak|tar|gz|zip)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
 # ===== Browser Caching =====
 <IfModule mod_expires.c>
     ExpiresActive On

@@ -196,12 +196,12 @@
             padding-right: 6px;
         }
         .product .product-info .name a {
-            font-size: 12px;
+            font-size:14px;
         }
 
         @media (max-width: 576px) {
             .product-info .name a {
-                font-size: 12px !important;
+                font-size:14px !important;
             }
             .product-price {
                 font-size: 14px;
@@ -211,15 +211,15 @@
                 padding: 6px 10px;
             }
             .product .product-info .name a {
-                font-size: 10px;
+                font-size:13px;
             }
         }
         @media (max-width: 376px) {
             .product-info .name a {
-                font-size: 12px !important;
+                font-size:14px !important;
             }
             .product-price {
-                font-size: 12px;
+                font-size:14px;
             }
             .add-cart-button .btn {
                 font-size: 13px;
@@ -229,13 +229,13 @@
         @media (max-width: 476px) {
            
             .product-info .name a {
-                font-size: 12px !important;
+                font-size:14px !important;
             }
             .product-price {
-                font-size: 12px;
+                font-size:14px;
             }
             .add-cart-button .btn {
-                font-size: 11px;
+                font-size:13px;
                 padding: 4px 4px;
             }
         }
@@ -482,7 +482,7 @@
                                                         <a href="{{ route('product.details.info', $product->slug) }}">
                                                             <button>
                                                                 @if ($product->image)
-                                                                    <img src="{{ asset('upload/product_images/' . $product->image) }}"
+                                                                    <img src="{{ asset('upload/product_images/' . $product- loading="lazy">image) }}"
                                                                         alt="{{ $product->slug }}"
                                                                         onerror="this.onerror=null;this.src='{{ asset('frontend/no-image-icon.jpg') }}';" />
                                                                 @else

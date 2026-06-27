@@ -13,23 +13,14 @@ class Size extends Model
         'name',
     ];
 
-    public static function queryBuild($columns)
-    {
-        $search = strip_tags(
-            htmlspecialchars(
-                request()->input('search.value', ''),
-                ENT_QUOTES,
-                'UTF-8'
-            )
-        );
 
+    static function queryBuild($columns)
+    {
+        $search = strip_tags(htmlspecialchars(request()->input('search.value', ''), ENT_QUOTES, 'UTF-8'));
         $Query = null;
         $i = 0;
 
-        $accountType = strip_tags(
-            request()->input('customFilter.accountType', '')
-        );
-
+        $$1 = strip_tags(request()->input('customFilter.$2', ''));
         if (!empty($accountType)) {
             $Query = self::where('created_by', $accountType);
         }
@@ -37,36 +28,13 @@ class Size extends Model
         if (!empty($search)) {
             foreach ($columns as $item) {
 
-                if (
-                    isset($item['searchable']) &&
-                    $item['searchable'] == "true"
-                ) {
-
-                    if ($i === 0) {
-
-                        if ($Query === null) {
-                            $Query = self::where(
-                                $item['name'],
-                                'LIKE',
-                                '%' . $search . '%'
-                            );
-                        } else {
-                            $Query->where(
-                                $item['name'],
-                                'LIKE',
-                                '%' . $search . '%'
-                            );
-                        }
-
+                if ($item['searchable'] == "true") {
+                    if ($i === 0) // first loop
+                    {
+                        $Query = self::where($item['name'], 'LIKE', '%' . $search . '%');
                     } else {
-
-                        $Query->orWhere(
-                            $item['name'],
-                            'LIKE',
-                            '%' . $search . '%'
-                        );
+                        $Query->orWhere($item['name'], 'LIKE', '%' . $search . '%');
                     }
-
                     $i++;
                 }
             }
@@ -75,32 +43,26 @@ class Size extends Model
         return $Query;
     }
 
-    public static function getResult($start, $length, $columns)
+    static function getResult($start, $length, $columns)
     {
         $Q = self::queryBuild($columns);
 
-        if ($Q === null) {
-            return self::orderBy('id', 'DESC')
-                ->offset($start)
-                ->limit($length)
-                ->get();
+        if ($Q == null) {
+            return self::limit($length)->offset($start)->orderBy('id', 'DESC')->get();
+        } else {
+            //$Q->orderBy("accountHolder", $_GET['order']['0']['dir']);
+            if ($length != -1) $Q->limit($length)->offset($start);
+            return $Q->get();
         }
-
-        if ($length != -1) {
-            $Q->offset($start)->limit($length);
-        }
-
-        return $Q->get();
     }
 
-    public static function countResult($columns)
+    static function countResult($columns)
     {
         $Q = self::queryBuild($columns);
-
-        if ($Q === null) {
+        if ($Q == null) {
             return self::count();
+        } else {
+            return $Q->count();
         }
-
-        return $Q->count();
     }
 }

@@ -24,7 +24,7 @@
                                             <a href="#">
                                                 @if(!empty($items->image))
                                                 <img style="max-height:120px;"
-                                                src="{{ asset('upload/product_images/' . $items->image)}}" 
+                                                src="{{ asset('upload/product_images/' . $items- loading="lazy">image)}}" 
                                                 alt="{{ $items->name }}" />
                                                 @else
                                                 <img style="max-height:120px;"

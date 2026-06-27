@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Traits\SendSmsTrait;
+use App\Traits\ReferCommissionTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 class ManageSellerController extends Controller
 {
     use SendSmsTrait;
+    use ReferCommissionTrait;
     public function view()
     {
         $pageTitle = 'Seller List';
@@ -266,7 +268,10 @@ class ManageSellerController extends Controller
         } else {
             $data->activated_at = null;
         }
-        $data->password = Hash::make($request->password);
+        // Password is optional - only update if provided
+        if (!empty($request->password)) {
+            $data->password = \Hash::make($request->password);
+        }
         if ($request->file('image')) {
             $file = $request->file('image');
             @unlink(public_path('upload/user_images/' . $data->image));
@@ -281,8 +286,20 @@ class ManageSellerController extends Controller
             $file->move(public_path('upload/user_images'), $filename);
             $data['logo'] = $filename;
         }
+        $oldUsertype = $data->getOriginal('usertype');
+        $newUsertype = $request->usertype;
         $data->update();
-        
+
+        // Log account type change
+        if ($oldUsertype !== $newUsertype) {
+            \Log::info('Admin changed seller account type', [
+                'user_id' => $data->id,
+                'from'    => $oldUsertype,
+                'to'      => $newUsertype,
+                'admin'   => auth()->id(),
+            ]);
+        }
+
         // Send welcome SMS when seller is activated for the first time
         if (!$wasActive && $newStatus === 2 && !empty($plainPassword)) {
             try {
@@ -292,7 +309,26 @@ class ManageSellerController extends Controller
                 Log::error('Seller activation SMS failed', ['seller_id' => $id, 'error' => $e->getMessage()]);
             }
         }
-        
+
+        // ── COD Refer Commission: trigger when admin sets payment_status=1 ──
+        $wasPaymentPaid = (int)(\DB::table('users')->where('id', $id)->value('payment_status')) === 1;
+        $newPaymentStatus = (int)$request->payment_status;
+
+        if (!$wasPaymentPaid && $newPaymentStatus === 1 && $data->reseller_id) {
+            try {
+                $freshUser = \App\Models\User::find($id);
+                if ($freshUser) {
+                    $this->distribute_refer_commission($freshUser, 399); // default subscription amount
+                    Log::info('COD Refer commission distributed on admin activation', [
+                        'seller_id'   => $id,
+                        'reseller_id' => $freshUser->reseller_id,
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::error('COD Refer commission failed', ['seller_id' => $id, 'error' => $e->getMessage()]);
+            }
+        }
+
         return redirect()->route('sellers.view')->with('success', 'Sellers Profile update successfully !!!');
     }
     public function delete($id)
@@ -357,4 +393,38 @@ class ManageSellerController extends Controller
 
     return redirect()->back()->with('success', 'All seller commissions updated successfully.');
 }
+
+    /**
+     * Unblock a user's login (admin only)
+     */
+    public function unblockLogin($id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+
+        $user->login_blocked_at      = null;
+        $user->login_blocked_reason  = null;
+        $user->failed_login_attempts = 0;
+        $user->save();
+
+        \Log::info('Admin unblocked user login', [
+            'admin_id' => auth()->id(),
+            'user_id'  => $id,
+            'email'    => $user->email,
+        ]);
+
+        return back()->with('success', "✅ {$user->name}-এর account unblock করা হয়েছে। এখন Login করতে পারবে।");
+    }
+
+    /**
+     * Show all blocked accounts
+     */
+    public function blockedAccounts()
+    {
+        $blocked = \App\Models\User::whereNotNull('login_blocked_at')
+            ->whereIn('usertype', ['seller','vendor','dropshipper','customer'])
+            ->orderBy('login_blocked_at', 'desc')
+            ->get();
+        return view('backend.seller.blocked-accounts', compact('blocked'));
+    }
+
 }

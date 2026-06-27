@@ -29,11 +29,11 @@
 }
 .invoice-body { padding: 20px 24px; }
 .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
-.info-item label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 4px; }
+.info-item label { font-size:13px; color: #999; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 4px; }
 .info-item span { font-size: 14px; color: #222; font-weight: 600; }
 .status-pill {
     display: inline-block; padding: 4px 14px; border-radius: 20px;
-    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+    font-size:14px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
 }
 .pill-pending    { background: #fff3cd; color: #856404; }
 .pill-confirmed  { background: #d1e7dd; color: #0a3622; }
@@ -81,10 +81,10 @@
 .step-col.canceled .step-circle{ background: #e8001d; color: #fff; box-shadow: 0 0 0 3px #fcd8db; }
 @keyframes stepPulse { 0%,100%{box-shadow:0 0 0 4px rgba(0,201,110,.3)} 50%{box-shadow:0 0 0 8px rgba(0,201,110,.1)} }
 
-.step-label { margin-top: 10px; font-size: 12px; color: #888; font-weight: 500; }
+.step-label { margin-top: 10px; font-size:14px; color: #888; font-weight: 500; }
 .step-col.done .step-label,
 .step-col.active .step-label { color: #333; font-weight: 600; }
-.step-time { font-size: 10px; color: #aaa; margin-top: 3px; }
+.step-time { font-size:13px; color: #aaa; margin-top: 3px; }
 .step-col.done .step-time,
 .step-col.active .step-time { color: #888; }
 
@@ -96,7 +96,7 @@
     .step-col { display: flex; align-items: flex-start; gap: 14px; text-align: left; padding: 0 0 28px 0; }
     .step-circle { flex-shrink: 0; width: 46px; height: 46px; margin: 0; }
     .step-label { margin-top: 4px; font-size: 13px; }
-    .step-time { font-size: 11px; }
+    .step-time { font-size:13px; }
     .track-line-fill { height: var(--fill-h, 0) !important; }
 }
 
@@ -124,7 +124,7 @@
 .item-img { width: 70px; height: 70px; object-fit: cover; border-radius: 8px; border: 1px solid #eee; flex-shrink: 0; }
 .item-info { flex: 1; min-width: 0; }
 .item-name { font-size: 14px; font-weight: 600; color: #222; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.item-meta { font-size: 12px; color: #888; }
+.item-meta { font-size:14px; color: #888; }
 .item-qty { font-size: 13px; font-weight: 700; color: #1e25fa; white-space: nowrap; }
 
 /* ── Back btn ─────────────────────────────── */
@@ -300,7 +300,7 @@
     @foreach($orderItems as $item)
     <div class="item-row">
         @if(!empty($item->product->image))
-            <img src="{{ url('upload/product_images/'.$item->product->image) }}"
+            <img src="{{ url('upload/product_images/'.$item- loading="lazy">product->image) }}"
                  onerror="this.src='{{ asset('frontend/no-image-icon.jpg') }}'"
                  class="item-img" alt="">
         @else

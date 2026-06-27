@@ -379,7 +379,7 @@ class ProductController extends Controller
                         $variant->product_id = $data->id;
                         $variant->color_id = $combination['color_id'];
                         $variant->size_id = $combination['size_id'];
-                        $variant->additional_price = $combination['additional_price'] ?? 0;
+                        $variant->additional_price = !empty($combination['additional_price']) ? (float)$combination['additional_price'] : 0;
                         $variant->stock_quantity = $combination['stock_quantity'] ?? 0;
                         $variant->sku = $combination['sku'] ?? null;
                         $variant->status = 1; // Active by default
@@ -417,6 +417,118 @@ class ProductController extends Controller
         $data['showData'] = Product::find($id);
         return view('backend.product.show-product', $data);
     }
+
+    /**
+     * Stock Out products list (quantity = 0)
+     */
+    public function stockOutList()
+    {
+        return view('backend.product.stockout-product');
+    }
+
+    public function getStockOutList(Request $request)
+    {
+        $start   = $request->start  ?? 0;
+        $length  = $request->length ?? 10;
+        $columns = ['id', 'name', 'quantity', 'status', 'user_id', 'image', 'price'];
+
+        $query = Product::where('quantity', '<=', 0)->where('status', 1);
+        $total = $query->count();
+
+        $products = $query->select($columns)
+            ->with(['user:id,name'])
+            ->orderBy('updated_at', 'desc')
+            ->skip($start)->take($length)->get();
+
+        $data = [];
+        foreach ($products as $p) {
+            $data[] = [
+                'id'     => $p->id,
+                'image'  => '<img src="' . url('upload/product_images/' . $p->image) . '" width="45" height="45" style="border-radius:6px;object-fit:cover;">',
+                'name'   => $p->name,
+                'price'  => '৳' . number_format($p->price, 0),
+                'qty'    => '<span class="badge badge-danger">Out of Stock (0)</span>',
+                'vendor' => $p->user->name ?? 'Admin',
+                'action' => '<a href="' . route('products.edit', $p->id) . '" class="btn btn-xs btn-primary"><i class="fas fa-edit"></i> Update Stock</a>',
+            ];
+        }
+
+        return response()->json([
+            'draw'            => $request->draw,
+            'recordsTotal'    => $total,
+            'recordsFiltered' => $total,
+            'data'            => $data,
+        ]);
+    }
+
+    /**
+     * Low Stock products list (quantity <= alert_label threshold, default ≤ 5)
+     */
+    public function lowStockList()
+    {
+        return view('backend.product.lowstock-product');
+    }
+
+    public function getLowStockList(Request $request)
+    {
+        $start     = $request->start  ?? 0;
+        $length    = $request->length ?? 10;
+        $threshold = 5; // alert when qty ≤ 5
+        $columns   = ['id', 'name', 'quantity', 'alert_label', 'status', 'user_id', 'image', 'price'];
+
+        $query = Product::where('quantity', '>', 0)
+                        ->where('quantity', '<=', $threshold)
+                        ->where('status', 1);
+        $total = $query->count();
+
+        $products = $query->select($columns)
+            ->with(['user:id,name'])
+            ->orderBy('quantity', 'asc')
+            ->skip($start)->take($length)->get();
+
+        $data = [];
+        foreach ($products as $p) {
+            $qtyColor = $p->quantity <= 2 ? 'danger' : 'warning';
+            $data[] = [
+                'id'     => $p->id,
+                'image'  => '<img src="' . url('upload/product_images/' . $p->image) . '" width="45" height="45" style="border-radius:6px;object-fit:cover;">',
+                'name'   => $p->name,
+                'price'  => '৳' . number_format($p->price, 0),
+                'qty'    => '<span class="badge badge-' . $qtyColor . '">Low: ' . $p->quantity . ' left</span>',
+                'vendor' => $p->user->name ?? 'Admin',
+                'action' => '<a href="' . route('products.edit', $p->id) . '" class="btn btn-xs btn-warning"><i class="fas fa-edit"></i> Restock</a>',
+            ];
+        }
+
+        return response()->json([
+            'draw'            => $request->draw,
+            'recordsTotal'    => $total,
+            'recordsFiltered' => $total,
+            'data'            => $data,
+        ]);
+    }
+
+    /**
+     * Toggle product active/inactive (AJAX)
+     */
+    public function toggleStatus(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);
+        if ($product->status === 1) {
+            $product->status = 0; // active → inactive
+            $msg = 'Product Inactive করা হয়েছে।';
+        } else {
+            $product->status = 1; // inactive/pending → active
+            $msg = 'Product Active করা হয়েছে।';
+        }
+        $product->save();
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'status' => $product->status, 'message' => $msg]);
+        }
+        return redirect()->back()->with('success', $msg);
+    }
+
     public function productStatus($id)
     {
         $product = Product::find($id);
@@ -548,7 +660,7 @@ class ProductController extends Controller
                         $variant->product_id = $data->id;
                         $variant->color_id = $combination['color_id'];
                         $variant->size_id = $combination['size_id'];
-                        $variant->additional_price = $combination['additional_price'] ?? 0;
+                        $variant->additional_price = !empty($combination['additional_price']) ? (float)$combination['additional_price'] : 0;
                         $variant->stock_quantity = $combination['stock_quantity'] ?? 0;
                         $variant->sku = $combination['sku'] ?? null;
                         $variant->status = 1;

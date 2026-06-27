@@ -151,7 +151,7 @@
             right: -8px;
             background: #ff006e;
             color: white;
-            font-size: 11px;
+            font-size:13px;
             font-weight: bold;
             width: 20px;
             height: 20px;
@@ -173,7 +173,7 @@
             }
 
             .download-count {
-                font-size: 10px;
+                font-size:13px;
                 width: 18px;
                 height: 18px;
                 top: -6px;
@@ -444,7 +444,7 @@
             /* Smaller buttons for mobile */
             .cart-quantity button {
                 padding: 2px 6px;
-                font-size: 12px;
+                font-size:14px;
             }
 
             /* Smaller input */
@@ -459,7 +459,7 @@
             /* Reduce label spacing */
             .cart-quantity-sction label {
                 margin-right: 4px;
-                font-size: 12px;
+                font-size:14px;
             }
         }
 
@@ -762,7 +762,7 @@
                                                                         placeholder="Enter your selling price"
                                                                         oninput="showProfit()" required>
                                                                     <small class="text-info d-block mt-2 fw-bold"
-                                                                        style="font-size: 12px; font-weight: 600;">
+                                                                        style="font-size:14px; font-weight: 600;">
                                                                         Allowed Range: ৳{{ number_format($productDetails->min_price, 2) }} - ৳{{ number_format($productDetails->max_price, 2) }}
                                                                     </small>
                                                                     <input type="hidden" id="product-dropshipper-price"
@@ -781,7 +781,7 @@
                                                                         style="font-size: 18px; font-weight: 700; color: #28a745; border: 2px solid #28a745;">
                                                                         <span id="profit_display_main">৳0.00</span>
                                                                     </div>
-                                                                    <small class="text-muted d-block mt-2" style="font-size: 12px;">
+                                                                    <small class="text-muted d-block mt-2" style="font-size:14px;">
                                                                         Base Price: ৳<span id="base_price_display">{{ number_format($finalPrice, 2) }}</span>
                                                                     </small>
                                                                 </div>

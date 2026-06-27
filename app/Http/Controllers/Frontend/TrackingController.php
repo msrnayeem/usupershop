@@ -15,17 +15,44 @@ class TrackingController extends Controller
      */
     public function orderTrackNow(Request $request, $id = null)
     {
-        if (!$id) {
-            return redirect()->route('order.track');
+        // ── Support ?invoice=USP00044 GET param (from SMS link) ─────────────
+        if ($request->has('invoice') && !empty($request->invoice)) {
+            $invoice_no = strtoupper(trim($request->invoice));
+
+            $order = Order::with(['users', 'shipping'])
+                ->where('invoice_no', $invoice_no)
+                ->orWhere(function($q) use ($invoice_no) {
+                    // Support USP44 → USP00044 format
+                    if (preg_match('/^USP(\d+)$/', $invoice_no, $m)) {
+                        $padded = 'USP' . str_pad((int)$m[1], 5, '0', STR_PAD_LEFT);
+                        $q->where('invoice_no', $padded);
+                    }
+                })
+                ->first();
+
+            if ($order) {
+                $orderItems = OrderDetail::with('product')
+                    ->where('order_id', $order->id)
+                    ->orderBy('id', 'DESC')
+                    ->get();
+                return view('frontend.order-track', compact('order', 'orderItems'));
+            }
+
+            return view('frontend.order-track-search', [
+                'error' => 'Invoice ' . $invoice_no . ' পাওয়া যায়নি। সঠিক invoice number দিন।'
+            ]);
         }
 
-        // Build query - if logged in, verify ownership; if guest, allow by ID
-        $query = Order::with(['users', 'shipping'])->where('id', $id);
+        // ── No invoice param — show search form ──────────────────────────────
+        if (!$id) {
+            return view('frontend.order-track-search');
+        }
 
+        // ── /order/track/{id} — track by DB id ───────────────────────────────
+        $query = Order::with(['users', 'shipping'])->where('id', $id);
         if (auth()->check()) {
             $query->where('user_id', auth()->user()->id);
         }
-
         $order = $query->first();
 
         if ($order) {
@@ -36,7 +63,9 @@ class TrackingController extends Controller
             return view('frontend.order-track', compact('order', 'orderItems'));
         }
 
-        return redirect()->back()->with('error', 'Order not found.');
+        return view('frontend.order-track-search', [
+            'error' => 'Order পাওয়া যায়নি।'
+        ]);
     }
 
     /**

@@ -70,14 +70,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size:13px;
     font-weight: bold;
     margin-right: 10px;
 }
 .step-arrow {
     margin-left: 34px;
     color: #6c757d;
-    font-size: 12px;
+    font-size:13px;
 }
 </style>
 @endsection

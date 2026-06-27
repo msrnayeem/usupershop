@@ -276,12 +276,12 @@
         }
 
         .product .product-info .name a {
-            font-size: 12px;
+            font-size:14px;
         }
 
         @media (max-width: 576px) {
             .product-info .name a {
-                font-size: 12px !important;
+                font-size:14px !important;
             }
 
             .product-price {
@@ -294,17 +294,17 @@
             }
 
             .product .product-info .name a {
-                font-size: 10px;
+                font-size:13px;
             }
         }
 
         @media (max-width: 376px) {
             .product-info .name a {
-                font-size: 12px !important;
+                font-size:14px !important;
             }
 
             .product-price {
-                font-size: 12px;
+                font-size:14px;
             }
 
             .add-cart-button .btn {
@@ -316,15 +316,15 @@
         @media (max-width: 476px) {
 
             .product-info .name a {
-                font-size: 12px !important;
+                font-size:14px !important;
             }
 
             .product-price {
-                font-size: 12px;
+                font-size:14px;
             }
 
             .add-cart-button .btn {
-                font-size: 11px;
+                font-size:13px;
                 padding: 4px 4px;
             }
         }
@@ -613,17 +613,74 @@
                                                                         </div>
 
                                                                         <div class="mb-3">
-                                                                            <label>Your Selling Price</label>
-                                                                            <input type="number" name="selling_price"
-                                                                                class="form-control"
-                                                                                placeholder="Enter your selling price"
-                                                                                required>
-                                                                            <small class="text-muted">
-                                                                                Allowed range:
-                                                                                {{ $productDetails->min_price }} -
-                                                                                {{ $productDetails->max_price }}
-                                                                            </small>
+                                                                            <label class="font-weight-bold">
+                                                                                💰 আপনার Selling Price
+                                                                            </label>
+                                                                            <div class="input-group">
+                                                                                <div class="input-group-prepend">
+                                                                                    <span class="input-group-text">৳</span>
+                                                                                </div>
+                                                                                <input type="number" name="selling_price"
+                                                                                    id="dropSellingPrice"
+                                                                                    class="form-control"
+                                                                                    placeholder="৳{{ $productDetails->min_price }}"
+                                                                                    min="{{ $productDetails->min_price }}"
+                                                                                    max="{{ $productDetails->max_price > 0 ? $productDetails->max_price : '' }}"
+                                                                                    value="{{ $productDetails->min_price }}"
+                                                                                    required
+                                                                                    oninput="calcDropProfit(this.value)">
+                                                                            </div>
+                                                                            <div style="margin-top:6px;font-size:13px">
+                                                                                <span class="badge badge-light border" style="font-size:12px">
+                                                                                    Min: ৳{{ number_format($productDetails->min_price, 0) }}
+                                                                                </span>
+                                                                                @if($productDetails->max_price > 0)
+                                                                                <span class="badge badge-light border ml-1" style="font-size:12px">
+                                                                                    Max: ৳{{ number_format($productDetails->max_price, 0) }}
+                                                                                </span>
+                                                                                @endif
+                                                                            </div>
+                                                                            <!-- Real-time profit preview -->
+                                                                            <div id="profitPreview" style="background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;padding:10px;margin-top:8px;font-size:13px;display:none">
+                                                                                <strong>🧮 আপনার Profit:</strong>
+                                                                                <span id="profitAmt" style="color:#00a855;font-size:16px;font-weight:800">৳0</span>
+                                                                                <span style="color:#555"> / প্রতিটি পণ্যে</span>
+                                                                            </div>
+                                                                            <div id="priceError" style="color:#e8001d;font-size:13px;display:none;margin-top:4px"></div>
                                                                         </div>
+                                                                        <script>
+                                                                        var dropWholesale = {{ $productDetails->sale_price ?? $productDetails->price }};
+                                                                        var dropMin = {{ $productDetails->min_price ?? 0 }};
+                                                                        var dropMax = {{ $productDetails->max_price > 0 ? $productDetails->max_price : 9999999 }};
+                                                                        function calcDropProfit(val) {
+                                                                            var price = parseFloat(val) || 0;
+                                                                            var errEl = document.getElementById('priceError');
+                                                                            var prvEl = document.getElementById('profitPreview');
+                                                                            var amtEl = document.getElementById('profitAmt');
+                                                                            errEl.style.display = 'none';
+                                                                            if (price < dropMin) {
+                                                                                errEl.textContent = '❌ সর্বনিম্ন মূল্য ৳' + dropMin + ' — এর কম হবে না';
+                                                                                errEl.style.display = 'block';
+                                                                                prvEl.style.display = 'none';
+                                                                                return;
+                                                                            }
+                                                                            if (dropMax < 9999999 && price > dropMax) {
+                                                                                errEl.textContent = '❌ সর্বোচ্চ মূল্য ৳' + dropMax + ' — এর বেশি হবে না';
+                                                                                errEl.style.display = 'block';
+                                                                                prvEl.style.display = 'none';
+                                                                                return;
+                                                                            }
+                                                                            var profit = price - dropWholesale;
+                                                                            prvEl.style.display = 'block';
+                                                                            amtEl.textContent = '৳' + Math.round(profit);
+                                                                            amtEl.style.color = profit > 0 ? '#00a855' : '#e8001d';
+                                                                        }
+                                                                        // Run on load
+                                                                        document.addEventListener('DOMContentLoaded', function() {
+                                                                            var inp = document.getElementById('dropSellingPrice');
+                                                                            if (inp) calcDropProfit(inp.value);
+                                                                        });
+                                                                        </script>
 
                                                                         <div class="mb-3">
                                                                             <label>Quantity</label>
@@ -712,7 +769,7 @@
                                                     <a href="{{ route('product.details.info', $product->slug) }}">
                                                         <button>
                                                             @if ($product->image)
-                                                                <img src="{{ asset('upload/product_images/' . $product->image) }}"
+                                                                <img src="{{ asset('upload/product_images/' . $product- loading="lazy">image) }}"
                                                                     alt="{{ $product->slug }}"
                                                                     onerror="this.onerror=null;this.src='{{ asset('frontend/no-image-icon.jpg') }}';" />
                                                             @else

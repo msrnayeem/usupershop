@@ -35,11 +35,6 @@ use App\Http\Controllers\Frontend\SitemapController;
 // Dynamic Sitemap (replaces static sitemap.xml)
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
-Route::get('/optimize-clear', function () {
-    Artisan::call('optimize:clear');
-    return 'Optimization cache cleared successfully!';
-});
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -54,6 +49,20 @@ Route::get('/optimize-clear', function () {
 
 Route::get('language/bangla', [LanguageController::class, 'bangla'])->name('bangla.language');
 Route::get('language/english', [LanguageController::class, 'english'])->name('english.language');
+
+// ── Seller Share Link (Ref Tracking) ─────────────────────────────────
+// /ref/SELLERCODE → store seller ID in session → 10% commission on order delivery
+Route::get('/ref/{code}', function ($code) {
+    $seller = \App\Models\User::where('refer_code', $code)
+        ->whereIn('usertype', ['seller', 'vendor'])
+        ->where('status', 1)
+        ->where('payment_status', 1)
+        ->first();
+    if ($seller) {
+        session(['seller_ref_code' => $code, 'seller_ref_id' => $seller->id]);
+    }
+    return redirect(request('redirect', '/'));
+})->name('seller.ref.track');
 Route::get('/success', [FrontendController::class, 'SuccessPage'])->name('success.page');
 Route::get('/cancel', [FrontendController::class, 'CancelPage'])->name('cancel.page');
 Route::get('/failed', [FrontendController::class, 'FaildPage'])->name('failed.page');
@@ -88,6 +97,7 @@ Route::get('/privacy-policy', [FrontendController::class, 'privacyPlicy'])->name
 Route::get('/return-policy', [FrontendController::class, 'returnPlicy'])->name('return.policy');
 Route::get('/terms-and-condition', [FrontendController::class, 'termsAndCondition'])->name('terms.and.condition');
 Route::get('/contact-us', [FrontendController::class, 'contactUs'])->name('contact.us');
+Route::get('/user-guide', [FrontendController::class, 'userGuide'])->name('user.guide');
 Route::post('/communication-store', [FrontendController::class, 'communicationStore'])->name('communication.store');
 Route::get('/product-list', [FrontendController::class, 'productList'])->name('product.list')->middleware('cache.response:60');
 Route::post('shop-filter', [FrontendController::class, 'shopFilter'])->name('shop.filter');
@@ -162,10 +172,8 @@ Route::get('/get-variant-price', [ProductController::class, 'getVariantPrice'])-
 Route::get('/customer-login', [CheckoutController::class, 'customerLogin'])->name('customer.login');
 Route::get('/customer-otp', [CheckoutController::class, 'SendCustomerOtp'])->name('send.otp');
 Route::post('/customer-otp/save', [CheckoutController::class, 'SendCustomerOtpSubmit'])->name('send.customer.otp');
-// Customer signup disabled — guest checkout used instead (added fallback to prevent RouteNotFoundException)
-Route::get('/customer-signup', function () {
-    return redirect()->route('customer.login')->with('message', 'Registration is disabled. You can checkout as a guest.');
-})->name('customer.signup');
+// Customer signup disabled — guest checkout used instead
+// Route::get('/customer-signup', [CheckoutController::class, 'customerSignup'])->name('customer.signup');
 // Route::post('/signup-store', [CheckoutController::class, 'signupStore'])->name('signup.store');
 Route::get('/email-verify', [CheckoutController::class, 'emailVerify'])->name('email.verify');
 //Route::post('/verify-store', [CheckoutController::class, 'verifyStore'])->name('verify.store');
@@ -188,13 +196,9 @@ Route::prefix('/verify')->as('verify.')->group(function () {
     Route::post('/store/{id}', [OtpVerifyController::class, 'store'])->name('store');
 });
 
-// seller code here........... (added fallbacks to prevent RouteNotFoundException)
-Route::get('/seller-customer-login', function () {
-    return redirect()->route('customer.login');
-})->name('seller.customer.login');
-Route::get('/seller-customer-signup', function () {
-    return redirect()->route('customer.login')->with('message', 'Registration is disabled. You can checkout as a guest.');
-})->name('seller.customer.signup');
+//seller code here...........
+// Route::get('/seller-customer-login', [CheckoutController::class, 'sellerCustomerLogin'])->name('seller.customer.login');
+// Route::get('/seller-customer-signup', [CheckoutController::class, 'sellerCustomerSignup'])->name('seller.customer.signup');
 // Route::post('/seller-signup-store', [CheckoutController::class, 'sellerSignupStore'])->name('seller.signup.store');
 Route::get('/seller-email-verify', [CheckoutController::class, 'sellerOtpVerify'])->name('seller.email.verify');
 Route::get('/seller-verify', [CheckoutController::class, 'sellerVerify'])->name('seller.a.verify');
@@ -234,7 +238,14 @@ Route::get('area/ajax/{sub_location_id}', [AreaController::class, 'areaAjax'])->
 Route::post('userlogin', [LoginController::class, 'Userlogin'])->name('userlogin');
 Route::get('forget/email', [LoginController::class, 'ForgetEmailID'])->name('forget.email');
 Route::post('forget/email', [LoginController::class, 'forgetEmailVerify'])->name('forget.email_verify');
-Route::get('forget/verify/otp', [LoginController::class, 'VerifyEmailAndOtp']);
+Route::post('/ajax-check-coupon', [\App\Http\Controllers\Frontend\CartController::class, 'ajaxCheckCouponForRegistration'])->name('ajax.check.coupon');
+Route::post('/ajax-apply-coupon', [\App\Http\Controllers\Frontend\CartController::class, 'ajaxApplyCoupon'])->name('ajax.apply.coupon');
+Route::get('/remove-coupon', [\App\Http\Controllers\Frontend\CartController::class, 'removeCoupon'])->name('remove.coupon');
+
+Route::post('/update-delivery-charge', [\App\Http\Controllers\Frontend\FrontendController::class, 'updateDeliveryCharge'])->name('update.delivery.charge');
+
+Route::get('forget/verify/otp', [LoginController::class, 'VerifyEmailAndOtp'])->name('forget.verify.otp');
+Route::post('/forget/otp/resend', [LoginController::class, 'resendForgotOtp'])->name('forget.otp.resend');
 Route::post('forget/verify/otp', [LoginController::class, 'VerifyEmailAndOtpSave'])->name('forget.verify.otp');
 Route::get('password_changes/with/email/', [LoginController::class, 'VerifyEmailAndPasswordChange'])->name('forget_password');
 Route::post('password_changes_with/email/', [LoginController::class, 'VerifyEmailAndPasswordChangeSave'])->name('otp.password_change');
@@ -245,7 +256,7 @@ Route::get('login/facebook', [LoginController::class, 'redirectToFacebook'])->na
 Route::get('login/facebook/callback', [LoginController::class, 'handleFacebookCallback']);
 
 //Order Tracking
-Route::get('order/track/{id?}', [TrackingController::class, 'orderTrackNow'])->name('order.track');
+Route::get('order/track/{id?}', [TrackingController::class, 'orderTrackNow'])->name('order.track'); // supports ?invoice=USP00044
 Route::post('order/invoice/track/submit', [TrackingController::class, 'orderTrackSubmit'])->name('order.tracksave');
 Route::get('/bkash/callback', [BkashPaymentGatewayController::class, 'callback'])->name('bkash.callback');
 //search product

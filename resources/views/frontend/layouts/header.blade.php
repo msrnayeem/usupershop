@@ -48,13 +48,13 @@
 
     .cart-item.product-summary .item .details .name {
         margin: 0px;
-        font-size: 12px !important;
+        font-size: 13px !important;
         font-weight: 600;
     }
 
     .cart-item.product-summary .item .details .price {
         margin: 0px;
-        font-size: 12px;
+        font-size: 13px;
     }
 
     .cart-item.product-summary .item .details {
@@ -908,7 +908,11 @@
                                                 href="#">English</a>
                                         </li>
 
-                                        <li><a class="changeLng bangla" lang="bangla" href="#">বাংলা</a>
+                                        <li><a class="changeLng bangla" lang="bangla"
+                                        href="{{ route('bangla.language') }}"
+                                        style="font-weight:700;color:#111">
+                                        🇧🇩 বাংলা
+                                    </a>
                                         </li>
 
                                     </ul>

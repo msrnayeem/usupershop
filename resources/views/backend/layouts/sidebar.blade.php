@@ -133,11 +133,109 @@
                 </ul>
             </li>
 
-            {{-- Settings --}}
-            <li
-                class="nav-item {{ in_array($route, ['settings.view', 'settings.commission.index']) ? 'menu-open' : '' }}">
+            {{-- Recycle Bin --}}
+            @if(auth()->user()->usertype === 'admin')
+            @php
+                $recycleBinCount = 0;
+                try {
+                    $recycleBinCount = \App\Models\Product::onlyTrashed()->count()
+                        + \App\Models\User::onlyTrashed()->count()
+                        + \App\Models\Order::onlyTrashed()->count()
+                        + \App\Models\Coupon::onlyTrashed()->count();
+                } catch(\Exception $e) {}
+            @endphp
+            <li class="nav-item {{ str_starts_with($route ?? '', 'recycle') ? 'menu-open' : '' }}">
+                <a href="{{ route('recycle.bin') }}"
+                    class="nav-link {{ str_starts_with($route ?? '', 'recycle') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-trash-restore" style="color:#e8001d"></i>
+                    <p>
+                        🗑️ Recycle Bin
+                        @if($recycleBinCount > 0)
+                        <span class="badge badge-danger badge-sm ml-1">{{ $recycleBinCount }}</span>
+                        @endif
+                    </p>
+                </a>
+            </li>
+            @endif
+
+            {{-- Blocked Accounts Alert --}}
+            @if(auth()->user()->usertype === 'admin')
+            @php $blockedCount = \App\Models\User::whereNotNull('login_blocked_at')->whereIn('usertype',['seller','vendor','dropshipper','customer'])->count(); @endphp
+            @if($blockedCount > 0)
+            <li class="nav-item">
+                <a href="{{ route('sellers.blocked') }}"
+                    class="nav-link {{ $route === 'sellers.blocked' ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-ban" style="color:#e8001d"></i>
+                    <p>
+                        🚫 Blocked Accounts
+                        <span class="badge badge-danger ml-1">{{ $blockedCount }}</span>
+                    </p>
+                </a>
+            </li>
+            @endif
+            @endif
+
+            {{-- Courier API Settings --}}
+            @if(auth()->user()->usertype === 'admin')
+            <li class="nav-item {{ str_starts_with($route ?? '', 'couriers') ? 'active' : '' }}">
+                <a href="{{ route('couriers.settings') }}"
+                    class="nav-link {{ str_starts_with($route ?? '', 'couriers') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-truck" style="color:#e8001d"></i>
+                    <p>
+                        🚚 Courier API
+                        @php $activeCouriers = \App\Models\Courier::where('is_active',1)->count(); @endphp
+                        @if($activeCouriers)
+                        <span class="badge badge-success badge-sm ml-1">{{ $activeCouriers }} ON</span>
+                        @else
+                        <span class="badge badge-secondary badge-sm ml-1">OFF</span>
+                        @endif
+                    </p>
+                </a>
+            </li>
+            @endif
+
+            {{-- Withdrawal Methods --}}
+            @if(auth()->user()->usertype === 'admin')
+            <li class="nav-item {{ $route === 'withdrawal.methods.index' ? 'menu-open' : '' }}">
+                <a href="{{ route('withdrawal.methods.index') }}"
+                    class="nav-link {{ str_starts_with($route ?? '', 'withdrawal') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-wallet" style="color:#f57c00"></i>
+                    <p>Withdrawal Methods</p>
+                </a>
+            </li>
+            @endif
+
+            {{-- Staff Management (Main Admin Only) --}}
+            @if(auth()->user()->usertype === 'admin')
+            <li class="nav-item {{ in_array($route, ['staff.index','staff.create','staff.edit']) ? 'menu-open' : '' }}">
                 <a href="#" class="nav-link">
-                    <i class="nav-icon fas fa-copy"></i>
+                    <i class="nav-icon fas fa-users-cog" style="color:#f5c400"></i>
+                    <p>Staff Management <i class="fas fa-angle-left right"></i>
+                    <span class="badge badge-warning badge-sm ml-1">{{ \App\Models\Staff::where('created_by',auth()->id())->where('is_active',1)->count() }}</span>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ route('staff.index') }}"
+                            class="nav-link {{ $route == 'staff.index' ? 'active' : '' }}">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>👥 All Staff</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('staff.create') }}"
+                            class="nav-link {{ $route == 'staff.create' ? 'active' : '' }}">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>➕ নতুন Staff যোগ করুন</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            @endif
+            <li
+                class="nav-item {{ in_array($route, ['settings.view', 'settings.commission.index', 'settings.notification']) ? 'menu-open' : '' }}">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-cog"></i>
                     <p>Site settings <i class="fas fa-angle-left right"></i></p>
                 </a>
                 <ul class="nav nav-treeview">
@@ -153,6 +251,52 @@
                             class="nav-link {{ $route == 'settings.commission.index' ? 'active' : '' }}">
                             <i class="far fa-circle nav-icon"></i>
                             <p>Commission Settings</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('settings.notification') }}"
+                            class="nav-link {{ $route == 'settings.notification' ? 'active' : '' }}">
+                            <i class="far fa-circle nav-icon text-success"></i>
+                            <p>
+                                📲 Notification Settings
+                                @php
+                                    $notifSetting = \App\Models\Setting::first();
+                                @endphp
+                                @if(empty($notifSetting->callmebot_api_key))
+                                    <span class="badge badge-danger badge-sm ml-1">Setup!</span>
+                                @else
+                                    <span class="badge badge-success badge-sm ml-1">✓</span>
+                                @endif
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('settings.invoice') }}"
+                            class="nav-link {{ $route == 'settings.invoice' ? 'active' : '' }}">
+                            <i class="far fa-circle nav-icon text-warning"></i>
+                            <p>🧾 Invoice Settings</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('settings.livechat') }}"
+                            class="nav-link {{ $route == 'settings.livechat' ? 'active' : '' }}">
+                            <i class="far fa-circle nav-icon text-success"></i>
+                            <p>
+                                💬 Live Chat
+                                @php $lc = \App\Models\Setting::first(); @endphp
+                                @if($lc && $lc->livechat_enabled)
+                                    <span class="badge badge-success badge-sm ml-1">ON</span>
+                                @else
+                                    <span class="badge badge-secondary badge-sm ml-1">OFF</span>
+                                @endif
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('settings.seo') }}"
+                            class="nav-link {{ $route == 'settings.seo' ? 'active' : '' }}">
+                            <i class="far fa-circle nav-icon text-primary"></i>
+                            <p>🔍 SEO Settings</p>
                         </a>
                     </li>
                 </ul>
@@ -247,6 +391,28 @@
             </li>
 
             {{-- SMS Gateway --}}
+            <li class="nav-item {{ in_array($route, ['smsgateways.view','smsgateways.add','sms.templates.view']) ? 'menu-open' : '' }}">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-sms"></i>
+                    <p>SMS Gateway <i class="fas fa-angle-left right"></i></p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ route('smsgateways.view') }}"
+                            class="nav-link {{ $route == 'smsgateways.view' ? 'active' : '' }}">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>SMS Settings</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('sms.templates.view') }}"
+                            class="nav-link {{ $route == 'sms.templates.view' ? 'active' : '' }}">
+                            <i class="far fa-circle nav-icon text-primary"></i>
+                            <p>✏️ SMS Templates <span class="badge badge-primary badge-sm">Edit</span></p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
             <li class="nav-item {{ in_array($route, ['smsgateways.view', 'smsgateways.test.page']) ? 'menu-open' : '' }}">
                 <a href="#" class="nav-link">
                     <i class="nav-icon fas fa-copy"></i>
@@ -498,6 +664,20 @@
                         class="nav-link {{ $route == 'products.view' ? 'active' : '' }}">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Total Product Lists</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('products.stockout.view') }}"
+                        class="nav-link {{ $route == 'products.stockout.view' ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon text-danger"></i>
+                        <p>Stock Out <span class="badge badge-danger badge-sm">{{ \App\Models\Product::where('quantity','<=',0)->where('status',1)->count() }}</span></p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('products.lowstock.view') }}"
+                        class="nav-link {{ $route == 'products.lowstock.view' ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon text-warning"></i>
+                        <p>Low Stock <span class="badge badge-warning badge-sm">{{ \App\Models\Product::where('quantity','>',0)->where('quantity','<=',5)->where('status',1)->count() }}</span></p>
                     </a>
                 </li>
             </ul>

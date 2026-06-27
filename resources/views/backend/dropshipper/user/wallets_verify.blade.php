@@ -39,14 +39,14 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">
-                                    @if (auth()->user()->is_profile_verify == 0)
+                                    @if (false) {{-- Profile verify is optional --}}
                                         Verification with NID !!
                                     @else
                                         Wallet Info
                                     @endif
 
                                 </h3>
-                                @if (auth()->check() && auth()->user()->is_profile_verify == 1 && auth()->user()->balance >= 200)
+                                @if (auth()->check() && auth()->user()->balance >= 200)
                                     <button type="button" class="btn btn-info btn-sm text-right" data-toggle="modal"
                                         data-target="#exampleModal" style="float:right;">
                                         Withdraw request
@@ -76,7 +76,7 @@
                                     @endif
                                     <!-- Morris chart - Sales -->
 
-                                    @if (auth()->user()->is_profile_verify == 0)
+                                    @if (false) {{-- Profile verify is optional --}}
                                         <div class="tab-pane active profilevarify">
                                             <form action="{{ route('nid_profile.update') }}" method="POST"
                                                 enctype="multipart/form-data">
@@ -226,17 +226,22 @@
                                     <div class="form-group">
                                         <label for="payment_type">Payment Method</label>
 
-                                        <select class="custom-select" name="payment_type" id="payment_type">
-                                            <option value="">Select Payment Type</option>
-
-                                            @foreach ($paymentSetting as $ps)
-                                                <option value="{{ $ps->method }}"
-                                                    {{ old('payment_type') == $ps->method ? 'selected' : '' }}>
-                                                    {{ $ps->method }}
+                                        <select class="custom-select" name="payment_type" id="payment_type" onchange="updateAccountLabel(this)" style="font-size:14px;border-radius:10px;padding:10px 14px">
+                                            <option value="">-- Payment Method বেছে নিন --</option>
+                                            @foreach ($withdrawalMethods ?? [] as $wm)
+                                                <option value="{{ $wm->name }}"
+                                                    data-label="{{ $wm->account_label }}"
+                                                    data-placeholder="{{ $wm->account_placeholder }}"
+                                                    data-regex="{{ $wm->account_regex }}"
+                                                    data-instructions="{{ $wm->instructions }}"
+                                                    data-color="{{ $wm->logo_color }}"
+                                                    data-emoji="{{ $wm->logo_emoji }}"
+                                                    {{ old('payment_type') == $wm->name ? 'selected' : '' }}>
+                                                    {{ $wm->logo_emoji }} {{ $wm->name }}
                                                 </option>
                                             @endforeach
-
                                         </select>
+                                        <div id="paymentInstructions" style="display:none;margin-top:6px;font-size:13px;color:#555;background:#f8f9fb;padding:8px 12px;border-radius:8px;border-left:3px solid #1e25fa"></div>
 
                                         @error('payment_type')
                                             <span class="text-danger">{{ $message }}</span>

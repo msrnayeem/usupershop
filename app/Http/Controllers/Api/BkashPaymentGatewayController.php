@@ -26,15 +26,45 @@ class BkashPaymentGatewayController extends Controller
 
     public function bkashcallback_new()
     {
-        $status = request()->get('status');
-        $paymentID = request()->get('paymentID');
-        $paymentType = request()->get('payment_type');
+        $status     = request()->get('status');
+        $paymentID  = request()->get('paymentID');
+        $paymentType= request()->get('payment_type');
 
         $returnData = ['payment_type' => $paymentType];
 
         if (!$status || !$paymentID || !$paymentType) {
             return view('frontend.failed', compact('returnData'));
         }
+
+        // ── Log all callback attempts for audit trail ───────────────────
+        try {
+            \DB::table('payment_logs')->insert([
+                'payment_id'   => $paymentID,
+                'payment_type' => $paymentType,
+                'status'       => $status,
+                'ip_address'   => request()->ip(),
+                'user_agent'   => substr(request()->userAgent() ?? '', 0, 300),
+                'notes'        => 'callback received',
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ]);
+        } catch (\Exception $e) {}
+
+        // ── Idempotency: block duplicate callback replays ──────────────
+        // If this paymentID was already processed, return success silently
+        $cacheKey = 'bkash_processed:' . $paymentID;
+        if (\Cache::has($cacheKey)) {
+            \Log::warning('Duplicate bKash callback detected', [
+                'paymentID'   => $paymentID,
+                'payment_type'=> $paymentType,
+                'ip'          => request()->ip(),
+            ]);
+            // Return success view to avoid infinite retry loops
+            return view('frontend.sucess', compact('returnData'));
+        }
+
+        // Mark as being processed (10 min lock)
+        \Cache::put($cacheKey, true, 600);
 
         $grant = $this->grantToken();
         if (!isset($grant['id_token'])) {
@@ -62,6 +92,53 @@ class BkashPaymentGatewayController extends Controller
                 'merchantInvoiceNumber' => $execute['data']['merchantInvoiceNumber'],
                 'amount' => $execute['data']['amount'] ?? 0,
             ];
+
+            // ── AMOUNT VERIFICATION: prevent underpayment fraud ───────────
+            // Someone could tamper and pay ৳1 — we must verify the amount
+            $invoiceParts = explode('-', $paymentData['merchantInvoiceNumber']);
+            $refId        = $invoiceParts[0] ?? null;
+
+            if ($paymentType === 'customer_order' && $refId) {
+                $orderForCheck = Order::find($refId);
+                if ($orderForCheck) {
+                    $paidAmount    = (float)$paymentData['amount'];
+                    $deliveryCharge= (float)($orderForCheck->delivery_charge ?? 0);
+                    $grandTotal    = (float)($orderForCheck->grand_total ?? $orderForCheck->order_total ?? 0);
+                    $isFreeDelivery= $deliveryCharge <= 0;
+                    $minRequired   = $isFreeDelivery ? $grandTotal : $deliveryCharge;
+
+                    // Allow ৳1 tolerance for rounding
+                    if ($paidAmount < ($minRequired - 1)) {
+                        \Log::error('bKash amount mismatch — possible fraud', [
+                            'paymentID'   => $paymentID,
+                            'paid'        => $paidAmount,
+                            'required'    => $minRequired,
+                            'order_id'    => $refId,
+                            'ip'          => request()->ip(),
+                        ]);
+                        return view('frontend.failed', compact('returnData'));
+                    }
+                }
+            }
+
+            if ($paymentType === 'user_subscription' && $refId) {
+                $subForCheck = SubscriptionFee::find($refId);
+                if ($subForCheck) {
+                    $paidAmount  = (float)$paymentData['amount'];
+                    $expectedAmt = (float)($subForCheck->amount ?? 399);
+                    if ($paidAmount < ($expectedAmt - 1)) {
+                        \Log::error('bKash subscription amount mismatch', [
+                            'paymentID' => $paymentID,
+                            'paid'      => $paidAmount,
+                            'required'  => $expectedAmt,
+                            'sub_id'    => $refId,
+                            'ip'        => request()->ip(),
+                        ]);
+                        return view('frontend.failed', compact('returnData'));
+                    }
+                }
+            }
+            // ── END AMOUNT VERIFICATION ───────────────────────────────────
 
             if ($paymentType === 'customer_order') {
 
@@ -168,6 +245,20 @@ class BkashPaymentGatewayController extends Controller
     private function customer_payment_confirmation($payment_status, $data)
     {
         $order_id = explode('-', $data['merchantInvoiceNumber'])[0];
+
+        // ── Prevent duplicate processing via trxID ─────────────────────
+        if ($payment_status === 'success' && !empty($data['trxID'])) {
+            $alreadyProcessed = \DB::table('payments')
+                ->where('transaction_no', $data['trxID'])
+                ->exists();
+            if ($alreadyProcessed) {
+                \Log::warning('Duplicate trxID detected in customer payment', [
+                    'trxID'    => $data['trxID'],
+                    'order_id' => $order_id,
+                ]);
+                return true; // Already processed — return success silently
+            }
+        }
         $order = Order::find($order_id);
 
         if (!$order)
@@ -182,21 +273,42 @@ class BkashPaymentGatewayController extends Controller
 
             if ($payment_status === 'success') {
 
+                // ── Save transaction to payments_transaction ─────────────
                 DB::table('payments_transaction')->insert([
-                    'client_id' => $order->user_id,
-                    'order_id' => $order->id,
+                    'client_id'        => $order->user_id,
+                    'order_id'         => $order->id,
                     'transaction_type' => 'bkash_payment',
-                    'trxID' => $data['trxID'],
-                    'payment_method' => 'bkash',
-                    'credit' => $data['amount'],
-                    'debit' => 0,
-                    'order_note' => 'order bkash payment',
-                    'status' => 0
+                    'trxID'            => $data['trxID'],
+                    'payment_method'   => 'bkash',
+                    'credit'           => $data['amount'],
+                    'debit'            => 0,
+                    'order_note'       => 'bKash Payment | Invoice: ' . ($order->invoice_no ?? $order->order_no),
+                    'status'           => 0,
                 ]);
 
+                // ── Update payments table with method & TXN ──────────────
+                DB::table('payments')
+                    ->where('id', $order->payment_id)
+                    ->update([
+                        'payment_method' => 'bKash',
+                        'transaction_no' => $data['trxID'],
+                        'updated_at'     => now(),
+                    ]);
+
+                // ── Determine payment type for status label ──────────────
+                $isFreeDelivery   = ((float)($order->delivery_charge ?? 0)) <= 0;
+                $isFullPayment    = $data['amount'] >= ((float)($order->grand_total ?? $order->order_total ?? 0));
+                $isDeliveryOnly   = !$isFullPayment && !$isFreeDelivery;
+
+                $paymentLabel = $isFullPayment
+                    ? 'Paid'          // Full payment via bKash
+                    : 'Delivery Paid'; // Only delivery charge paid (COD sub-1000)
+
                 $order->update([
-                    'status' => 'confirmed',
-                    'order_payment' => 'Paid'
+                    'status'         => 'confirmed',
+                    'order_payment'  => $paymentLabel,
+                    'pay_method'     => 1, // 1 = bKash
+                    'tran_id'        => $data['trxID'],
                 ]);
 
                 // WhatsApp notification to admin
@@ -259,6 +371,16 @@ class BkashPaymentGatewayController extends Controller
     }
     private function user_subscription_payment_confirmation($payment_status, $data)
     {
+        // ── Prevent duplicate subscription payment ─────────────────────
+        if ($payment_status === 'success' && !empty($data['trxID'])) {
+            $alreadyProcessed = \DB::table('payments')
+                ->where('transaction_no', $data['trxID'])
+                ->exists();
+            if ($alreadyProcessed) {
+                \Log::warning('Duplicate trxID in subscription payment', ['trxID' => $data['trxID']]);
+                return true;
+            }
+        }
         $subscription_id = explode('-', $data['merchantInvoiceNumber'])[0];
 
         $subscription = SubscriptionFee::find($subscription_id);

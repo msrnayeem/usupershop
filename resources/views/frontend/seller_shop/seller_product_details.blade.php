@@ -31,7 +31,7 @@
                                         <div class="products" style="border:1px solid #eee;">
                                             <div class="hot-deal-wrapper">
                                                 <div class="image">
-                                                    <img src="{{ url('upload/product_images/' . $items->image) }}"
+                                                    <img src="{{ url('upload/product_images/' . $items- loading="lazy">image) }}"
                                                         alt="{{ $items->name }}">
                                                 </div>
                                                 <div class="sale-offer-tag"><span>35%<br>off</span></div>
@@ -136,7 +136,7 @@
                                                 <a data-lightbox="image-1" data-title="Product Gallery"
                                                     href="{{ url('upload/product_images/product_sub_images/'.$sub_image->sub_image) }}">
                                                     <img style="width:100%;" class="img-responsive" alt=""
-                                                        src="{{ url('upload/product_images/product_sub_images/'.$sub_image->sub_image) }}" style="max-height: 200px;"
+                                                        src="{{ url('upload/product_images/product_sub_images/'.$sub_image- loading="lazy">sub_image) }}" style="max-height: 200px;"
                                                         data-echo="{{ url('upload/product_images/product_sub_images/'.$sub_image->sub_image) }}" />
                                                 </a>
                                             </div><!-- /.single-product-gallery-item -->
@@ -151,7 +151,7 @@
                                                         data-slide="{{ $sub_image->id }}"
                                                         href="#slide_{{ $sub_image->id }}">
                                                         <img class="img-responsive" width="85" alt=""
-                                                            src="{{ url('upload/product_images/product_sub_images/' . $sub_image->sub_image) }}" style="max-height: 200px;"
+                                                            src="{{ url('upload/product_images/product_sub_images/' . $sub_image- loading="lazy">sub_image) }}" style="max-height: 200px;"
                                                             data-echo="{{ url('upload/product_images/product_sub_images/' . $sub_image->sub_image) }}" />
                                                     </a>
                                                 </div>
@@ -330,7 +330,7 @@
                                                 <div class="image">
                                                     <a href="{{ route('seller.product.details',['slug'=>$items->slug,'shopID'=>$shopID]) }}">
                                                         <img
-                                                            src="{{ url('upload/product_images/' . $items->image) }}"
+                                                            src="{{ url('upload/product_images/' . $items- loading="lazy">image) }}"
                                                             alt="{{ $items->name }}" style="max-height:200px;"></a>
                                                 </div><!-- /.image -->
 

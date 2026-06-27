@@ -75,14 +75,18 @@ class SellerController extends Controller
             'account_type' => 'required',
             'subscription_plan' => 'required',
             'shop_name' => 'required',
-            'email' => 'required|unique:users,email',
-            'mobile' => $mobileRules,
-            'password' => 'min:9|required_with:confirmation_password|same:confirmation_password',
-            'confirmation_password' => 'min:9',
-            'otp_delivery_method' => 'required|in:email,sms,both',
-            'address' => 'required',
-            'terms' => 'required',
-            'refer_code' => ['nullable', 'exists:users,refer_code']
+            'email'                 => 'required|unique:users,email',
+            'mobile'                => $mobileRules,
+            'password'              => 'min:6|required_with:confirmation_password|same:confirmation_password',
+            'confirmation_password' => 'min:6',
+            'otp_delivery_method'   => 'required|in:email,sms,both',
+            'address'               => 'required',
+            'terms'                 => 'required',
+            'refer_code'            => ['nullable', 'exists:users,refer_code'],
+            'coupon_code'           => ['nullable'],
+        ], [
+            'refer_code.exists'  => '❌ এই Refer Code-টি সঠিক নয়। আবার চেক করুন।',
+            'coupon_code.exists' => '❌ কুপন কোড সঠিক নয়।',
         ]);
 
         try {
@@ -112,19 +116,52 @@ class SellerController extends Controller
             $user->address = $request->address;
             $user->email_verified_at = NULL;
 
-            // Find reseller/vendor/dropshipper user by the provided code
-            $reseller = User::where('refer_code', $request->code)->whereIn('usertype', ['seller', 'vendor', 'dropshipper'])->first();
-            if ($reseller) {
-                $reseller->is_reseller = 1;
-                // For seller/vendor, they need payment_status 2. For dropshipper, 1 might be enough based on master layouts.
-                // However, to be safe and consistent with existing logic, I'll check if they are paid.
-                if ($reseller->payment_status == 2 || $reseller->payment_status == 1) {
-                    if ($reseller->is_profile_verify == 1) {
-                        $user->reseller_id = $reseller->id;
-                    }
+            // ── Refer Code: find referrer ──────────────────────────────
+            // Form sends 'refer_code' — fix consistent field name
+            $referCode = trim($request->refer_code ?? $request->code ?? '');
+            if (!empty($referCode)) {
+                $reseller = User::where('refer_code', $referCode)
+                    ->whereIn('usertype', ['seller', 'vendor', 'dropshipper'])
+                    ->where('status', 1)           // referrer must be active
+                    ->where('payment_status', 1)   // referrer must have paid
+                    ->first();
+
+                if ($reseller) {
+                    $user->reseller_id = $reseller->id;
+                    $reseller->is_reseller = 1;
+                    $reseller->save();
+                    Log::info('Refer code accepted', [
+                        'new_user'  => $request->email,
+                        'referrer'  => $reseller->id,
+                        'code'      => $referCode,
+                    ]);
+                } else {
+                    Log::info('Refer code not valid/active', ['code' => $referCode]);
                 }
-                $reseller->updated_at = now();
-                $reseller->save();
+            }
+
+            // ── Coupon Code (Optional) ─────────────────────────────────
+            $couponDiscount = 0;
+            $couponCode     = trim($request->coupon_code ?? '');
+            if (!empty($couponCode)) {
+                $coupon = \App\Models\Coupon::where('promoCode', $couponCode)->first();
+                $today  = now()->toDateString();
+                $usertype = $request->account_type;
+
+                $couponValid = $coupon
+                    && $coupon->status == 1
+                    && $today >= $coupon->start_date
+                    && $today <= $coupon->end_date
+                    && $coupon->available > 0
+                    && in_array($coupon->availableFor, [2, 4, 3, 5]); // All, Seller, Vendor, Dropshipper
+
+                if ($couponValid) {
+                    // Store coupon info in session to use after payment
+                    \Session::put('reg_coupon_code', $couponCode);
+                    \Session::put('reg_coupon_id',   $coupon->id);
+                    $coupon->decrement('available');
+                    Log::info('Registration coupon applied', ['code' => $couponCode, 'user' => $request->email]);
+                }
             }
 
             $user->save();
@@ -263,6 +300,27 @@ class SellerController extends Controller
         // Update password
         $user->password = Hash::make($request->password);
         $user->save();
+
+        // ── Send password reset confirmation SMS ────────────────────────
+        if (!empty($user->mobile)) {
+            try {
+                $mobile    = $this->normalizeBangladeshMobileNumber($user->mobile);
+                $userName  = $user->name ?? 'User';
+                $loginLink = route('seller.login');
+
+                $smsSetting = \App\Models\Sms::first();
+                $tpl = $smsSetting->tpl_password_reset ?? null;
+                if ($tpl) {
+                    $smsMessage = str_replace(['{name}', '{login_link}'], [$userName, $loginLink], $tpl);
+                } else {
+                    $smsMessage = "🔐 {$userName}, আপনার password পরিবর্তন হয়েছে ✅\n\nযদি আপনি এই পরিবর্তন না করে থাকেন:\nwa.me/8801816622128\n\n🔑 Login: {$loginLink}\n\nU Super Shop ❤️";
+                }
+                $this->send_rapid_message($mobile, $smsMessage);
+            } catch (\Throwable $e) {
+                \Log::warning('Seller password reset SMS failed: ' . $e->getMessage());
+            }
+        }
+
         Session::forget('seller_verify');
         // Delete password reset record
         DB::table('password_resets')->where('email', $request->input('content'))->orWhere('mobile', $request->input('content'))->delete();

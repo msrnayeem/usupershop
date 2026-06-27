@@ -42,25 +42,52 @@
                                 <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                             @endauth
                             <div class="row">
-                                <div class="col-md-4 form-group">
-                                    <label for="name">Full Name :</label>
-                                    <input type="text" name="name" id="name" class="form-control" value="{{ auth()->user()->name ?? old('name') }}" required>
+                                <div class="col-md-12 form-group">
+                                    <label for="name">পূর্ণ নাম <span class="text-danger">*</span></label>
+                                    <input type="text" name="name" id="name" class="form-control"
+                                        value="{{ auth()->check() ? auth()->user()->name : old('name') }}"
+                                        placeholder="আপনার পূর্ণ নাম লিখুন" required>
                                     <font color="red">{{ $errors->has('name') ? $errors->first('name') : '' }}</font>
                                 </div>
-                                <div class="col-md-4 form-group">
-                                    <label for="email">Email :</label>
-                                    <input type="email" name="email" id="email" class="form-control" value="{{ auth()->user()->email ?? old('email') }}">
-                                </div>
-                                <div class="col-md-4 form-group">
-                                    <label for="mobile">Phone No :</label>
-                                    <input type="text" name="mobile" id="mobile" class="form-control" value="{{ auth()->user()->mobile ?? old('mobile') }}" required>
+                                <div class="col-md-12 form-group">
+                                    <label for="mobile">মোবাইল নম্বর <span class="text-danger">*</span></label>
+                                    <input type="text" name="mobile" id="mobile" class="form-control"
+                                        value="{{ auth()->check() ? auth()->user()->mobile : old('mobile') }}"
+                                        placeholder="01XXXXXXXXX" required>
                                     <font color="red">{{ $errors->has('mobile') ? $errors->first('mobile') : '' }}</font>
                                 </div>
+                                <div class="col-md-8 form-group">
+                                    <label for="address">Delivery Address <span class="text-danger">*</span></label>
+                                    <textarea name="address" id="address" class="form-control"
+                                        rows="3"
+                                        placeholder="বাড়ি নম্বর, রাস্তা, এলাকা, পাড়া/মহল্লা..."
+                                        style="resize:none;border-radius:10px;font-size:14px;font-family:'Hind Siliguri',sans-serif"
+                                        required>{{ auth()->check() ? auth()->user()->address : old('address') }}</textarea>
+                                    <font color="red">{{ $errors->has('address') ? $errors->first('address') : '' }}</font>
+                                </div>
                                 <div class="col-md-4 form-group">
-                                    <label for="address">Address :</label>
-                                    <input type="text" name="address" id="address" class="form-control" value="{{ auth()->user()->address ?? old('address') }}" required>
-                                    <font color="red">{{ $errors->has('address') ? $errors->first('address') : '' }}
-                                    </font>
+                                    <label for="delivery_zone">Delivery Area <span class="text-danger">*</span></label>
+                                    @php
+                                        $deliveryZones = \App\Models\DeliveryZone::orderBy('zone_charge','asc')->get();
+                                    @endphp
+                                    <select name="delivery_zone" id="delivery_zone" class="form-control"
+                                        style="border-radius:10px;font-size:14px;font-family:'Hind Siliguri',sans-serif;cursor:pointer"
+                                        onchange="updateDeliveryCharge(this)" required>
+                                        {{-- value="" হওয়ায় এই option select করলে submit হবে না --}}
+                                        <option value="" disabled selected style="display:none">-- Delivery Area বেছে নিন --</option>
+                                        @foreach($deliveryZones as $zone)
+                                        <option value="{{ $zone->id }}"
+                                            data-charge="{{ $zone->zone_charge }}"
+                                            {{ old('delivery_zone') == $zone->id ? 'selected' : '' }}>
+                                            {{ $zone->zone_area }} (৳{{ $zone->zone_charge }})
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                    <input type="hidden" name="delivery_charge_amount" id="delivery_charge_amount" value="0">
+                                    @if($errors->has('delivery_zone'))
+                                    <span style="color:#e8001d;font-size:14px">❌ Delivery Area অবশ্যই বেছে নিতে হবে।</span>
+                                    @endif
+                                    <small class="text-muted" style="font-size:14px;display:block;margin-top:4px">✅ ১,০০০ টাকার উপরে অর্ডারে Delivery FREE</small>
                                 </div>
                                 <div class="col-md-4" style="padding-top:30px;">
                                     <button type="submit" class="btn btn-primary">Submit</button>
@@ -86,16 +113,22 @@
                     address: {
                         required: true
                     },
+                    delivery_zone: {
+                        required: true
+                    },
                 },
                 messages: {
                     name: {
-                        required: "Please enter your full name"
+                        required: "আপনার পূর্ণ নাম দিন।"
                     },
                     mobile: {
-                        required: "Please enter your mobile no"
+                        required: "মোবাইল নম্বর দিন।"
                     },
                     address: {
-                        required: "Please enter your address"
+                        required: "ডেলিভারি ঠিকানা দিন।"
+                    },
+                    delivery_zone: {
+                        required: "❌ Delivery Area অবশ্যই বেছে নিতে হবে।"
                     },
                 },
                 errorElement: 'span',

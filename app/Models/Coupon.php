@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Coupon extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     static function queryBuild($columns)
     {
@@ -15,7 +16,7 @@ class Coupon extends Model
         $Query = null;
         $i = 0;
 
-        $accountType = strip_tags(request()->input('customFilter.accountType', ''));
+        $$1 = strip_tags(request()->input('customFilter.$2', ''));
         if (!empty($accountType)) {
             $Query = self::where('promoCode', $accountType);
         }

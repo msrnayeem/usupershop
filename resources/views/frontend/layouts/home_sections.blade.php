@@ -42,7 +42,7 @@
 .role-title .accent-blue  { color: #0070d2; }
 .role-title .accent-green { color: #00875a; }
 .role-title .accent-red   { color: #e8001d; }
-.role-sub { font-size: 10px; color: #666; line-height: 1.4; }
+.role-sub { font-size:14px; color: #666; line-height: 1.4; }
 
 /* ── Trust Badges (4 badges, image 2) ───── */
 .trust-section { padding: 8px 0 10px; }
@@ -64,7 +64,7 @@
 }
 .trust-badge:hover { transform: translateY(-2px); }
 .trust-icon { font-size: 26px; line-height: 1; display: block; }
-.trust-text { font-size: 10px; color: #333; font-weight: 600; line-height: 1.4; }
+.trust-text { font-size:14px; color: #333; font-weight: 600; line-height: 1.4; }
 
 /* ── Dropship CTA Banner (image 3 dark) ─── */
 .drop-banner {
@@ -83,7 +83,7 @@
 .drop-tag {
     display: inline-flex; align-items: center; gap: 5px;
     background: #e8001d; color: #fff;
-    font-size: 10px; font-weight: 700;
+    font-size:14px; font-weight: 700;
     letter-spacing: 1.2px; text-transform: uppercase;
     padding: 5px 12px; border-radius: 20px;
     margin-bottom: 12px;
@@ -117,7 +117,7 @@
 .income-head h3 {
     font-size: 18px; font-weight: 800; color: #111; margin: 0;
 }
-.income-head span { font-size: 12px; color: #888; }
+.income-head span { font-size: 13px; color: #888; }
 
 .income-grid {
     display: grid;
@@ -138,7 +138,7 @@
 
 .income-icon  { font-size: 26px; margin-bottom: 5px; display: block; }
 .income-title { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 3px; }
-.income-sub   { font-size: 11px; color: #666; line-height: 1.5; }
+.income-sub   { font-size: 13px; color: #666; line-height: 1.5; }
 
 /* ── Responsive ──────────────────────────── */
 @media (max-width: 480px) {
@@ -151,18 +151,18 @@
     .trust-grid-4 { gap: 5px; }
     .trust-badge { padding: 10px 2px 8px; border-radius: 10px; }
     .trust-icon { font-size: 22px; }
-    .trust-text { font-size: 9px; }
+    .trust-text { font-size:13px; }
 
     .drop-banner { padding: 18px 16px 16px; border-radius: 14px; }
     .drop-banner h2 { font-size: 17px; }
-    .drop-banner p { font-size: 12px; }
-    .drop-btn { padding: 9px 16px; font-size: 12px; }
+    .drop-banner p { font-size: 13px; }
+    .drop-btn { padding: 10px 18px; font-size: 13px; }
 
     .income-grid { gap: 8px; }
     .income-card { padding: 12px 10px; }
     .income-icon { font-size: 22px; }
-    .income-title { font-size: 12px; }
-    .income-sub { font-size: 10px; }
+    .income-title { font-size: 13px; }
+    .income-sub { font-size:14px; }
 }
 @media (max-width: 360px) {
     .role-title { font-size: 10.5px; }
@@ -223,7 +223,7 @@
 
         <div class="trust-badge">
             <span class="trust-icon">🛡️</span>
-            <div class="trust-text">১০০% অথেনটিক</div>
+            <div class="trust-text">100% অথেনটিক</div>
         </div>
 
         <a href="{{ route('return.policy') }}" class="trust-badge" style="color:inherit;">
@@ -233,7 +233,7 @@
 
         <div class="trust-badge">
             <span class="trust-icon">📞</span>
-            <div class="trust-text">২৪/৭ সাপোর্ট</div>
+            <div class="trust-text">24/7 সাপোর্ট</div>
         </div>
 
     </div>
@@ -258,31 +258,41 @@
     </div>
     <div class="income-grid">
 
-        <a href="{{ route('seller.signup') }}" class="income-card ref">
+        <a href="{{ route('user.guide') }}" class="income-card ref">
             <span class="income-icon">🎁</span>
             <div class="income-title">রেফার বোনাস</div>
-            <div class="income-sub">বন্ধুদের রেফার করে আনলিমিটেড আয়</div>
+            <div class="income-sub">বন্ধুদের রেফার করে আনলিমিটেড আয় — প্রতিজনে ৳200</div>
         </a>
 
-        <a href="{{ route('seller.signup') }}" class="income-card sell">
+        <a href="{{ route('user.guide') }}" class="income-card sell">
             <span class="income-icon">🏪</span>
             <div class="income-title">পণ্য বিক্রি</div>
-            <div class="income-sub">সেলার বা ভেন্ডর হয়ে আয় করুন</div>
+            <div class="income-sub">সেলার বা ভেন্ডর হয়ে আয় করুন — মাত্র ৳399 থেকে শুরু</div>
         </a>
 
-        <a href="{{ route('seller.signup') }}" class="income-card drop">
+        <a href="{{ route('user.guide') }}" class="income-card drop">
             <span class="income-icon">🚀</span>
             <div class="income-title">ড্রপশিপিং</div>
-            <div class="income-sub">ইনভেস্টমেন্ট ছাড়া ব্যবসা করুন</div>
+            <div class="income-sub">ইনভেস্টমেন্ট ছাড়া ব্যবসা — নিজে দাম ঠিক করুন</div>
         </a>
 
-        <a href="{{ route('product.list') }}" class="income-card aff">
+        <a href="{{ route('user.guide') }}" class="income-card aff">
             <span class="income-icon">🔗</span>
             <div class="income-title">শেয়ার কমিশন</div>
             <div class="income-sub">লিংক শেয়ার করে কমিশন পান</div>
         </a>
 
     </div>
+
+    {{-- Guide CTA Banner --}}
+    <div style="background:linear-gradient(135deg,#111,#333);border-radius:14px;padding:18px 16px;margin-top:2px;display:flex;align-items:center;gap:14px;">
+        <div style="flex:1;">
+            <div style="color:#fff;font-size:14px;font-weight:800;margin-bottom:4px;">📖 সম্পূর্ণ গাইড দেখুন</div>
+            <div style="color:rgba(255,255,255,.75);font-size:13px;line-height:1.6;">কীভাবে কাজ করবেন, কীভাবে আয় করবেন — সব বিস্তারিত জানুন</div>
+        </div>
+        <a href="{{ route('user.guide') }}" style="background:#e8001d;color:#fff;font-size:13px;font-weight:800;padding:11px 20px;border-radius:20px;text-decoration:none;white-space:nowrap;font-family:'Hind Siliguri',sans-serif;flex-shrink:0;">গাইড দেখুন →</a>
+    </div>
+
 </div>
 
 </div>{{-- .home-sec --}}

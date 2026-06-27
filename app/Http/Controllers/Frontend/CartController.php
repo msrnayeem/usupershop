@@ -224,65 +224,153 @@ class CartController extends Controller
     // Coupon
   public function saveCoupon(Request $request)
 {
-    $coupon_code = $request->input('coupon_code');
+    $coupon_code   = trim($request->input('coupon_code'));
+    $total_ammount = (float)$request->input('totalAmm', 0);
 
-    if ($coupon_code != null) {
-        $total_ammount = $request->input('totalAmm');
-
-        $coupon_info = DB::table('coupons')->where('promoCode', $coupon_code)->first();
-
-        if ($coupon_info && $coupon_info->status != 0 && $coupon_info->availableFor == 0) {
-            if ($total_ammount >= $coupon_info->min_amount) {
-                if ($coupon_info->discount_type == 1) {
-                    // percentage discount
-                    $coupon_discount = ($total_ammount * $coupon_info->discount_amount) / 100;
-                } else {
-                    // fixed discount
-                    $coupon_discount = $coupon_info->discount_amount;
-                }
-
-                Session()->put('coupon_discount', $coupon_discount);
-
-                return redirect()->route('show.cart')->with('success', 'Coupon Added Successfully');
-            } else {
-                return redirect()->route('show.cart')->with('error', 'Amount is not enough');
-            }
-        } else {
-            return redirect()->route('show.cart')->with('error', 'Invalid Coupon');
-        }
-    } else {
-        return redirect()->route('show.cart')->with('error', 'Coupon not yet set');
+    if (empty($coupon_code)) {
+        return redirect()->route('show.cart')
+            ->with('error', '❌ কুপন কোড লিখুন।');
     }
+
+    $coupon = \App\Models\Coupon::where('promoCode', $coupon_code)->first();
+
+    // ── 1. Coupon exists? ─────────────────────────────────────────────
+    if (!$coupon) {
+        return redirect()->route('show.cart')
+            ->with('error', '❌ এই কুপন কোডটি সঠিক নয়।');
+    }
+
+    // ── 2. Active? ────────────────────────────────────────────────────
+    if ($coupon->status == 0) {
+        return redirect()->route('show.cart')
+            ->with('error', '❌ এই কুপনটি আর সক্রিয় নেই।');
+    }
+
+    // ── 3. Date valid? ────────────────────────────────────────────────
+    $today = now()->toDateString();
+    if ($today < $coupon->start_date) {
+        return redirect()->route('show.cart')
+            ->with('error', '❌ এই কুপনটি এখনও শুরু হয়নি। শুরুর তারিখ: ' . \Carbon\Carbon::parse($coupon->start_date)->format('d M Y'));
+    }
+    if ($today > $coupon->end_date) {
+        return redirect()->route('show.cart')
+            ->with('error', '❌ এই কুপনটির মেয়াদ শেষ হয়ে গেছে।');
+    }
+
+    // ── 4. Available for correct user type? ───────────────────────────
+    // availableFor: 0=Customer only, 1=Staff, 2=Both(All), 3=Vendor, 4=Seller, 5=Dropshipper
+    $usertype = auth()->check() ? auth()->user()->usertype : 'guest';
+    $allowed  = false;
+
+    if ($coupon->availableFor == 2) {
+        $allowed = true; // All users
+    } elseif ($coupon->availableFor == 0 && in_array($usertype, ['user', 'customer', 'guest'])) {
+        $allowed = true; // Customer only
+    } elseif ($coupon->availableFor == 4 && $usertype === 'seller') {
+        $allowed = true;
+    } elseif ($coupon->availableFor == 3 && $usertype === 'vendor') {
+        $allowed = true;
+    } elseif ($coupon->availableFor == 5 && $usertype === 'dropshipper') {
+        $allowed = true;
+    } elseif ($coupon->availableFor == 1 && $usertype === 'staff') {
+        $allowed = true;
+    }
+
+    if (!$allowed) {
+        return redirect()->route('show.cart')
+            ->with('error', '❌ এই কুপনটি আপনার Account Type-এর জন্য প্রযোজ্য নয়।');
+    }
+
+    // ── 5. Minimum amount? ────────────────────────────────────────────
+    if ($total_ammount < (float)$coupon->min_amount) {
+        return redirect()->route('show.cart')
+            ->with('error', '❌ এই কুপন ব্যবহার করতে কমপক্ষে ৳' . number_format($coupon->min_amount, 0) . ' টাকার কেনাকাটা করতে হবে।');
+    }
+
+    // ── 6. Usage limit? ───────────────────────────────────────────────
+    if ($coupon->available <= 0) {
+        return redirect()->route('show.cart')
+            ->with('error', '❌ এই কুপনটি সব ব্যবহার হয়ে গেছে।');
+    }
+
+    // ── 7. Calculate discount ─────────────────────────────────────────
+    if ($coupon->discount_type == 1) {
+        $coupon_discount = ($total_ammount * (float)$coupon->discount_amount) / 100;
+    } else {
+        $coupon_discount = (float)$coupon->discount_amount;
+    }
+
+    // Cap discount at order total
+    $coupon_discount = min($coupon_discount, $total_ammount);
+
+    Session::put('coupon_discount', $coupon_discount);
+    Session::put('coupon_code', $coupon_code);
+
+    // Decrement available count
+    $coupon->decrement('available');
+
+    $discountText = $coupon->discount_type == 1
+        ? $coupon->discount_amount . '% ছাড়'
+        : '৳' . number_format($coupon_discount, 0) . ' ছাড়';
+
+    return redirect()->route('show.cart')
+        ->with('success', '✅ কুপন সফলভাবে প্রয়োগ হয়েছে! আপনি পাচ্ছেন ' . $discountText . '।');
 }
 
     public function SellerSaveCoupon(Request $request)
     {
-        $coupon_code = $request->input('coupon_code');
-        if ($coupon_code != '') {
-            $total_ammount = $request->input('totalAmm');
+        $coupon_code   = trim($request->input('coupon_code'));
+        $total_ammount = (float)$request->input('totalAmm', 0);
 
-            $coupon_info = DB::table('coupons')->where('promoCode', $coupon_code)->get();
-            if ($coupon_info[0]->status != 0) {
-                if ($total_ammount >= $coupon_info[0]->min_amount) {
-                    if ($coupon_info[0]->discount_type == 1) {
-                        $coupon_discount = ($total_ammount  * $coupon_info[0]->discount_amount) / 100;
-                        //echo $coupon_discount;
-                        Session()->put('coupon_discount', $coupon_discount);
-                        return redirect()->route('show.seller.cart')->with('success', 'Coupon Added Successfully');
-                    } else {
-                        $coupon_discount = $coupon_info[0]->discount_amount;
-                        Session()->put('coupon_discount', $coupon_discount);
-                        return redirect()->route('show.seller.cart')->with('success', 'Coupon Added Successfully');
-                    }
-                } else {
-                    return redirect()->route('show.seller.cart')->with('error', 'Amount is not enough');
-                }
-            } else {
-                return redirect()->route('show.seller.cart')->with('error', 'Invalid Coupon');
-            }
-        } else {
-            return redirect()->route('show.seller.cart')->with('error', 'Coupon not yet set');
+        if (empty($coupon_code)) {
+            return redirect()->route('show.seller.cart')->with('error', '❌ কুপন কোড লিখুন।');
         }
+
+        $coupon = \App\Models\Coupon::where('promoCode', $coupon_code)->first();
+
+        if (!$coupon) {
+            return redirect()->route('show.seller.cart')->with('error', '❌ এই কুপন কোডটি সঠিক নয়।');
+        }
+        if ($coupon->status == 0) {
+            return redirect()->route('show.seller.cart')->with('error', '❌ এই কুপনটি আর সক্রিয় নেই।');
+        }
+
+        $today = now()->toDateString();
+        if ($today < $coupon->start_date) {
+            return redirect()->route('show.seller.cart')->with('error', '❌ এই কুপনটি এখনও শুরু হয়নি।');
+        }
+        if ($today > $coupon->end_date) {
+            return redirect()->route('show.seller.cart')->with('error', '❌ এই কুপনটির মেয়াদ শেষ হয়ে গেছে।');
+        }
+
+        // availableFor: 2=All, 4=Seller, 3=Vendor, 5=Dropshipper
+        $usertype = auth()->check() ? auth()->user()->usertype : 'guest';
+        $allowed  = in_array($coupon->availableFor, [2]) ||
+                    ($coupon->availableFor == 4 && $usertype === 'seller') ||
+                    ($coupon->availableFor == 3 && $usertype === 'vendor') ||
+                    ($coupon->availableFor == 5 && $usertype === 'dropshipper');
+
+        if (!$allowed) {
+            return redirect()->route('show.seller.cart')->with('error', '❌ এই কুপনটি আপনার Account Type-এর জন্য প্রযোজ্য নয়।');
+        }
+        if ($total_ammount < (float)$coupon->min_amount) {
+            return redirect()->route('show.seller.cart')->with('error', '❌ কমপক্ষে ৳' . number_format($coupon->min_amount, 0) . ' টাকার কেনাকাটা করুন।');
+        }
+        if ($coupon->available <= 0) {
+            return redirect()->route('show.seller.cart')->with('error', '❌ এই কুপনটি সব ব্যবহার হয়ে গেছে।');
+        }
+
+        $coupon_discount = $coupon->discount_type == 1
+            ? ($total_ammount * (float)$coupon->discount_amount) / 100
+            : (float)$coupon->discount_amount;
+        $coupon_discount = min($coupon_discount, $total_ammount);
+
+        Session::put('coupon_discount', $coupon_discount);
+        Session::put('coupon_code', $coupon_code);
+        $coupon->decrement('available');
+
+        return redirect()->route('show.seller.cart')
+            ->with('success', '✅ কুপন সফলভাবে প্রয়োগ হয়েছে! ৳' . number_format($coupon_discount, 0) . ' ছাড় পাচ্ছেন।');
     }
     // Area id save
 
@@ -313,4 +401,115 @@ class CartController extends Controller
             return response()->json(['error' => 'At First Login Your Account']);
         }
     }
+
+    /**
+     * AJAX coupon apply for payment page
+     */
+    public function ajaxApplyCoupon(\Illuminate\Http\Request $request)
+    {
+        $coupon_code   = trim($request->input('coupon_code'));
+        $total_ammount = (float)$request->input('total', 0);
+
+        if (empty($coupon_code)) {
+            return response()->json(['success' => false, 'message' => 'কুপন কোড লিখুন।']);
+        }
+
+        $coupon = \App\Models\Coupon::where('promoCode', $coupon_code)->first();
+
+        if (!$coupon)         return response()->json(['success' => false, 'message' => 'এই কুপন কোডটি সঠিক নয়।']);
+        if ($coupon->status == 0) return response()->json(['success' => false, 'message' => 'এই কুপনটি আর সক্রিয় নেই।']);
+
+        $today = now()->toDateString();
+        if ($today < $coupon->start_date) return response()->json(['success' => false, 'message' => 'এই কুপনটি এখনও শুরু হয়নি।']);
+        if ($today > $coupon->end_date)   return response()->json(['success' => false, 'message' => 'এই কুপনটির মেয়াদ শেষ হয়ে গেছে।']);
+
+        $usertype = auth()->check() ? auth()->user()->usertype : 'guest';
+        $allowed  = $coupon->availableFor == 2 ||
+                    ($coupon->availableFor == 0 && in_array($usertype, ['user', 'customer', 'guest'])) ||
+                    ($coupon->availableFor == 4 && $usertype === 'seller') ||
+                    ($coupon->availableFor == 3 && $usertype === 'vendor') ||
+                    ($coupon->availableFor == 5 && $usertype === 'dropshipper');
+
+        if (!$allowed) return response()->json(['success' => false, 'message' => 'এই কুপনটি আপনার Account Type-এর জন্য প্রযোজ্য নয়।']);
+        if ($coupon->available <= 0) return response()->json(['success' => false, 'message' => 'এই কুপনটি সব ব্যবহার হয়ে গেছে।']);
+        if ($total_ammount < (float)$coupon->min_amount) {
+            return response()->json(['success' => false, 'message' => 'কমপক্ষে ৳' . number_format($coupon->min_amount, 0) . ' টাকার কেনাকাটা করতে হবে।']);
+        }
+
+        $discount = $coupon->discount_type == 1
+            ? ($total_ammount * (float)$coupon->discount_amount) / 100
+            : (float)$coupon->discount_amount;
+        $discount = min($discount, $total_ammount);
+
+        Session::put('coupon_discount', $discount);
+        Session::put('coupon_code', $coupon_code);
+        $coupon->decrement('available');
+
+        $msg = $coupon->discount_type == 1
+            ? $coupon->discount_amount . '% ছাড় — ৳' . number_format($discount, 0) . ' সাশ্রয়!'
+            : '৳' . number_format($discount, 0) . ' ছাড় পাচ্ছেন!';
+
+        return response()->json(['success' => true, 'message' => $msg, 'discount' => $discount]);
+    }
+
+    /**
+     * Remove applied coupon
+     */
+    public function removeCoupon()
+    {
+        // Restore available count
+        $code = Session::get('coupon_code');
+        if ($code) {
+            \App\Models\Coupon::where('promoCode', $code)->increment('available');
+        }
+        Session::forget('coupon_discount');
+        Session::forget('coupon_code');
+
+        // Redirect back - could be cart or payment page
+        return redirect()->back()->with('success', '✅ কুপন সরানো হয়েছে।');
+    }
+
+
+    /**
+     * AJAX coupon check for Seller/Vendor/Dropshipper registration page
+     */
+    public function ajaxCheckCouponForRegistration(\Illuminate\Http\Request $request)
+    {
+        $code     = trim($request->input('coupon_code', ''));
+        $usertype = $request->input('type', 'registration');
+
+        if (empty($code)) {
+            return response()->json(['success' => false, 'message' => 'কুপন কোড লিখুন।']);
+        }
+
+        $coupon = \App\Models\Coupon::where('promoCode', $code)->first();
+
+        if (!$coupon)
+            return response()->json(['success' => false, 'message' => 'এই কুপন কোডটি সঠিক নয়।']);
+        if ($coupon->status == 0)
+            return response()->json(['success' => false, 'message' => 'এই কুপনটি আর সক্রিয় নেই।']);
+
+        $today = now()->toDateString();
+        if ($today < $coupon->start_date)
+            return response()->json(['success' => false, 'message' => 'এই কুপনটি এখনও শুরু হয়নি।']);
+        if ($today > $coupon->end_date)
+            return response()->json(['success' => false, 'message' => 'এই কুপনটির মেয়াদ শেষ হয়ে গেছে।']);
+        if ($coupon->available <= 0)
+            return response()->json(['success' => false, 'message' => 'এই কুপনটি সব ব্যবহার হয়ে গেছে।']);
+
+        // Registration coupons: availableFor 2=All, 4=Seller, 3=Vendor, 5=Dropshipper
+        if (!in_array($coupon->availableFor, [2, 4, 3, 5]))
+            return response()->json(['success' => false, 'message' => 'এই কুপনটি Registration-এর জন্য প্রযোজ্য নয়।']);
+
+        $discText = $coupon->discount_type == 1
+            ? $coupon->discount_amount . '% ছাড়'
+            : '৳' . number_format($coupon->discount_amount, 0) . ' ছাড়';
+
+        return response()->json([
+            'success' => true,
+            'message' => 'কুপন সঠিক! আপনি পাবেন ' . $discText . '। Registration-এর সময় apply হবে।',
+            'discount' => $coupon->discount_amount,
+        ]);
+    }
+
 }

@@ -283,7 +283,7 @@
                                         </div>
 
                                         <div class="form-group col-md-3">
-                                            <label>Hole Sale Price</label>
+                                            <label class="font-weight-bold">🏷️ Wholesale Price (Dropshipper Cost)</label>
                                             <input type="number" name="sale_price" value="{{ @$editData->sale_price }}"
                                                 class="form-control" step="0.01" min="0">
                                             <span
@@ -291,7 +291,7 @@
                                         </div>
 
                                         <div class="form-group col-md-3">
-                                            <label>Min Price</label>
+                                            <label class="font-weight-bold">📉 Min Selling Price (Dropshipper)</label>
                                             <input type="number" name="min_price" value="{{ @$editData->min_price }}"
                                                 class="form-control" step="0.01" min="0">
                                             <span
@@ -299,7 +299,7 @@
                                         </div>
 
                                         <div class="form-group col-md-3">
-                                            <label>Max Price</label>
+                                            <label class="font-weight-bold">📈 Max Selling Price (Dropshipper)</label>
                                             <input type="number" name="max_price" value="{{ @$editData->max_price }}"
                                                 class="form-control" step="0.01" min="0">
                                             <span

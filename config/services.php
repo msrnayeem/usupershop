@@ -44,9 +44,8 @@ return [
     |--------------------------------------------------------------------------
     */
     'whatsapp' => [
-        'token'           => env('WHATSAPP_TOKEN', ''),
-        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID', ''),
-        'admin_number'    => env('ADMIN_WHATSAPP_NUMBER', '8801816622128'),
+        'callmebot_api_key' => env('CALLMEBOT_API_KEY', ''),
+        'admin_number'      => env('ADMIN_WHATSAPP_NUMBER', '8801816622128'),
     ],
 
 ];

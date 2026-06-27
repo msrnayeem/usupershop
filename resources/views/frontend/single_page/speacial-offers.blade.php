@@ -60,7 +60,7 @@
             }
 
             .product-info .name a {
-                font-size: 12px !important;
+                font-size:14px !important;
             }
 
             .product-price {
@@ -79,11 +79,11 @@
             }
 
             .product-info .name a {
-                font-size: 12px !important;
+                font-size:14px !important;
             }
 
             .product-price {
-                font-size: 12px;
+                font-size:14px;
             }
 
             .add-cart-button .btn {
@@ -99,15 +99,15 @@
             }
 
             .product-info .name a {
-                font-size: 12px !important;
+                font-size:14px !important;
             }
 
             .product-price {
-                font-size: 12px;
+                font-size:14px;
             }
 
             .add-cart-button .btn {
-                font-size: 11px;
+                font-size:13px;
                 padding: 4px 4px;
             }
         }
@@ -189,7 +189,7 @@
                                                             <a href="{{ route('product.details.info', $product->slug) }}">
                                                                 <button>
                                                                     @if ($product->image)
-                                                                        <img src="{{ asset('upload/product_images/' . $product->image) }}"
+                                                                        <img src="{{ asset('upload/product_images/' . $product- loading="lazy">image) }}"
                                                                             alt="{{ $product->slug }}"
                                                                             onerror="this.onerror=null;this.src='{{ asset('frontend/no-image-icon.jpg') }}';" />
                                                                     @else

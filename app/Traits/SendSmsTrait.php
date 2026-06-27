@@ -96,6 +96,24 @@ trait SendSmsTrait{
         return $twoDigitOperators[$code] ?? 'Unknown';
     }
 
+    /**
+     * Get SMS template from DB, fallback to default string.
+     * Replaces placeholders like {name}, {invoice}, etc.
+     */
+    private function getSmsTemplate(string $column, array $vars = [], string $fallback = ''): string
+    {
+        try {
+            $sms = \App\Models\Sms::first();
+            $tpl = ($sms && !empty($sms->$column)) ? $sms->$column : $fallback;
+        } catch (\Exception $e) {
+            $tpl = $fallback;
+        }
+        foreach ($vars as $key => $value) {
+            $tpl = str_replace('{' . $key . '}', $value, $tpl);
+        }
+        return $tpl;
+    }
+
     public function send_rapid_message($mobile = '', $message = '')
     {
         $sms = Sms::first();
@@ -274,18 +292,24 @@ trait SendSmsTrait{
             || (int) ($order->pay_method ?? 0) === 3
             || strtoupper((string) ($order->order_payment ?? '')) === 'UNPAID';
 
+        $trackingWithInvoice = $trackingLink . '?invoice=' . $invoiceNo;
+
         if ($isCashOnDelivery) {
             $deliveryCharge = (float) ($order->delivery_charge ?? 0);
             $grandTotal = (float) ($order->grand_total ?? $order->order_total ?? 0);
             $remainingAmount = max($grandTotal - $deliveryCharge, 0);
             $deliveryChargeText = number_format($deliveryCharge, 0, '.', '');
             $remainingAmountText = number_format($remainingAmount, 0, '.', '');
+            $isFreeDelivery = $deliveryCharge <= 0;
 
-            $message = "🎉 Dear {$customerName}, your order is confirmed on U Super Shop ✅\n📦 Invoice: #{$invoiceNo}\n💳 COD | Partially Paid\n🚚 Delivery received: Tk {$deliveryChargeText}\n🔻 Due on delivery: Tk {$remainingAmountText}\n🔎 Track: {$trackingLink}\n🛒 https://usuper.shop";
+            if ($isFreeDelivery) {
+                $message = "🎉 অভিনন্দন {$customerName}!\nআপনার অর্ডার নিশ্চিত হয়েছে ✅\n\n📦 Invoice: {$invoiceNo}\n💳 Payment: Cash on Delivery\n🚚 Delivery: FREE (বিনামূল্যে)\n💰 ডেলিভারিতে পরিশোধ: ৳{$remainingAmountText}\n\n🔎 অর্ডার ট্র্যাক করুন:\n{$trackingWithInvoice}\n\nU Super Shop ❤️\nhttps://usuper.shop";
+            } else {
+                $message = "🎉 অভিনন্দন {$customerName}!\nআপনার অর্ডার নিশ্চিত হয়েছে ✅\n\n📦 Invoice: {$invoiceNo}\n💳 Payment: Cash on Delivery\n🚚 Delivery Charge Paid: ৳{$deliveryChargeText}\n💰 ডেলিভারিতে পরিশোধ: ৳{$remainingAmountText}\n\n🔎 অর্ডার ট্র্যাক করুন:\n{$trackingWithInvoice}\n\nU Super Shop ❤️\nhttps://usuper.shop";
+            }
         } else {
-            $amount = $order->grand_total ?? $order->order_total;
-            
-            $message = "🎉 Dear {$customerName},\nThank you for shopping with U Super Shop!\nYour payment has been successfully received and your order is now confirmed. ✅\n📦 Order Details: • Invoice No: #{$invoiceNo}\n• Order Amount: {$amount}\n• Payment Status: Paid ✅\n🚚 Your order is now being prepared for delivery.\n🔎 Track Your Order: {$trackingLink}\n🛒 Continue Shopping: https://usuper.shop\nIf you have any questions, feel free to contact our support team.\nThank you for choosing U Super Shop ❤️";
+            $amount = number_format((float)($order->grand_total ?? $order->order_total ?? 0), 0, '.', '');
+            $message = "🎉 অভিনন্দন {$customerName}!\nপেমেন্ট সম্পন্ন ও অর্ডার নিশ্চিত হয়েছে ✅\n\n📦 Invoice: {$invoiceNo}\n💳 Paid: ৳{$amount}\n✅ Payment Status: Paid\n\n🔎 অর্ডার ট্র্যাক করুন:\n{$trackingWithInvoice}\n\nU Super Shop ❤️\nhttps://usuper.shop";
         }
         
         return $this->send_rapid_message($mobile, $message);
@@ -304,6 +328,46 @@ trait SendSmsTrait{
         return $this->send_rapid_message($mobile, $message);
     }
     
+    /**
+     * Send SMS when order is returned
+     */
+    public function sendOrderReturnSms($order): void
+    {
+        $mobile = $order->shipping->mobile ?? $order->users->mobile ?? null;
+        if (!$mobile) return;
+
+        $customerName = $order->shipping->name ?? $order->users->name ?? 'Customer';
+        $invoiceNo    = $order->invoice_no ?? ('USP' . str_pad($order->id, 5, '0', STR_PAD_LEFT));
+        $trackingLink = url('order/track');
+        $trackingWithInvoice = $trackingLink . '?invoice=' . $invoiceNo;
+
+        $deliveryCharge = (float)($order->delivery_charge ?? 0);
+        $hasDeliveryCharge = $deliveryCharge > 0;
+        $deliveryChargeText = number_format($deliveryCharge, 0, '.', '');
+
+        $vars = [
+            'name'            => $customerName,
+            'invoice'         => $invoiceNo,
+            'delivery_charge' => $deliveryChargeText,
+            'track_link'      => $trackingWithInvoice,
+        ];
+        $fallback = "↩️ {name}, আপনার অর্ডার Return হয়েছে।
+
+📦 Invoice: {invoice}
+• Status: Returned ↩️
+
+⚠️ Return-এ ডেলিভারি চার্জ ৳{delivery_charge} ফেরতযোগ্য নয়।
+আরও বিস্তারিত জানতে:
+wa.me/8801816622128
+
+🔎 ট্র্যাক করুন:
+{track_link}
+
+U Super Shop ❤️";
+        $message = $this->getSmsTemplate('tpl_order_return', $vars, $fallback);
+        $this->send_rapid_message($mobile, $message);
+    }
+
     public function sendOrderProcessingSms($order)
     {
         $mobile = $order->shipping->mobile ?? ($order->users->mobile ?? null);
@@ -313,7 +377,18 @@ trait SendSmsTrait{
         $invoiceNo = $order->invoice_no ?? $order->order_no;
         $trackingLink = route('order.track');
         
-        $message = "📢 Dear {$customerName},\nYour order has been received successfully and is now being processed. ✅\n📦 Order Details: • Invoice No: #{$invoiceNo}\n• Order Status: Processing ⏳\n🚚 We will update you once your order is shipped.\n🔎 Track Your Order: {$trackingLink}\n🛒 Visit Our Shop: https://usuper.shop\nThank you for shopping with U Super Shop ❤️";
+        $trackingWithInvoice = $trackingLink . '?invoice=' . $invoiceNo;
+        $vars = ['name' => $customerName, 'invoice' => $invoiceNo, 'track_link' => $trackingWithInvoice];
+        $fallback = "📢 {name}, আপনার অর্ডার প্রক্রিয়াধীন ⏳
+
+📦 Invoice: {invoice}
+• Status: Processing
+
+🔎 ট্র্যাক করুন:
+{track_link}
+
+U Super Shop ❤️";
+        $message = $this->getSmsTemplate('tpl_order_processing', $vars, $fallback);
         
         return $this->send_rapid_message($mobile, $message);
     }
@@ -327,7 +402,20 @@ trait SendSmsTrait{
         $invoiceNo = $order->invoice_no ?? $order->order_no;
         $trackingLink = route('order.track');
 
-        $message = "🚚 Dear {$customerName},\nGreat news! Your order has been shipped and is on its way to you. 📦\n• Invoice No: #{$invoiceNo}\n• Order Status: Shipped ✅\n🔎 Track Your Order: {$trackingLink}\n🛒 U Super Shop: https://usuper.shop\nThank you for shopping with U Super Shop ❤️";
+        $trackingWithInvoice = $trackingLink . '?invoice=' . $invoiceNo;
+        $vars = ['name' => $customerName, 'invoice' => $invoiceNo, 'track_link' => $trackingWithInvoice];
+        $fallback = "🚚 {name}, আপনার পণ্য রওনা হয়েছে! ✅
+
+📦 Invoice: {invoice}
+• Status: Shipped 🚚
+
+ডেলিভারি ম্যান সামনে থাকাকালীন পণ্য চেক করুন।
+
+🔎 ট্র্যাক করুন:
+{track_link}
+
+U Super Shop ❤️";
+        $message = $this->getSmsTemplate('tpl_order_shipped', $vars, $fallback);
 
         return $this->send_rapid_message($mobile, $message);
     }
@@ -340,7 +428,19 @@ trait SendSmsTrait{
         $customerName = $order->shipping->name ?? ($order->users->name ?? 'Customer');
         $invoiceNo = $order->invoice_no ?? $order->order_no;
 
-        $message = "🎉 Dear {$customerName},\nYour order has been successfully delivered! ✅\n📦 Invoice No: #{$invoiceNo}\n• Order Status: Delivered ✅\nWe hope you love your purchase! If you have any issues, please contact our support team.\n🛒 Shop Again: https://usuper.shop\nThank you for choosing U Super Shop ❤️";
+        $vars = ['name' => $customerName, 'invoice' => $invoiceNo, 'track_link' => $trackingLink . '?invoice=' . $invoiceNo];
+        $fallback = "🎉 {name}, পণ্য ডেলিভারি সম্পন্ন! ✅
+
+📦 Invoice: {invoice}
+• Status: Delivered ✅
+
+পণ্য পেয়ে সন্তুষ্ট হলে আমাদের Review দিন।
+যেকোনো সমস্যায়: wa.me/8801816622128
+
+🛒 আবার কেনাকাটা করুন:
+https://usuper.shop
+U Super Shop ❤️";
+        $message = $this->getSmsTemplate('tpl_order_delivered', $vars, $fallback);
 
         return $this->send_rapid_message($mobile, $message);
     }

@@ -22,19 +22,19 @@
                     <div style="padding: 32px; background: #fff;">
                         <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px;">
                             <div style="background: #f8fafc; border-radius: 14px; padding: 16px;">
-                                <div style="font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: #64748b;">Order No</div>
+                                <div style="font-size:14px; text-transform: uppercase; letter-spacing: .08em; color: #64748b;">Order No</div>
                                 <div style="font-size: 20px; font-weight: 700; color: #0f172a;">#{{ $order->order_no }}</div>
                             </div>
                             <div style="background: #f8fafc; border-radius: 14px; padding: 16px;">
-                                <div style="font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: #64748b;">Status</div>
+                                <div style="font-size:14px; text-transform: uppercase; letter-spacing: .08em; color: #64748b;">Status</div>
                                 <div style="font-size: 20px; font-weight: 700; color: #0f172a;">{{ ucfirst((string) $order->status) }}</div>
                             </div>
                             <div style="background: #f8fafc; border-radius: 14px; padding: 16px;">
-                                <div style="font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: #64748b;">Customer</div>
+                                <div style="font-size:14px; text-transform: uppercase; letter-spacing: .08em; color: #64748b;">Customer</div>
                                 <div style="font-size: 18px; font-weight: 600; color: #0f172a;">{{ $order->shipping->name ?? 'Guest Customer' }}</div>
                             </div>
                             <div style="background: #f8fafc; border-radius: 14px; padding: 16px;">
-                                <div style="font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: #64748b;">Total</div>
+                                <div style="font-size:14px; text-transform: uppercase; letter-spacing: .08em; color: #64748b;">Total</div>
                                 <div style="font-size: 18px; font-weight: 700; color: #0f172a;">৳ {{ number_format((float) $order->grand_total, 2) }}</div>
                             </div>
                         </div>

@@ -12,6 +12,12 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        //
+        // bKash payment callbacks — must be excluded from CSRF
+        'api/callback/bkash',
+        'api/bkash/*',
+        'payment/bkash/callback',
+        'payment/callback/*',
+        // Webhook endpoints if any
+        'webhook/*',
     ];
 }

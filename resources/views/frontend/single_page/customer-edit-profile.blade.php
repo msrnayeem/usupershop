@@ -39,7 +39,8 @@
             color: #fff;
             padding-left: 15px;
         }
-    </style>
+    input[readonly]{background:#f8f9fb!important;color:#888!important;cursor:not-allowed!important;border-color:#eee!important}
+</style>
     <!-- Title page -->
     {{-- <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('frontend/images/bg-01.jpg');">
         <h2 class="ltext-105 cl0 txt-center">Edit Profile</h2>
@@ -66,14 +67,14 @@
                             <font color="red">{{ $errors->has('name') ? $errors->first('name') : '' }}</font>
                         </div>
                         <div class="col-md-4">
-                            <label for="email">Email :</label>
-                            <input type="email" name="email" value="{{ $editData->email }}" id="email"
+                            <label for="email">📧 Email <span style="background:#f0f0f0;color:#888;font-size:13px;padding:1px 7px;border-radius:8px;font-weight:700;margin-left:5px">🔒 পরিবর্তন করা যাবে না</span></label>
+                            <input type="email" name="email" readonly readonly value="{{ $editData->email }}" id="email"
                                 class="form-control" readonly>
                             <font color="red">{{ $errors->has('email') ? $errors->first('email') : '' }}</font>
                         </div>
                         <div class="col-md-4">
-                            <label for="mobile">Phone No :</label>
-                            <input type="text" name="mobile" value="{{ $editData->mobile }}" id="mobile"
+                            <label for="mobile">📱 Phone Number <span style="background:#f0f0f0;color:#888;font-size:13px;padding:1px 7px;border-radius:8px;font-weight:700;margin-left:5px">🔒 পরিবর্তন করা যাবে না</span></label>
+                            <input type="text" name="mobile" readonly value="{{ $editData->mobile }}" id="mobile"
                                 class="form-control" readonly>
                             <font color="red">{{ $errors->has('mobile') ? $errors->first('mobile') : '' }}</font>
                         </div>

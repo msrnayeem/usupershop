@@ -48,13 +48,13 @@
 
     .cart-item.product-summary .item .details .name {
         margin: 0px;
-        font-size: 12px !important;
+        font-size:14px !important;
         font-weight: 600;
     }
 
     .cart-item.product-summary .item .details .price {
         margin: 0px;
-        font-size: 12px;
+        font-size:14px;
     }
 
     .cart-item.product-summary .item .details {

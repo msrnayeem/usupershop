@@ -11,15 +11,20 @@
             @endphp
 
             <div class="product-slider">
-                <div class="owl-carousel new_productsTab custom-carousel owl-theme" data-item="6">
+                <div class="owl-carousel new_productsTab home-owl-carouseltab custom-carousel owl-theme" data-item="6">
                     @forelse ($allProducts as $items)
                         @php
-                            // ── Price calc ──
-                            if (auth()->check() && auth()->user()->usertype === 'dropshipper' && !empty($items->sale_price)) {
-                                $displayPrice = $items->sale_price;
+                            // ── Price calc — Wholesale ONLY for Dropshipper ──────────
+                            $isDropshipper = auth()->check() && auth()->user()->usertype === 'dropshipper';
+                            $hasWholesale  = !empty($items->sale_price) && $items->sale_price > 0;
+
+                            if ($isDropshipper && $hasWholesale) {
+                                // Dropshipper দেখবে: Wholesale price
+                                $displayPrice = (float)$items->sale_price;
                                 $showOriginal = false;
                                 $discountPct  = 0;
                             } elseif (!empty($items->discount)) {
+                                // Customer / Seller / Vendor দেখবে: খুচরা (retail) price with discount
                                 $displayPrice = $items->discount_type == 1
                                     ? $items->price - ($items->price * $items->discount) / 100
                                     : $items->price - $items->discount;
@@ -28,7 +33,8 @@
                                     ? (int)$items->discount
                                     : (int)round(($items->discount / $items->price) * 100);
                             } else {
-                                $displayPrice = $items->price;
+                                // Default: খুচরা price
+                                $displayPrice = (float)$items->price;
                                 $showOriginal = false;
                                 $discountPct  = 0;
                             }
@@ -68,15 +74,28 @@
                                 <div class="pcard-info">
                                     <div class="pcard-name english_lang">{{ substr($items->name ?? '', 0, 26) }}</div>
                                     <div class="pcard-name bangla_lang" style="display:none">{{ substr($items->name_bn ?? $items->name ?? '', 0, 26) }}</div>
-                                    @if($items->category)
-                                    <div class="pcard-cat">{{ $items->category->name }}</div>
-                                    @endif
+{{-- Category name removed --}}
                                     <div class="pcard-price">
                                         <span class="pcard-price-now">&#2547;{{ number_format($displayPrice, 0) }}</span>
                                         @if($showOriginal)
                                         <span class="pcard-price-old">&#2547;{{ number_format($items->price, 0) }}</span>
                                         @endif
                                     </div>
+                                    {{-- Save & Free Delivery badges --}}
+                                    @php
+                                        $savedAmount = $showOriginal ? ($items->price - $displayPrice) : 0;
+                                        $isFreeDelivery = $displayPrice >= 1000;
+                                    @endphp
+                                    @if($savedAmount > 0 || $isFreeDelivery)
+                                    <div class="pcard-badges">
+                                        @if($savedAmount > 0)
+                                        <span class="pcard-save-pill">Save &#2547;{{ number_format($savedAmount, 0) }}</span>
+                                        @endif
+                                        @if($isFreeDelivery)
+                                        <span class="pcard-free-del">&#128667; Free Delivery</span>
+                                        @endif
+                                    </div>
+                                    @endif
                                     {{-- Add to cart button --}}
                                     <button class="pcard-cart-btn productCartBtn"
                                         data-toggle="modal" data-target="#cartModal"

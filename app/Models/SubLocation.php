@@ -25,7 +25,7 @@ class SubLocation extends Model
         $Query = null;
         $i = 0;
 
-        $accountType = strip_tags(request()->input('customFilter.accountType', ''));
+        $$1 = strip_tags(request()->input('customFilter.$2', ''));
         if (!empty($accountType)) {
             $Query = self::where('division_id', $accountType);
         }

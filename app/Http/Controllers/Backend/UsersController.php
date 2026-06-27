@@ -91,18 +91,38 @@ class UsersController extends Controller
 
     public function update(Request $request, $id)
     {
+        $data = User::findOrFail($id);
+
         $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required'
+            'name'         => 'required|string|max:100',
+            'email'        => 'required|email|unique:users,email,' . $id,
+            'mobile'       => 'nullable|regex:/^01[3-9][0-9]{8}$/|unique:users,mobile,' . $id,
+            'new_password' => 'nullable|min:6|max:32|confirmed',
+        ], [
+            'email.unique'   => 'এই Email অন্য account-এ ব্যবহৃত হচ্ছে।',
+            'mobile.unique'  => 'এই Phone Number অন্য account-এ ব্যবহৃত হচ্ছে।',
+            'mobile.regex'   => 'সঠিক বাংলাদেশি নম্বর দিন (01XXXXXXXXX)।',
+            'new_password.confirmed' => 'Password confirm করুন।',
+            'new_password.min' => 'Password কমপক্ষে ৬ অক্ষর হতে হবে।',
         ]);
 
-        $data = User::find($id);
-        $data->role = $request->role;
-        $data->name = $request->name;
+        // ── Basic info ────────────────────────────────────────────────────
+        $data->name  = $request->name;
         $data->email = $request->email;
+
+        if (!empty($request->mobile)) {
+            $data->mobile = $request->mobile;
+        }
+
+        // ── Password change (optional) ────────────────────────────────────
+        if (!empty($request->new_password)) {
+            $data->password = \Hash::make($request->new_password);
+        }
+
         $data->save();
-        //$this->setSuccessMessage('Your user is update successfully !!!');
-        return redirect()->route('users.view')->with('success', 'Data updated successfully !!!');
+
+        return redirect()->route('users.edit', $id)
+            ->with('success', '✅ User সফলভাবে আপডেট হয়েছে!');
     }
 
     /* public function delete($id){

@@ -110,7 +110,7 @@
                 serverSide: true,
                 searchable: true,
                 ajax: {
-                    url: "{{ route('seller.orders.listbyadmin') }}",
+                    url: "{{ route('seller.orders.list') }}",
                     data: function(data) {
                         let customFilter = {};
                         customFilter.src_from = src_from;

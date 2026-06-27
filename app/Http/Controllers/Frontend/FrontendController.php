@@ -29,17 +29,44 @@ class FrontendController extends Controller
 {
     public function index()
     {
+        // ── Cache homepage data for 10 minutes ───────────────────────
+        // This prevents 20,000 users from each hitting the DB separately
+        $cacheKey = 'homepage_data_v1';
+        $data = \Illuminate\Support\Facades\Cache::remember($cacheKey, 600, function () {
+            return $this->buildHomepageData();
+        });
+        return $data;
+    } // end buildHomepageData
 
-        $data['hot_deals'] = Product::where('hot_deals', 1)->where('status', 1)->orderBy('id', 'DESC')->get();
-        $data['featureds'] = Product::where('featured', 1)->where('status', 1)->orderBy('id', 'DESC')->get();
-        $data['special_offers'] = Product::where('special_offer', 1)->where('status', 1)->orderBy('id', 'DESC')->get();
-        $data['special_deals'] = Product::where('special_deals', 1)->where('status', 1)->orderBy('id', 'DESC')->get();
+    /**
+     * Build homepage data — called once, then cached
+     */
+    private function buildHomepageData(): array
+    {
+        // ── All queries cached individually ─────────────────────────
+        // Each cache key = 1 DB query shared across ALL concurrent users
+        $ttl = (int)env('HOMEPAGE_CACHE_TTL', 300); // 5 min default
+
+
+        $data['hot_deals'] = \Cache::remember('hp_hot_deals', $ttl, fn() => 
+                Product::select('id','name','name_bn','slug','price','discount','discount_type','image')
+                ->where('hot_deals', 1)->where('status', 1)->orderBy('id', 'DESC')->limit(20)->get());
+        $data['featureds'] = \Cache::remember('hp_featured', $ttl, fn() => 
+                Product::select('id','name','name_bn','slug','price','discount','discount_type','image')
+                ->where('featured', 1)->where('status', 1)->orderBy('id', 'DESC')->limit(20)->get());
+        $data['special_offers'] = \Cache::remember('hp_special_offers', $ttl, fn() => 
+                Product::select('id','name','name_bn','slug','price','discount','discount_type','image')
+                ->where('special_offer', 1)->where('status', 1)->orderBy('id', 'DESC')->limit(20)->get());
+        $data['special_deals'] = \Cache::remember('hp_special_deals', $ttl, fn() => 
+                Product::select('id','name','name_bn','slug','price','discount','discount_type','image')
+                ->where('special_deals', 1)->where('status', 1)->orderBy('id', 'DESC')->limit(20)->get());
 
         // Sliders
         $data['sliders'] = Slider::select('id', 'name', 'image')->orderBy('id', 'desc')->get();
 
         // Latest products
-        $data['allData'] = Product::select('id', 'status', 'category_id', 'brand_id', 'name', 'slug', 'country_id', 'price', 'discount_type', 'discount', 'image')->where('status', 1)->orderBy('id', 'DESC')->get();
+        $data['allData'] = Product::select('id','status','category_id','name','name_bn','slug','price','discount_type','discount','image')
+                ->where('status', 1)->orderBy('id', 'DESC')->limit(40)->get();
 
         // Categories with active products
         $categories = DB::table('categories')->select('categories.id', 'categories.name', 'categories.name_bn')->join('products', 'products.category_id', '=', 'categories.id')->where('products.status', 1)->groupBy('categories.id', 'categories.name', 'categories.name_bn')->orderBy('categories.id', 'DESC')->get();
@@ -230,7 +257,9 @@ class FrontendController extends Controller
     public function productDetails($slug)
     {
         //dd($slug);
-        $data['hot_deals'] = Product::where('hot_deals', 1)->where('status', 1)->orderBy('id', 'DESC')->get();
+        $data['hot_deals'] = \Cache::remember('hp_hot_deals', $ttl, fn() => 
+                Product::select('id','name','name_bn','slug','price','discount','discount_type','image')
+                ->where('hot_deals', 1)->where('status', 1)->orderBy('id', 'DESC')->limit(20)->get());
         $data['categories'] = Product::select('category_id')->groupBy('category_id')->get();
         $data['productDetails'] = Product::with([
             'product_colors.color',
@@ -356,6 +385,11 @@ class FrontendController extends Controller
     {
         $page = Page::where('page-slug', 'terms-and-condition')->first();
         return view('frontend.single_page.terms-condition', compact('page'));
+    }
+
+    public function userGuide()
+    {
+        return view('frontend.single_page.user-guide');
     }
 
     public function contactUs()
@@ -500,5 +534,22 @@ class FrontendController extends Controller
         ]);
     }
 
+
+
+    /**
+     * Update delivery charge in session when zone is selected
+     */
+    public function updateDeliveryCharge(\Illuminate\Http\Request $request)
+    {
+        $zoneId = $request->zone_id;
+        $zone   = \App\Models\DeliveryZone::find($zoneId);
+        if ($zone) {
+            \Session::put('delivery_charge', $zone->zone_charge);
+            \Session::put('delivery_zone_id', $zoneId);
+            \Session::put('delivery_zone_name', $zone->zone_area);
+            return response()->json(['status' => true, 'charge' => $zone->zone_charge]);
+        }
+        return response()->json(['status' => false]);
+    }
 
 }

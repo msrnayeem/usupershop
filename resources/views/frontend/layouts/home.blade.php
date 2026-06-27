@@ -168,7 +168,6 @@
         }
 
         #categorySliderSection .owl-item a {
-            /* margin: 8px; */
             text-align: center;
         }
 
@@ -177,10 +176,19 @@
             height: 80px;
         }
 
-        #categorySliderSection .category_area h5{
+        #categorySliderSection .category_area h5 {
             text-align: center;
-            font-size: 12px;
+            font-size: 13px;
+            font-weight: 700;
             margin-top: 6px !important;
+            font-family: 'Hind Siliguri', sans-serif;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 80px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         #categorySliderSection .category-slide-new .item {
@@ -188,14 +196,19 @@
             filter: none !important;
         }
 
-
         #categorySliderSection .category_area img {
-            border: 1px solid #ddd;
+            border: 2px solid #eee;
             border-radius: 50%;
-            padding: 2px;
+            padding: 3px;
             text-align: center;
             margin: auto;
-            text-align: center;
+            object-fit: cover;
+            background: #f8f8f8;
+            transition: border-color .2s, transform .2s;
+        }
+        #categorySliderSection .category_area:hover img {
+            border-color: #e8001d;
+            transform: scale(1.05);
         }
 
         @media (max-width: 1140px) {
@@ -207,28 +220,29 @@
 
         @media (max-width: 992px) {
             #categorySliderSection .category_area img {
-                width: 70px;
-                height: 70px;
+                width: 75px;
+                height: 75px;
             }
         }
 
         @media (max-width: 768px) {
             #categorySliderSection .category_area img {
-                width: 60px;
-                height: 60px;
+                width: 72px;
+                height: 72px;
             }
-
-            #categorySliderSection .col-xs-12{
+            #categorySliderSection .category_area h5 {
+                font-size: 12px;
+                max-width: 72px;
+            }
+            #categorySliderSection .col-xs-12 {
                 padding: 0px;
             }
-
-            .homebanner-holder{
                 padding: 0px;
             }
 
             #categorySliderSection .category_area h5{
                 width:70px;
-                font-size:8px !important;
+                font-size:13px !important;
                 margin-bottom:10px;
                 text-align:center;
             }
@@ -257,6 +271,16 @@
             <div class="row home-banner-row">
                 <div class="col-xs-12 col-sm-12 col-md-8 sliderFixed">
                     @include('frontend.layouts.slider')
+
+                    {{-- ── Free Delivery Banner ── --}}
+                    <div style="background:linear-gradient(90deg,#00a855,#007a3d);padding:10px 16px;display:flex;align-items:center;gap:10px;border-radius:0 0 10px 10px;margin-bottom:10px;">
+                        <span style="font-size:22px;flex-shrink:0;">🚚</span>
+                        <div style="flex:1;">
+                            <strong style="color:#fff;font-size:13px;display:block;line-height:1.3;">১,০০০ টাকার উপরে অর্ডারে FREE DELIVERY!</strong>
+                            <span style="color:rgba(255,255,255,.88);font-size:13px;">আজই অর্ডার করুন — সারাদেশে দ্রুত ডেলিভারি</span>
+                        </div>
+                        <span style="background:#fff;color:#00a855;font-size:13px;font-weight:800;padding:5px 14px;border-radius:20px;white-space:nowrap;flex-shrink:0;">FREE 🎉</span>
+                    </div>
                     {{-- <div class="info-boxes wow fadeInUp">
                         <div class="desktop_show">
                             <div class="info-boxes-inner">
@@ -298,7 +322,7 @@
                         @foreach ($categories as $key => $category)
                             <div class="item category_area">
                                 <a href="{{ route('category.wise.product', $category->id) }}">
-                                    <img class="img-circle" src="{{ !empty($category->image) ? url('upload/category_images/' . $category->image) : url('frontend/no-image-icon.jpg') }}" alt="{{ $category->name }}" />
+                                    <img loading="lazy" class="img-circle" src="{{ !empty($category->image) ? url('upload/category_images/' . $category->image) : url('frontend/no-image-icon.jpg') }}" alt="{{ $category->name }}" />
                                     <h5 style="margin: 0px;">{{ substr($category->name, 0, 10) }}</h5>
                                 </a>
                             </div>
@@ -362,169 +386,113 @@
 
 @push('custom_script')
     <script>
-        $('.category-slide-new').owlCarousel({
-            nav: false,
-            loop: true,
-            autoplay: true,
-            autoplayTimeout: 3000,
-            autoplayHoverPause: true,
-            margin: 10,
-            dots: false,
-            responsive: {
-                0: {
-                    items: 5,
-                    margin: 0
-                },
-                480: {
-                    items: 7,
-                    margin: 0
-                },
-                768: {
-                    items: 8,
-                    margin: 0
-                },
-                992: {
-                    items: 9,
-                    margin: 0
-                },
-                1200: {
-                    items: 11,
-                    margin: 0
-                }
+    $(document).ready(function() {
+
+        // ── 1. CATEGORY AUTO SLIDER ───────────────────────────────────
+        if ($('.category-slide-new').length && $('.category-slide-new .item').length > 0) {
+            var catItems = $('.category-slide-new .item').length;
+            var canLoop  = catItems >= 6;
+
+            if ($('.category-slide-new').hasClass('owl-loaded')) {
+                $('.category-slide-new').trigger('destroy.owl.carousel').removeClass('owl-carousel owl-loaded');
             }
-        });
 
-
-        $('.categoryProducts').owlCarousel({
-            loop: true,
-            autoplay: true,
-            autoplayTimeout: 2000, // Adjust autoplay speed (3 seconds)
-            autoplayHoverPause: true, // Pause autoplay when hovering
-            dots: false,
-            nav: false, // Updated from `navigation: false`
-            pagination: false,
-            responsive: {
-                0: {
-                    items: 2
-                },
-                350: {
-                    items: 2
-                },
-                380: {
-                    items: 2
-                },
-                450: {
-                    items: 2
-                },
-                480: {
-                    items: 2
-                },
-                556: {
-                    items: 3
-                },
-                650: {
-                    items: 3
-                },
-                768: {
-                    items: 4
-                },
-                1000: {
-                    items: 6
-                }
-            }
-        });
-      
-          
-
-              $('.best_selling').owlCarousel({
-                loop: true, // ✅ Must be true for autoplay to loop
-                autoplay: true,
-                autoplayTimeout: 2000,
-                autoplayHoverPause: false,
-                dots: false,
-                nav: false,
+            $('.category-slide-new').owlCarousel({
+                nav:                false,
+                loop:               canLoop,
+                rewind:             !canLoop,
+                autoplay:           true,
+                autoplayTimeout:    3500,
+                autoplayHoverPause: true,
+                smartSpeed:         700,
+                dots:               false,
+                stagePadding:       10,
+                margin:             6,
                 responsive: {
-                    0: {
-                        items: 2
-                    },
-                    350: {
-                        items: 2
-                    },
-                    380: {
-                        items: 2
-                    },
-                    450: {
-                        items: 2
-                    },
-                    480: {
-                        items: 2
-                    },
-                    556: {
-                        items: 3
-                    },
-                    650: {
-                        items: 3
-                    },
-                    768: {
-                        items: 4
-                    },
-                    1000: {
-                        items: 6
-                    }
+                    0:    { items: 4, margin: 6,  stagePadding: 8  },
+                    360:  { items: 5, margin: 6,  stagePadding: 8  },
+                    480:  { items: 5, margin: 8,  stagePadding: 10 },
+                    600:  { items: 6, margin: 8  },
+                    768:  { items: 7, margin: 10 },
+                    992:  { items: 8, margin: 10 },
+                    1200: { items: 10, margin: 12 }
                 }
             });
-          
-           $('.featuredProducts').owlCarousel({
-                loop: true, // ✅ Must be true for autoplay to loop
-                autoplay: true,
-                autoplayTimeout: 2000,
-                autoplayHoverPause: false,
-                dots: false,
-                nav: false,
-                responsive: {
-                    0: {
-                        items: 2
-                    },
-                    350: {
-                        items: 2
-                    },
-                    380: {
-                        items: 2
-                    },
-                    450: {
-                        items: 2
-                    },
-                    480: {
-                        items: 2
-                    },
-                    556: {
-                        items: 3
-                    },
-                    650: {
-                        items: 3
-                    },
-                    768: {
-                        items: 4
-                    },
-                    1000: {
-                        items: 6
+        }
+
+        // ── 2. PRODUCT TAB CAROUSEL ───────────────────────────────────
+        function initProductCarousel(selector, timeout) {
+            if (!$(selector).length) return;
+            $(selector).each(function() {
+                var $owl = $(this);
+                if ($owl.hasClass('owl-loaded')) return;
+                $owl.owlCarousel({
+                    loop: true, autoplay: true,
+                    autoplayTimeout: timeout || 2800,
+                    autoplayHoverPause: true,
+                    smartSpeed: 600,
+                    dots: false, nav: false, margin: 8,
+                    responsive: {
+                        0:   { items: 2, margin: 8  },
+                        350: { items: 2, margin: 8  },
+                        480: { items: 2, margin: 8  },
+                        556: { items: 3, margin: 8  },
+                        650: { items: 3, margin: 8  },
+                        768: { items: 4, margin: 10 },
+                        992: { items: 4, margin: 10 },
+                        1200:{ items: 5, margin: 12 }
                     }
-                }
+                });
             });
+        }
+
+        initProductCarousel('.new_productsTab',       4500);
+        initProductCarousel('.home-owl-carouseltab',   4500);
+        initProductCarousel('.categoryProducts',       4000);
+        initProductCarousel('.best_selling',           5000);
+        initProductCarousel('.featuredProducts',       5500);
+        initProductCarousel('.special_offer_carousel', 4200);
+        initProductCarousel('.special_deals_err',      4300);
+        initProductCarousel('.best-seller',            4800);
+
+        // ── 3. TAB SWITCH — refresh carousel ─────────────────────────
+        $(document).on('click', '.nav-tabs .nav-link, .product-tab-btn', function() {
+            setTimeout(function() {
+                $('.new_productsTab, .home-owl-carouseltab').each(function() {
+                    if ($(this).hasClass('owl-loaded')) {
+                        $(this).trigger('refresh.owl.carousel');
+                    }
+                });
+            }, 150);
+        });
+
+    }); // end ready
     </script>
+    {{-- Live Chat — DB থেকে control --}}
+    @php
+        try {
+            $lcS = \App\Models\Setting::first();
+            $lcEnabled = $lcS->livechat_enabled ?? 1;
+            $lcPropId  = $lcS->tawkto_property_id ?? '67769592af5bfec1dbe5cfa4';
+            $lcWidgetId = $lcS->tawkto_widget_id ?? '1igjjqi4t';
+        } catch (\Exception $e) {
+            $lcEnabled = 1; $lcPropId = '67769592af5bfec1dbe5cfa4'; $lcWidgetId = '1igjjqi4t';
+        }
+    @endphp
+    @if($lcEnabled)
     <!--Start of Tawk.to Script-->
-     <script type="text/javascript">
-        var Tawk_API = Tawk_API || {},
-            Tawk_LoadStart = new Date();
-        (function() {
-            var s1 = document.createElement("script"),
-                s0 = document.getElementsByTagName("script")[0];
+    <script type="text/javascript">
+        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+        (function(){
+            var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
             s1.async = true;
-            s1.src = 'https://embed.tawk.to/67769592af5bfec1dbe5cfa4/1igjjqi4t';
+            s1.src = 'https://embed.tawk.to/{{ $lcPropId }}/{{ $lcWidgetId }}';
             s1.charset = 'UTF-8';
-            s1.setAttribute('crossorigin', '*');
+            s1.setAttribute('crossorigin','*');
             s0.parentNode.insertBefore(s1, s0);
         })();
-    </script> 
+    </script>
     <!--End of Tawk.to Script-->
+    @endif
+
 @endpush

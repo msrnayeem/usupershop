@@ -156,8 +156,8 @@ class SellerDashboardController extends Controller
         $data = User::find(Auth::user()->id);
         $data->name = $request->name;
         $data->shop_name = $request->shop_name;
-        $data->email = $request->email;
-        $data->mobile = $request->mobile;
+        // Email is locked — not editable
+        // Mobile is locked — not editable
         $data->address = $request->address;
         $data->gender = $request->gender;
         if ($request->file('image')) {

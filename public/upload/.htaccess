@@ -1,5 +1,14 @@
-# ===== Block dangerous file access in upload directories =====
-<FilesMatch "\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|sh|cgi|htaccess|htpasswd|ini|log|sql|bak|tar|gz|zip)$">
-    Order Allow,Deny
+# Block PHP execution in upload directory
+<FilesMatch "\.(php|php5|php7|phtml|phar|shtml|pl|py|cgi|sh)$">
+    Order allow,deny
     Deny from all
+</FilesMatch>
+
+# Block directory listing
+Options -Indexes
+
+# Only allow image, document, and video files
+<FilesMatch "\.(jpg|jpeg|png|gif|webp|pdf|mp4|webm)$">
+    Order allow,deny
+    Allow from all
 </FilesMatch>

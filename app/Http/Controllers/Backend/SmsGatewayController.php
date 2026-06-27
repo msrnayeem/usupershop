@@ -209,4 +209,42 @@ public function testSend(Request $request)
     {
         //
     }
+    /**
+     * Show SMS Templates edit page
+     */
+    public function templates()
+    {
+        $smsSettings = \App\Models\Sms::first();
+        return view('backend.sms-gateway.sms-templates', compact('smsSettings'));
+    }
+
+    /**
+     * Update SMS Templates from admin panel
+     */
+    public function updateTemplates(\Illuminate\Http\Request $request)
+    {
+        $templateKeys = [
+            'tpl_order_confirmed_cod_free', 'tpl_order_confirmed_cod_paid',
+            'tpl_order_confirmed_bkash', 'tpl_order_processing',
+            'tpl_order_shipped', 'tpl_order_delivered',
+            'tpl_order_cancelled', 'tpl_order_return',
+            'tpl_welcome_seller', 'tpl_welcome_vendor',
+            'tpl_welcome_dropshipper', 'tpl_subscription_expiry',
+            'tpl_withdrawal_approved',
+            'tpl_password_reset',
+        ];
+
+        $data = [];
+        foreach ($templateKeys as $key) {
+            if ($request->has($key)) {
+                $data[$key] = $request->input($key);
+            }
+        }
+
+        \App\Models\Sms::where('id', 1)->update($data);
+
+        return redirect()->route('sms.templates.view')
+            ->with('success', '✅ সব SMS Templates সফলভাবে Save হয়েছে!');
+    }
+
 }

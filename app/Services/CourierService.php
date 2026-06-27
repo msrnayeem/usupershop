@@ -5,693 +5,307 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use App\Models\Courier;
 
 class CourierService
 {
-    protected $steadfastConfig;
-    protected $pathaoConfig;
+    protected $steadfast;
+    protected $pathao;
 
     public function __construct()
     {
-        $this->steadfastConfig = [
-            'base_url' => 'https://portal.packzy.com/api/v1',
-            'api_key' => '8tglqf4sskogfpaqw236zymkvcjhomli',
-            'secret_key' => '2iiqxtgqnztsc9u9esshh2xf'
+        // ── Load credentials from DB ─────────────────────────────────
+        $sfRow = Courier::where('name', 'Steadfast')->first();
+        $ptRow = Courier::where('name', 'Pathao')->first();
+
+        $this->steadfast = [
+            'base_url'   => $sfRow->base_url    ?? 'https://portal.packzy.com/api/v1',
+            'api_key'     => $sfRow->api_key     ?? '',
+            'secret_key'  => $sfRow->secret_key  ?? '',
+            'is_active'   => $sfRow->is_active   ?? 0,
+            'is_sandbox'  => $sfRow->is_sandbox  ?? 0,
         ];
 
-        $this->pathaoConfig = [
-            'base_url' => 'https://courier-api-sandbox.pathao.com',
-            'client_id' => '7N1aMJQbWm',
-            'client_secret' => 'wRcaibZkUdSNz2EI9ZyuXLlNrnAv0TdPUPXMnD39',
-            'username' => 'test@pathao.com',
-            'password' => 'lovePathao',
-            'grant_type' => 'password'
+        $isSandbox = ($ptRow->is_sandbox ?? 0);
+        $this->pathao = [
+            'base_url'       => $ptRow->base_url      ?? ($isSandbox ? 'https://courier-api-sandbox.pathao.com' : 'https://courier-api.pathao.com'),
+            'client_id'      => $ptRow->client_id     ?? '',
+            'client_secret'  => $ptRow->client_secret ?? '',
+            'username'       => $ptRow->username       ?? '',
+            'password'       => $ptRow->password       ?? '',
+            'store_id'       => $ptRow->store_id       ?? '',
+            'is_active'      => $ptRow->is_active      ?? 0,
+            'is_sandbox'     => $isSandbox,
+            'grant_type'     => 'password',
         ];
     }
 
-    /**
-     * Get valid Pathao store ID
-     */
-    protected function getValidPathaoStoreId()
-    {
-        $cacheKey = 'pathao_store_id';
-        
-        if (Cache::has($cacheKey)) {
-            return Cache::get($cacheKey);
-        }
-
-        try {
-            $token = $this->getPathaoToken();
-            $response = Http::timeout(30)
-                ->withHeaders([
-                    'Authorization' => 'Bearer ' . $token,
-                    'Accept' => 'application/json'
-                ])
-                ->get($this->pathaoConfig['base_url'] . '/aladdin/api/v1/stores');
-
-            if ($response->successful()) {
-                $result = $response->json();
-                
-                // Handle different response structures
-                $stores = [];
-                if (isset($result['data']['data'])) {
-                    $stores = $result['data']['data'];
-                } elseif (isset($result['data']) && is_array($result['data'])) {
-                    $stores = $result['data'];
-                } elseif (is_array($result)) {
-                    $stores = $result;
-                }
-                
-                if (!empty($stores) && isset($stores[0]['store_id'])) {
-                    $storeId = $stores[0]['store_id'];
-                    Cache::put($cacheKey, $storeId, 24 * 60 * 60); // Cache for 24 hours
-                    return $storeId;
-                }
-            }
-
-            Log::warning('Failed to get valid Pathao store ID, using default', [
-                'status' => $response->status(),
-                'response' => $response->body()
-            ]);
-
-        } catch (\Exception $e) {
-            Log::error('Failed to get Pathao store ID', ['error' => $e->getMessage()]);
-        }
-
-        return 1; // Default fallback
-    }
-
-    /**
-     * Send order to selected courier
-     */
+    // ── Send to courier ───────────────────────────────────────────────
     public function sendToCourier($order, $courierId, $priority = 'normal', $notes = null)
     {
         try {
             switch ($courierId) {
                 case 'steadfast':
+                    if (!$this->steadfast['is_active'])
+                        return ['success' => false, 'message' => 'Steadfast courier is not active. Admin → Couriers থেকে activate করুন।'];
+                    if (empty($this->steadfast['api_key']))
+                        return ['success' => false, 'message' => 'Steadfast API Key নেই। Admin → Couriers থেকে set করুন।'];
                     return $this->sendToSteadfast($order, $priority, $notes);
+
                 case 'pathao':
+                    if (!$this->pathao['is_active'])
+                        return ['success' => false, 'message' => 'Pathao courier is not active. Admin → Couriers থেকে activate করুন।'];
+                    if (empty($this->pathao['client_id']))
+                        return ['success' => false, 'message' => 'Pathao credentials নেই। Admin → Couriers থেকে set করুন।'];
                     return $this->sendToPathao($order, $priority, $notes);
-                case 'redx':
-                case 'sa_paribahan':
-                case 'sundarban':
-                case 'karatoa':
-                    // Mock response for unsupported couriers
-                    return [
-                        'success' => true,
-                        'tracking_id' => 'MOCK_' . strtoupper($courierId) . '_' . time(),
-                        'message' => "Order successfully assigned to " . ucfirst($courierId) . " (Demo Mode)",
-                        'response' => ['mock' => true, 'courier' => $courierId]
-                    ];
+
                 default:
-                    return ['success' => false, 'message' => 'Unsupported courier service: ' . $courierId];
+                    return ['success' => false, 'message' => 'Unknown courier: ' . $courierId];
             }
         } catch (\Exception $e) {
-            Log::error('Courier API Error', [
-                'courier' => $courierId,
-                'order' => $order->order_no ?? 'unknown',
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return ['success' => false, 'message' => 'Courier API connection failed: ' . $e->getMessage()];
+            Log::error('Courier API Error', ['courier' => $courierId, 'error' => $e->getMessage()]);
+            return ['success' => false, 'message' => 'Courier API error: ' . $e->getMessage()];
         }
     }
 
-    /**
-     * Send order to Steadfast
-     */
+    // ── Steadfast ────────────────────────────────────────────────────
     protected function sendToSteadfast($order, $priority, $notes)
     {
-        $endpoint = $this->steadfastConfig['base_url'] . '/create_order';
-        
-        // Debug: Log order data to see what fields are available
-        Log::info('Order Data for Steadfast', [
-            'order_no' => $order->order_no,
-            'billing_name' => $order->billing_name ?? 'NULL',
-            'billing_mobile' => $order->billing_mobile ?? 'NULL',
-            'billing_phone' => $order->billing_phone ?? 'NULL',
-            'customer_name' => $order->customer_name ?? 'NULL',
-            'customer_phone' => $order->customer_phone ?? 'NULL',
-            'phone' => $order->phone ?? 'NULL',
-            'mobile' => $order->mobile ?? 'NULL'
-        ]);
-        
-        // Try different field combinations that might exist in your Order model
-        $recipientName = $order->billing_name 
-            ?? $order->customer_name 
-            ?? $order->name 
-            ?? $order->recipient_name 
-            ?? 'Customer';
-            
-        $recipientPhone = $order->billing_mobile 
-            ?? $order->billing_phone 
-            ?? $order->customer_phone 
-            ?? $order->phone 
-            ?? $order->mobile 
-            ?? $order->customer_mobile 
-            ?? '01700000000'; // Default phone number
-            
-        $recipientAddress = $order->billing_address 
-            ?? $order->customer_address 
-            ?? $order->address 
-            ?? $order->shipping_address 
-            ?? 'Dhaka, Bangladesh';
-        
-        $orderData = [
-            'invoice' => $order->order_no,
-            'recipient_name' => trim($recipientName),
-            'recipient_phone' => trim($recipientPhone),
-            'recipient_address' => trim($recipientAddress),
-            'recipient_city' => $order->billing_district ?? $order->district ?? 'Dhaka',
-            'recipient_zone' => $order->billing_upazila ?? $order->upazila ?? 'Dhaka',
-            'cod_amount' => $order->payment_id === 'cash_on_delivery' || $order->payment_method === 'cash_on_delivery' ? (float)$order->order_total : 0,
-            'note' => $notes ?? ('Order from ' . config('app.name', 'E-commerce')),
+        $shipping = $order->shipping;
+        $recipientName    = $shipping->name    ?? $order->billing_name    ?? 'Customer';
+        $recipientPhone   = $shipping->mobile  ?? $order->billing_mobile  ?? '01700000000';
+        $recipientAddress = $shipping->address ?? $order->billing_address ?? 'Dhaka, Bangladesh';
+
+        $isCOD = in_array(strtolower($order->payment_method ?? ''), ['cash on delivery', 'cod', 'unpaid']);
+        $codAmount = $isCOD ? (float)($order->grand_total ?? $order->order_total ?? 0) : 0;
+
+        $payload = [
+            'invoice'            => $order->order_no ?? $order->invoice_no ?? ('USP' . $order->id),
+            'recipient_name'     => trim($recipientName),
+            'recipient_phone'    => trim($recipientPhone),
+            'recipient_address'  => trim($recipientAddress),
+            'cod_amount'         => $codAmount,
+            'note'               => $notes ?? 'U Super Shop order',
         ];
 
-        try {
-            $response = Http::timeout(30)
-                ->withHeaders([
-                    'Api-Key' => $this->steadfastConfig['api_key'],
-                    'Secret-Key' => $this->steadfastConfig['secret_key'],
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json'
-                ])
-                ->post($endpoint, $orderData);
+        $response = Http::timeout(30)
+            ->withHeaders([
+                'Api-Key'    => $this->steadfast['api_key'],
+                'Secret-Key' => $this->steadfast['secret_key'],
+                'Content-Type' => 'application/json',
+                'Accept'     => 'application/json',
+            ])
+            ->post($this->steadfast['base_url'] . '/create_order', $payload);
 
-            Log::info('Steadfast API Response', [
-                'order_no' => $order->order_no,
-                'status' => $response->status(),
-                'response' => $response->body()
-            ]);
+        Log::info('Steadfast Response', ['order' => $order->id, 'status' => $response->status(), 'body' => $response->body()]);
 
-            if ($response->successful()) {
-                $result = $response->json();
-                
-                // Handle different Steadfast response formats
-                if (isset($result['status']) && $result['status'] == 200) {
-                    return [
-                        'success' => true,
-                        'tracking_id' => $result['consignment']['tracking_code'] ?? null,
-                        'message' => 'Order successfully sent to Steadfast',
-                        'response' => $result
-                    ];
-                } elseif (isset($result['success']) && $result['success'] === true) {
-                    return [
-                        'success' => true,
-                        'tracking_id' => $result['data']['tracking_code'] ?? $result['tracking_code'] ?? null,
-                        'message' => 'Order successfully sent to Steadfast',
-                        'response' => $result
-                    ];
-                }
-            }
-
-            $errorMessage = 'Unknown error';
-            if ($response->json()) {
-                $errorData = $response->json();
-                $errorMessage = $errorData['message'] ?? $errorData['error'] ?? 'API request failed';
-            }
-
-            return [
-                'success' => false,
-                'message' => 'Failed to send order to Steadfast: ' . $errorMessage
-            ];
-
-        } catch (\Exception $e) {
-            Log::error('Steadfast API Exception', [
-                'order_no' => $order->order_no,
-                'error' => $e->getMessage()
-            ]);
-            
-            throw new \Exception('Steadfast API Error: ' . $e->getMessage());
+        if ($response->successful()) {
+            $result = $response->json();
+            $tracking = $result['consignment']['tracking_code']
+                ?? $result['data']['tracking_code']
+                ?? $result['tracking_code']
+                ?? null;
+            return ['success' => true, 'tracking_id' => $tracking, 'message' => 'Order sent to Steadfast successfully!', 'response' => $result];
         }
+
+        $err = $response->json()['message'] ?? $response->json()['error'] ?? 'API request failed (HTTP ' . $response->status() . ')';
+        return ['success' => false, 'message' => 'Steadfast error: ' . $err];
     }
 
-    /**
-     * Get Pathao access token
-     */
+    // ── Pathao Token ─────────────────────────────────────────────────
     protected function getPathaoToken()
     {
-        $cacheKey = 'pathao_access_token';
-        
-        if (Cache::has($cacheKey)) {
-            return Cache::get($cacheKey);
-        }
+        $cacheKey = 'pathao_access_token_' . md5($this->pathao['client_id']);
 
-        try {
-            $response = Http::timeout(30)
-                ->asForm()
-                ->post($this->pathaoConfig['base_url'] . '/aladdin/api/v1/issue-token', [
-                    'client_id' => $this->pathaoConfig['client_id'],
-                    'client_secret' => $this->pathaoConfig['client_secret'],
-                    'username' => $this->pathaoConfig['username'],
-                    'password' => $this->pathaoConfig['password'],
-                    'grant_type' => $this->pathaoConfig['grant_type']
-                ]);
+        if (Cache::has($cacheKey)) return Cache::get($cacheKey);
 
-            Log::info('Pathao Token Response', [
-                'status' => $response->status(),
-                'response' => $response->body()
+        $response = Http::timeout(30)
+            ->withHeaders(['Accept' => 'application/json', 'Content-Type' => 'application/json'])
+            ->post($this->pathao['base_url'] . '/aladdin/api/v1/issue-token', [
+                'client_id'     => $this->pathao['client_id'],
+                'client_secret' => $this->pathao['client_secret'],
+                'username'      => $this->pathao['username'],
+                'password'      => $this->pathao['password'],
+                'grant_type'    => 'password',
             ]);
 
-            if ($response->successful()) {
-                $result = $response->json();
-                $token = $result['access_token'] ?? null;
-                
-                if (!$token) {
-                    throw new \Exception('Access token not found in response: ' . json_encode($result));
-                }
-                
-                $expiresIn = $result['expires_in'] ?? 3600;
-                Cache::put($cacheKey, $token, $expiresIn - 300);
-                return $token;
-            }
+        if (!$response->successful())
+            throw new \Exception('Pathao token failed: ' . $response->body());
 
-            throw new \Exception('Failed to get Pathao access token. Status: ' . $response->status() . ' Response: ' . $response->body());
-
-        } catch (\Exception $e) {
-            Log::error('Pathao Token Error', ['error' => $e->getMessage()]);
-            throw new \Exception('Pathao token error: ' . $e->getMessage());
-        }
+        $result = $response->json();
+        $token  = $result['access_token'] ?? throw new \Exception('No access_token in Pathao response');
+        Cache::put($cacheKey, $token, ($result['expires_in'] ?? 3600) - 300);
+        return $token;
     }
 
-    /**
-     * Send order to Pathao - FIXED VERSION
-     */
-    protected function sendToPathao($order, $priority, $notes)
+    // ── Pathao Store ID ──────────────────────────────────────────────
+    protected function getValidPathaoStoreId()
     {
+        if (!empty($this->pathao['store_id'])) return (int)$this->pathao['store_id'];
+
+        $cacheKey = 'pathao_store_id_' . md5($this->pathao['client_id']);
+        if (Cache::has($cacheKey)) return Cache::get($cacheKey);
+
         try {
-            $token = $this->getPathaoToken();
-            $endpoint = $this->pathaoConfig['base_url'] . '/aladdin/api/v1/orders';
-
-            // Get recipient information with proper null checks and type casting
-            $recipientName = trim((string)($order->billing_name 
-                ?? $order->customer_name 
-                ?? $order->name 
-                ?? $order->recipient_name 
-                ?? 'Customer'));
-                
-            $recipientPhone = trim((string)($order->billing_mobile 
-                ?? $order->billing_phone 
-                ?? $order->customer_phone 
-                ?? $order->phone 
-                ?? $order->mobile 
-                ?? $order->customer_mobile 
-                ?? '01700000000'));
-                
-            $recipientAddress = trim((string)($order->billing_address 
-                ?? $order->customer_address 
-                ?? $order->address 
-                ?? $order->shipping_address 
-                ?? 'Dhaka, Bangladesh'));
-
-            // Get city and zone names as strings
-            $cityName = (string)($order->billing_district ?? $order->district ?? 'Dhaka');
-            $zoneName = (string)($order->billing_upazila ?? $order->upazila ?? 'Dhaka');
-
-            // Get city and zone IDs with safe fallbacks
-            $cityId = $this->getPathaoCityId($cityName);
-            $zoneId = $this->getPathaoZoneId($zoneName, $cityId);
-
-            // First get valid store list to find correct store_id
-            $validStoreId = $this->getValidPathaoStoreId();
-            
-            // Ensure all values are properly typed
-            $orderData = [
-                'store_id' => (int)$validStoreId,
-                'merchant_order_id' => (string)$order->order_no,
-                'sender_name' => (string)(config('app.name', 'E-commerce')),
-                'sender_phone' => '01700000000',
-                'recipient_name' => $recipientName,
-                'recipient_phone' => $recipientPhone,
-                'recipient_address' => $recipientAddress,
-                'recipient_city' => (int)$cityId,
-                'recipient_zone' => (int)$zoneId,
-                'delivery_type' => (int)48,
-                'item_type' => (int)2,
-                'special_instruction' => (string)($notes ?? 'Handle with care'),
-                'item_quantity' => (int)1,
-                'item_weight' => (float)0.5,
-                'amount_to_collect' => (float)($order->payment_id === 'cash_on_delivery' || $order->payment_method === 'cash_on_delivery' ? (float)$order->order_total : 0),
-                'item_description' => 'Order #' . (string)$order->order_no
-            ];
-
-            // Log the data being sent for debugging
-            Log::info('Pathao Order Data', [
-                'order_no' => $order->order_no,
-                'order_data' => $orderData
-            ]);
-
-            $response = Http::timeout(30)
-                ->withHeaders([
-                    'Authorization' => 'Bearer ' . $token,
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json'
-                ])
-                ->post($endpoint, $orderData);
-
-            Log::info('Pathao Order Response', [
-                'order_no' => $order->order_no,
-                'status' => $response->status(),
-                'response' => $response->body()
-            ]);
-
+            $token    = $this->getPathaoToken();
+            $response = Http::withHeaders(['Authorization' => 'Bearer ' . $token, 'Accept' => 'application/json'])
+                ->get($this->pathao['base_url'] . '/aladdin/api/v1/stores');
             if ($response->successful()) {
-                $result = $response->json();
-                
-                // Handle different Pathao response structures safely
-                $consignmentId = null;
-                
-                if (isset($result['data']['consignment_id'])) {
-                    $consignmentId = $result['data']['consignment_id'];
-                } elseif (isset($result['data']) && is_array($result['data']) && isset($result['data']['id'])) {
-                    $consignmentId = $result['data']['id'];
-                } elseif (isset($result['consignment_id'])) {
-                    $consignmentId = $result['consignment_id'];
-                } elseif (isset($result['id'])) {
-                    $consignmentId = $result['id'];
-                }
-                
-                return [
-                    'success' => true,
-                    'tracking_id' => $consignmentId,
-                    'message' => 'Order successfully sent to Pathao',
-                    'response' => $result
-                ];
+                $stores  = $response->json()['data']['data'] ?? $response->json()['data'] ?? [];
+                $storeId = $stores[0]['store_id'] ?? 1;
+                Cache::put($cacheKey, $storeId, 86400);
+                return $storeId;
             }
-
-            $errorMessage = 'Unknown error';
-            $responseData = $response->json();
-            if ($responseData) {
-                $errorMessage = $responseData['message'] ?? $responseData['error'] ?? 'API request failed';
-                if (isset($responseData['errors']) && is_array($responseData['errors'])) {
-                    $errorDetails = [];
-                    foreach ($responseData['errors'] as $field => $messages) {
-                        if (is_array($messages)) {
-                            $errorDetails[] = $field . ': ' . implode(', ', $messages);
-                        } else {
-                            $errorDetails[] = $field . ': ' . (string)$messages;
-                        }
-                    }
-                    $errorMessage .= ' - ' . implode(', ', $errorDetails);
-                }
-            }
-
-            return [
-                'success' => false,
-                'message' => 'Failed to send order to Pathao: ' . $errorMessage
-            ];
-
-        } catch (\Exception $e) {
-            Log::error('Pathao Order Exception', [
-                'order_no' => $order->order_no,
-                'error' => $e->getMessage(),
-                'line' => $e->getLine(),
-                'file' => $e->getFile()
-            ]);
-            
-            throw new \Exception('Pathao API Error: ' . $e->getMessage());
-        }
+        } catch (\Exception $e) { Log::warning('Pathao store fetch failed', ['error' => $e->getMessage()]); }
+        return 1;
     }
 
-    /**
-     * Get Pathao cities with safe error handling
-     */
+    // ── Pathao Cities/Zones ──────────────────────────────────────────
     public function getPathaoCities()
     {
-        $cacheKey = 'pathao_cities';
-        
-        if (Cache::has($cacheKey)) {
-            return Cache::get($cacheKey);
-        }
-
+        $cacheKey = 'pathao_cities_' . md5($this->pathao['client_id']);
+        if (Cache::has($cacheKey)) return Cache::get($cacheKey);
         try {
-            $token = $this->getPathaoToken();
-            $response = Http::timeout(30)
-                ->withHeaders([
-                    'Authorization' => 'Bearer ' . $token,
-                    'Accept' => 'application/json'
-                ])
-                ->get($this->pathaoConfig['base_url'] . '/aladdin/api/v1/cities');
-
+            $token    = $this->getPathaoToken();
+            $response = Http::withHeaders(['Authorization' => 'Bearer ' . $token, 'Accept' => 'application/json'])
+                ->get($this->pathao['base_url'] . '/aladdin/api/v1/cities');
             if ($response->successful()) {
-                $result = $response->json();
-                
-                // Handle different response structures safely
-                $cities = [];
-                if (isset($result['data']['data'])) {
-                    $cities = $result['data']['data'];
-                } elseif (isset($result['data']) && is_array($result['data'])) {
-                    $cities = $result['data'];
-                } elseif (is_array($result)) {
-                    $cities = $result;
-                }
-                
-                Cache::put($cacheKey, $cities, 24 * 60 * 60);
+                $cities = $response->json()['data']['data'] ?? $response->json()['data'] ?? [];
+                Cache::put($cacheKey, $cities, 86400);
                 return $cities;
             }
-
-            Log::warning('Failed to get Pathao cities', [
-                'status' => $response->status(),
-                'response' => $response->body()
-            ]);
-
-            return [];
-
-        } catch (\Exception $e) {
-            Log::error('Failed to get Pathao cities', ['error' => $e->getMessage()]);
-            return [];
-        }
+        } catch (\Exception $e) { }
+        return [];
     }
 
-    /**
-     * Get Pathao zones for a city with safe error handling
-     */
     public function getPathaoZones($cityId)
     {
-        $cacheKey = "pathao_zones_{$cityId}";
-        
-        if (Cache::has($cacheKey)) {
-            return Cache::get($cacheKey);
-        }
-
+        $cacheKey = 'pathao_zones_' . $cityId . '_' . md5($this->pathao['client_id']);
+        if (Cache::has($cacheKey)) return Cache::get($cacheKey);
         try {
-            $token = $this->getPathaoToken();
-            $response = Http::timeout(30)
-                ->withHeaders([
-                    'Authorization' => 'Bearer ' . $token,
-                    'Accept' => 'application/json'
-                ])
-                ->get($this->pathaoConfig['base_url'] . "/aladdin/api/v1/cities/{$cityId}/zone-list");
-
+            $token    = $this->getPathaoToken();
+            $response = Http::withHeaders(['Authorization' => 'Bearer ' . $token, 'Accept' => 'application/json'])
+                ->get($this->pathao['base_url'] . "/aladdin/api/v1/cities/{$cityId}/zone-list");
             if ($response->successful()) {
-                $result = $response->json();
-                
-                // Handle different response structures safely
-                $zones = [];
-                if (isset($result['data']['data'])) {
-                    $zones = $result['data']['data'];
-                } elseif (isset($result['data']) && is_array($result['data'])) {
-                    $zones = $result['data'];
-                } elseif (is_array($result)) {
-                    $zones = $result;
-                }
-                
-                Cache::put($cacheKey, $zones, 24 * 60 * 60);
+                $zones = $response->json()['data']['data'] ?? $response->json()['data'] ?? [];
+                Cache::put($cacheKey, $zones, 86400);
                 return $zones;
             }
-
-            Log::warning('Failed to get Pathao zones', [
-                'city_id' => $cityId,
-                'status' => $response->status(),
-                'response' => $response->body()
-            ]);
-
-            return [];
-
-        } catch (\Exception $e) {
-            Log::error('Failed to get Pathao zones', [
-                'city_id' => $cityId, 
-                'error' => $e->getMessage()
-            ]);
-            return [];
-        }
+        } catch (\Exception $e) { }
+        return [];
     }
 
-    /**
-     * Get city ID by name with safe fallback - IMPROVED VERSION
-     */
     protected function getPathaoCityId($cityName)
     {
-        $cities = $this->getPathaoCities();
-        
-        if (empty($cities)) {
-            return 1; // Default to Dhaka if no cities found
-        }
-        
-        // Convert cityName to string and trim
-        $cityName = trim((string)$cityName);
-        
-        foreach ($cities as $city) {
-            if (isset($city['city_name']) && 
-                stripos((string)$city['city_name'], $cityName) !== false) {
+        foreach ($this->getPathaoCities() as $city)
+            if (isset($city['city_name']) && stripos($city['city_name'], $cityName) !== false)
                 return (int)$city['city_id'];
-            }
-        }
-        
-        return 1; // Default to Dhaka
+        return 1;
     }
 
-    /**
-     * Get zone ID by name and city with safe fallback - IMPROVED VERSION
-     */
     protected function getPathaoZoneId($zoneName, $cityId)
     {
         $zones = $this->getPathaoZones($cityId);
-        
-        if (empty($zones)) {
-            return 1; // Default zone ID
-        }
-        
-        // Convert zoneName to string and trim
-        $zoneName = trim((string)$zoneName);
-        
-        foreach ($zones as $zone) {
-            if (isset($zone['zone_name']) && 
-                stripos((string)$zone['zone_name'], $zoneName) !== false) {
-                return (int)$zone['zone_id'];
-            }
-        }
-        
-        return (int)($zones[0]['zone_id'] ?? 1); // Default to first zone
+        foreach ($zones as $z)
+            if (isset($z['zone_name']) && stripos($z['zone_name'], $zoneName) !== false)
+                return (int)$z['zone_id'];
+        return (int)($zones[0]['zone_id'] ?? 1);
     }
 
-    /**
-     * Track order status
-     */
+    // ── Pathao Send Order ────────────────────────────────────────────
+    protected function sendToPathao($order, $priority, $notes)
+    {
+        $token    = $this->getPathaoToken();
+        $shipping = $order->shipping;
+
+        $recipientName    = trim($shipping->name    ?? $order->billing_name    ?? 'Customer');
+        $recipientPhone   = trim($shipping->mobile  ?? $order->billing_mobile  ?? '01700000000');
+        $recipientAddress = trim($shipping->address ?? $order->billing_address ?? 'Dhaka, Bangladesh');
+        $cityName         = $shipping->district ?? $order->billing_district ?? 'Dhaka';
+        $zoneName         = $shipping->upazila  ?? $order->billing_upazila  ?? 'Dhaka';
+
+        $cityId = $this->getPathaoCityId($cityName);
+        $zoneId = $this->getPathaoZoneId($zoneName, $cityId);
+
+        $isCOD = in_array(strtolower($order->payment_method ?? ''), ['cash on delivery', 'cod', 'unpaid']);
+        $collectAmount = $isCOD ? (float)($order->grand_total ?? $order->order_total ?? 0) : 0;
+
+        $payload = [
+            'store_id'            => (int)$this->getValidPathaoStoreId(),
+            'merchant_order_id'   => (string)($order->order_no ?? $order->invoice_no ?? 'USP' . $order->id),
+            'sender_name'         => 'U Super Shop',
+            'sender_phone'        => '01816622128',
+            'recipient_name'      => $recipientName,
+            'recipient_phone'     => $recipientPhone,
+            'recipient_address'   => $recipientAddress,
+            'recipient_city'      => $cityId,
+            'recipient_zone'      => $zoneId,
+            'delivery_type'       => 48,
+            'item_type'           => 2,
+            'special_instruction' => $notes ?? '',
+            'item_quantity'       => 1,
+            'item_weight'         => 0.5,
+            'amount_to_collect'   => $collectAmount,
+            'item_description'    => 'Order #' . ($order->order_no ?? $order->id),
+        ];
+
+        $response = Http::timeout(30)
+            ->withHeaders(['Authorization' => 'Bearer ' . $token, 'Content-Type' => 'application/json', 'Accept' => 'application/json'])
+            ->post($this->pathao['base_url'] . '/aladdin/api/v1/orders', $payload);
+
+        Log::info('Pathao Response', ['order' => $order->id, 'status' => $response->status(), 'body' => $response->body()]);
+
+        if ($response->successful()) {
+            $result = $response->json();
+            $consignmentId = $result['data']['consignment_id'] ?? $result['data']['id'] ?? $result['consignment_id'] ?? null;
+            return ['success' => true, 'tracking_id' => $consignmentId, 'message' => 'Order sent to Pathao successfully!', 'response' => $result];
+        }
+
+        $errors = $response->json()['errors'] ?? [];
+        $errMsg = $response->json()['message'] ?? 'API failed (HTTP ' . $response->status() . ')';
+        if (!empty($errors)) $errMsg .= ' — ' . implode(', ', array_map(fn($e) => is_array($e) ? implode(', ', $e) : $e, $errors));
+        return ['success' => false, 'message' => 'Pathao error: ' . $errMsg];
+    }
+
+    // ── Track Order ──────────────────────────────────────────────────
     public function trackOrder($courierId, $trackingId)
     {
-        switch ($courierId) {
-            case 'steadfast':
-                return $this->trackSteadfastOrder($trackingId);
-            case 'pathao':
-                return $this->trackPathaoOrder($trackingId);
-            default:
-                return ['success' => false, 'message' => 'Unsupported courier service'];
-        }
+        try {
+            if ($courierId === 'steadfast') {
+                $r = Http::withHeaders(['Api-Key' => $this->steadfast['api_key'], 'Secret-Key' => $this->steadfast['secret_key']])
+                    ->post($this->steadfast['base_url'] . '/track_order', ['tracking_code' => $trackingId]);
+                return $r->successful() ? ['success' => true, 'data' => $r->json()] : ['success' => false, 'message' => 'Tracking failed'];
+            }
+            if ($courierId === 'pathao') {
+                $token = $this->getPathaoToken();
+                $r = Http::withHeaders(['Authorization' => 'Bearer ' . $token, 'Accept' => 'application/json'])
+                    ->get($this->pathao['base_url'] . "/aladdin/api/v1/orders/{$trackingId}");
+                return $r->successful() ? ['success' => true, 'data' => $r->json()] : ['success' => false, 'message' => 'Tracking failed'];
+            }
+        } catch (\Exception $e) { return ['success' => false, 'message' => $e->getMessage()]; }
+        return ['success' => false, 'message' => 'Unknown courier'];
     }
 
-    /**
-     * Track Steadfast order
-     */
-    protected function trackSteadfastOrder($trackingId)
+    // ── Test Connection ──────────────────────────────────────────────
+    public function testConnection($courierId)
     {
         try {
-            $endpoint = $this->steadfastConfig['base_url'] . '/track_order';
-            
-            $response = Http::timeout(30)
-                ->withHeaders([
-                    'Api-Key' => $this->steadfastConfig['api_key'],
-                    'Secret-Key' => $this->steadfastConfig['secret_key']
-                ])
-                ->post($endpoint, [
-                    'tracking_code' => $trackingId
-                ]);
-
-            if ($response->successful()) {
-                return [
-                    'success' => true,
-                    'data' => $response->json()
-                ];
+            if ($courierId === 'steadfast') {
+                if (empty($this->steadfast['api_key'])) return ['success' => false, 'message' => 'API Key খালি'];
+                $r = Http::withHeaders(['Api-Key' => $this->steadfast['api_key'], 'Secret-Key' => $this->steadfast['secret_key']])
+                    ->get($this->steadfast['base_url'] . '/get_balance');
+                return $r->successful()
+                    ? ['success' => true,  'message' => '✅ Steadfast সংযোগ সফল! Balance: ' . ($r->json()['current_balance'] ?? 'N/A')]
+                    : ['success' => false, 'message' => '❌ Steadfast connection failed: ' . $r->body()];
             }
-
-            return ['success' => false, 'message' => 'Failed to track Steadfast order'];
-
+            if ($courierId === 'pathao') {
+                if (empty($this->pathao['client_id'])) return ['success' => false, 'message' => 'Client ID খালি'];
+                $token = $this->getPathaoToken();
+                return ['success' => true, 'message' => '✅ Pathao সংযোগ সফল! Token পাওয়া গেছে।'];
+            }
         } catch (\Exception $e) {
-            return ['success' => false, 'message' => 'Tracking error: ' . $e->getMessage()];
+            return ['success' => false, 'message' => '❌ Error: ' . $e->getMessage()];
         }
-    }
-
-    /**
-     * Track Pathao order
-     */
-    protected function trackPathaoOrder($consignmentId)
-    {
-        try {
-            $token = $this->getPathaoToken();
-            $endpoint = $this->pathaoConfig['base_url'] . "/aladdin/api/v1/orders/{$consignmentId}";
-
-            $response = Http::timeout(30)
-                ->withHeaders([
-                    'Authorization' => 'Bearer ' . $token,
-                    'Accept' => 'application/json'
-                ])
-                ->get($endpoint);
-
-            if ($response->successful()) {
-                return [
-                    'success' => true,
-                    'data' => $response->json()
-                ];
-            }
-
-            return ['success' => false, 'message' => 'Failed to track Pathao order'];
-
-        } catch (\Exception $e) {
-            return ['success' => false, 'message' => 'Tracking error: ' . $e->getMessage()];
-        }
-    }
-
-    /**
-     * Bulk send orders to courier
-     */
-    public function bulkSendToCourier($orders, $courierId, $priority = 'normal')
-    {
-        $results = [];
-        $successful = 0;
-        $failed = 0;
-
-        foreach ($orders as $order) {
-            try {
-                $result = $this->sendToCourier($order, $courierId, $priority);
-                
-                if ($result['success']) {
-                    $successful++;
-                } else {
-                    $failed++;
-                }
-                
-                $results[] = [
-                    'order_no' => $order->order_no,
-                    'result' => $result
-                ];
-
-            } catch (\Exception $e) {
-                $failed++;
-                $results[] = [
-                    'order_no' => $order->order_no,
-                    'result' => [
-                        'success' => false,
-                        'message' => 'Exception: ' . $e->getMessage()
-                    ]
-                ];
-                
-                Log::error('Bulk courier send exception', [
-                    'order_no' => $order->order_no,
-                    'courier' => $courierId,
-                    'error' => $e->getMessage()
-                ]);
-            }
-        }
-
-        return [
-            'success' => $successful > 0,
-            'message' => "Successfully sent {$successful} orders to {$courierId}, {$failed} failed",
-            'details' => $results,
-            'summary' => [
-                'total' => count($orders),
-                'successful' => $successful,
-                'failed' => $failed
-            ]
-        ];
+        return ['success' => false, 'message' => 'Unknown courier'];
     }
 }

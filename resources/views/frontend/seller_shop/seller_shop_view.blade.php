@@ -25,7 +25,7 @@
                 margin-bottom: 5px !important;
             }
             .product-info .name a {
-                font-size: 12px !important;
+                font-size:14px !important;
             }
             .product-price {
                 font-size: 14px;
@@ -40,10 +40,10 @@
                 margin-bottom: 5px !important;
             }
             .product-info .name a {
-                font-size: 12px !important;
+                font-size:14px !important;
             }
             .product-price {
-                font-size: 12px;
+                font-size:14px;
             }
             .add-cart-button .btn {
                 font-size: 13px;
@@ -56,13 +56,13 @@
                 margin-bottom: 5px !important;
             }
             .product-info .name a {
-                font-size: 12px !important;
+                font-size:14px !important;
             }
             .product-price {
-                font-size: 12px;
+                font-size:14px;
             }
             .add-cart-button .btn {
-                font-size: 11px;
+                font-size:13px;
                 padding: 4px 4px;
             }
         }
@@ -151,7 +151,7 @@ $banners = Helper::bannerImage()
                                                             <a href="{{ route('product.details.info', $product->slug) }}">
                                                                 <button>
                                                                     @if ($product->image)
-                                                                        <img src="{{ asset('upload/product_images/' . $product->image) }}"
+                                                                        <img src="{{ asset('upload/product_images/' . $product- loading="lazy">image) }}"
                                                                             alt="{{ $product->slug }}" onerror="this.onerror=null;this.src='{{ asset('frontend/no-image-icon.jpg') }}';"/>
                                                                     @else
                                                                         <img src="{{ asset('frontend/assets/images/no-image.png') }}"

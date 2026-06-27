@@ -570,3 +570,39 @@ $('#transitionType li a').click(function () {
 
 
 })(jQuery);
+
+// ── U Super Shop: Initialize all product carousels ─────────────────
+$(document).ready(function() {
+    var carouselClasses = [
+        '.special_offer_carousel',
+        '.special_deals_err',
+        '.best-seller',
+        '.best_selling',
+        '.categoryProducts',
+        '.featuredProducts'
+    ];
+
+    carouselClasses.forEach(function(selector) {
+        if ($(selector).length && !$(selector).hasClass('owl-loaded')) {
+            $(selector).owlCarousel({
+                loop: true,
+                autoplay: true,
+                autoplayTimeout: 4500,
+                autoplayHoverPause: true,
+                smartSpeed: 700,
+                dots: false,
+                nav: false,
+                margin: 8,
+                responsive: {
+                    0:    { items: 2, margin: 8  },
+                    350:  { items: 2, margin: 8  },
+                    480:  { items: 2, margin: 8  },
+                    556:  { items: 3, margin: 8  },
+                    768:  { items: 4, margin: 10 },
+                    992:  { items: 4, margin: 10 },
+                    1200: { items: 5, margin: 12 }
+                }
+            });
+        }
+    });
+});

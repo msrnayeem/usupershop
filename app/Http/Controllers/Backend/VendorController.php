@@ -70,7 +70,10 @@ class VendorController extends Controller
         } else {
             $data->activated_at = null;
         }
-        $data->password = Hash::make($request->password) ;
+        // Password is optional - only update if provided
+        if (!empty($request->password)) {
+            $data->password = \Hash::make($request->password);
+        }
         if($request->file('image')){
             $file = $request->file('image');
             @unlink(public_path('upload/user_images/'.$data->image));
@@ -85,8 +88,20 @@ class VendorController extends Controller
             $file->move(public_path('upload/user_images'),$filename);
             $data['logo'] = $filename;
         }
+        $oldUsertype = $data->getOriginal('usertype');
+        $newUsertype = $request->usertype;
         $data->save();
-        
+
+        // Log account type change
+        if ($oldUsertype !== $newUsertype) {
+            \Log::info('Admin changed account type', [
+                'user_id'   => $data->id,
+                'from'      => $oldUsertype,
+                'to'        => $newUsertype,
+                'admin_id'  => auth()->id(),
+            ]);
+        }
+
         // Send welcome SMS when vendor is activated for the first time
         if (!$wasActive && $newStatus === 2 && !empty($plainPassword)) {
             try {

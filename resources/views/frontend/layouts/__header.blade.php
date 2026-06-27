@@ -289,7 +289,7 @@
                                             <div class="col-xs-4">
                                                 <div class="image">
                                                     <a href=""><img
-                                                            src="{{ url('upload/product_images/' . $content->options->image) }}"
+                                                            src="{{ url('upload/product_images/' . $content- loading="lazy">options->image) }}"
                                                             alt="" /></a>
                                                 </div>
                                             </div>

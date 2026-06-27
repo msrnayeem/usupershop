@@ -79,7 +79,7 @@
                                             <label for="whatsapp_notify_number" style="color:#128C7E; font-weight:700; font-size:15px;">
                                                 <i class="fab fa-whatsapp" style="font-size:18px; margin-right:6px;"></i>
                                                 WhatsApp Notification Number
-                                                <span style="background:#128C7E; color:#fff; font-size:10px; padding:2px 8px; border-radius:10px; margin-left:8px;">ADMIN ONLY</span>
+                                                <span style="background:#128C7E; color:#fff; font-size:12px; padding:2px 8px; border-radius:10px; margin-left:8px;">ADMIN ONLY</span>
                                             </label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">

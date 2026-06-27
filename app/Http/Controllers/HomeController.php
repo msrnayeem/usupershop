@@ -36,7 +36,9 @@ class HomeController extends Controller
         $data['confirmed_order'] = Order::where('status','confirmed')->count();
         $data['delivered_order'] = Order::where('status','delivered')->count();
         $data['return_order'] = Order::where('status','return')->count();
-        $data['cancel_order'] = Order::where('status','canceled ')->count();
+        $data['cancel_order']     = Order::where('status', 'canceled')->count();
+        $data['stock_out_count']  = \App\Models\Product::where('quantity', '<=', 0)->where('status', 1)->count();
+        $data['low_stock_count']  = \App\Models\Product::where('quantity', '>', 0)->where('quantity', '<=', 5)->where('status', 1)->count();
         $data['is_profile_verify'] = User::where('is_profile_verify',1)->count();
         $data['user_total_balance'] = User::sum('balance');
        $data['total_reffer'] = User::whereNotNull('code')->count();

@@ -50,19 +50,28 @@ class AddToCartController extends Controller
         // Dropshipper selling price validation
         if (auth()->check() && auth()->user()->usertype == 'dropshipper') {
             if (!$request->filled('drop_selling_price')) {
-                $validator->getMessageBag()->add('drop_selling_price', 'Your selling price is required.');
+                $validator->getMessageBag()->add('drop_selling_price', '❌ আপনার Selling Price দিন।');
             } else {
                 $sellingPrice = floatval($request->drop_selling_price);
-                $minPrice = floatval($product->min_price);
-                $maxPrice = floatval($product->max_price);
-                
-                // Check if selling price is within allowable range
-                if ($sellingPrice < $minPrice) {
-                    $validator->getMessageBag()->add('drop_selling_price', "Selling price cannot be less than ৳{$minPrice}. Please enter a valid price.");
+                $minPrice     = floatval($product->min_price);
+                $maxPrice     = floatval($product->max_price);
+                $wholesale    = floatval($product->sale_price ?? $product->price);
+
+                // Must not be less than wholesale price
+                if ($sellingPrice < $wholesale) {
+                    $validator->getMessageBag()->add('drop_selling_price',
+                        "❌ Selling Price Wholesale Price-এর (৳{$wholesale}) কম হতে পারবে না।");
                 }
-                
-                if ($sellingPrice > $maxPrice) {
-                    $validator->getMessageBag()->add('drop_selling_price', "Selling price cannot exceed ৳{$maxPrice}. Order will not be accepted.");
+
+                // Must be within min–max range
+                if ($minPrice > 0 && $sellingPrice < $minPrice) {
+                    $validator->getMessageBag()->add('drop_selling_price',
+                        "❌ সর্বনিম্ন Selling Price ৳{$minPrice}। এর কম দেওয়া যাবে না।");
+                }
+
+                if ($maxPrice > 0 && $sellingPrice > $maxPrice) {
+                    $validator->getMessageBag()->add('drop_selling_price',
+                        "❌ সর্বোচ্চ Selling Price ৳{$maxPrice}। এর বেশি দেওয়া যাবে না।");
                 }
             }
         }
@@ -186,10 +195,16 @@ class AddToCartController extends Controller
             }
 
             // === Structured response ===
+            $isDropshipper = auth()->check() && auth()->user()->usertype === 'dropshipper';
+            $wholesalePrice = ($product->sale_price > 0) ? floatval($product->sale_price) : null;
+
             $responseData[] = [
                 'id' => $value->id,
                 'product_id' => $value->product_id,
                 'qty' => $value->qty,
+                'is_dropshipper' => $isDropshipper,
+                'wholesale_price' => $wholesalePrice,
+                'drop_selling_price' => $value->drop_selling_price > 0 ? $value->drop_selling_price : null,
                 'size_id' => $value->size_id,
                 'size_name' => $value->product_size ? $value->product_size->size->name : '',
                 'color_id' => $value->color_id,

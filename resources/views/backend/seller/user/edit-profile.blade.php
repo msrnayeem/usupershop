@@ -55,8 +55,8 @@
                                         </div>
 
                                         <div class="form-group col-md-4">
-                                            <label for="email">Email</label>
-                                            <input type="email" name="email" value="{{ $editData->email }}"
+                                            <label for="email">Email <span style='background:#f0f0f0;color:#888;font-size:12px;padding:1px 6px;border-radius:6px;font-weight:700'>🔒 Fixed</span></label>
+                                            <input type="email" name="email" value="{{ $editData- readonly>email }}"
                                                 class="form-control" id="email" readonly>
                                             <span
                                                 style="color: red;">{{ $errors->has('email') ? $errors->first('email') : '' }}</span>
@@ -64,7 +64,7 @@
 
                                         <div class="form-group col-md-4">
                                             <label for="mobile">Phone No</label>
-                                            <input type="text" name="mobile" value="{{ $editData->mobile }}"
+                                            <input type="text" name="mobile" value="{{ $editData- readonly>mobile }}"
                                                 class="form-control" id="mobile" readonly>
                                             <span
                                                 style="color: red;">{{ $errors->has('mobile') ? $errors->first('mobile') : '' }}</span>

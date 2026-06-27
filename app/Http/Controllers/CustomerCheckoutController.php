@@ -14,6 +14,7 @@ use App\Models\ProductVariant;
 use App\Models\Shipping;
 use App\Rules\BdPhoneNumber;
 use App\Traits\BkashPaymentTrait;
+use App\Traits\WhatsAppNotifyTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +24,7 @@ use Illuminate\Support\Facades\URL;
 
 class CustomerCheckoutController extends Controller
 {
-    use BkashPaymentTrait;
+    use BkashPaymentTrait, WhatsAppNotifyTrait;
 
     private function generateOrderNumber()
     {
@@ -41,6 +42,7 @@ class CustomerCheckoutController extends Controller
 
         if ($guestCheckout) {
             $user = null;
+            // For guests, name/mobile come from form
         }
 
         if ($user && $user->usertype !== 'customer' && $user->usertype !== 'dropshipper') {
@@ -53,16 +55,19 @@ class CustomerCheckoutController extends Controller
 
         // Validate request
         $request->validate([
-            'name' => ['required'],
-            'email' => ['nullable', 'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/'],
-            'mobile' => ['required', new BdPhoneNumber()],
-            'address' => ['required'],
-            'delivery_area' => ['required'],
-            'payment_method' => ['required'],
+            'name'          => ['required'],
+            'email'         => ['nullable', 'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/'],
+            'mobile'        => ['required', new BdPhoneNumber()],
+            'address'       => ['required'],
+            'delivery_zone' => ['required', 'exists:delivery_zones,id'],
+            'payment_method'=> ['required'],
+        ], [
+            'delivery_zone.required' => 'Delivery Area অবশ্যই বেছে নিতে হবে।',
+            'delivery_zone.exists'   => 'সঠিক Delivery Area বেছে নিন।',
         ]);
 
-        // Get delivery charge
-        $deliveryArea = DeliveryZone::find($request->delivery_area);
+        // Get delivery charge — form sends delivery_zone (zone id)
+        $deliveryArea = \App\Models\DeliveryZone::find($request->delivery_zone ?? $request->delivery_area);
         if (!$deliveryArea) {
             return response()->json([
                 'status' => false,
@@ -150,7 +155,7 @@ class CustomerCheckoutController extends Controller
                     return response()->json([
                         'status' => false,
                         'type' => 'price_validation',
-                        'message' => "Product '{$product->name}' selling price must be between ৳{$minPrice} and ৳{$maxPrice}. Please update your cart."
+                        'message' => "❌ '{$product->name}' পণ্যের দাম ৳{$minPrice} থেকে ৳{$maxPrice}-এর মধ্যে হতে হবে। Cart আপডেট করুন।"
                     ]);
                 }
 
@@ -193,26 +198,51 @@ class CustomerCheckoutController extends Controller
 
         $grand_total_amount = $order_total_amount + $delivery_charge;
 
-        // Enforce: delivery charge must be paid for ALL orders (COD & bKash)
-        if ($delivery_charge <= 0) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Delivery area not selected or delivery charge is missing. Please select your delivery area.'
-            ], 422);
+        // ── FREE DELIVERY THRESHOLD ───────────────────────────────────────
+        // Orders ≥ 1,000 BDT → delivery is FREE
+        // Orders < 1,000 BDT → delivery charge must be paid upfront (bKash)
+        //                       regardless of payment method chosen
+        $FREE_DELIVERY_THRESHOLD = 1000;
+        $free_delivery = ($order_total_amount >= $FREE_DELIVERY_THRESHOLD);
+
+        if ($free_delivery) {
+            // Free delivery — no delivery charge
+            $delivery_charge   = 0;
+            $grand_total_amount = $order_total_amount;
         }
 
         $selectedPaymentMethod = strtolower((string) $request->payment_method);
 
-        // Payment method mapping
-        $payment_method = match ($selectedPaymentMethod) {
-            'bkash' => 1,
-            'cod' => 3,
-            default => 0,
-        };
-        $payment_amount = ($payment_method === 3) ? $delivery_charge : $grand_total_amount;
+        // ── PAYMENT METHOD & AMOUNT ───────────────────────────────────────
+        // < 1,000 BDT: delivery charge MUST be paid via bKash (even for COD)
+        // ≥ 1,000 BDT: free delivery — pay full amount via bKash OR COD
+        if (!$free_delivery) {
+            // Sub-threshold: must pay delivery charge upfront via bKash
+            $payment_method = 1; // Force bKash
+            $payment_amount = $delivery_charge;
+            $forced_payment = true;
+        } else {
+            // Free delivery: normal payment flow
+            $payment_method = match ($selectedPaymentMethod) {
+                'bkash' => 1,
+                'cod'   => 3,
+                default => 0,
+            };
+            $payment_amount = $grand_total_amount;
+            $forced_payment = false;
+        }
 
-        $order_status = $payment_method < 1 ? 'confirmed' : 'pending';
-        $order_payment_status = $payment_method < 1 ? 'Paid' : 'Unpaid';
+        $order_status         = ($payment_method === 3) ? 'pending' : 'pending';
+        // COD + free delivery = 'COD' (will collect product price on delivery)
+        // COD + paid delivery = 'Delivery Paid' (delivery paid via bKash, product price on delivery)
+        // bKash full = 'Paid'
+        if ($free_delivery && $payment_method === 3) {
+            $order_payment_status = 'COD';           // Free delivery, collect product price at door
+        } elseif (!$free_delivery && $payment_method === 3) {
+            $order_payment_status = 'Delivery Paid'; // Delivery paid, collect product price at door
+        } else {
+            $order_payment_status = 'Unpaid';        // Will be updated to 'Paid' after bKash callback
+        }
 
         DB::beginTransaction();
         try {
@@ -227,6 +257,9 @@ class CustomerCheckoutController extends Controller
 
             // Payment
             $payment = Payment::create(['payment_method' => $selectedPaymentMethod]);
+
+            // ── Seller Share Link tracking ────────────────────────────
+            $sellerRefId = session('seller_ref_id');
 
             // Order
             $order = Order::create([
@@ -244,6 +277,7 @@ class CustomerCheckoutController extends Controller
                 'order_payment' => $order_payment_status,
                 'pay_method' => $payment_method,
                 'dropshipper_profit' =>  ($user && $user->usertype == 'dropshipper') ? $dropshipper_profit_total : 0,
+                'seller_ref_id' => $sellerRefId ?? null,
             ]);
 
             // Update invoice
@@ -272,61 +306,90 @@ class CustomerCheckoutController extends Controller
             Cart::where('cookie_id', $cookie_id)->delete();
             Cookie::queue(Cookie::forget('customer_cookie_id'));
 
-            // Process payment AFTER order is saved
-            $payment_url = null;
-            $redirectMessage = 'Redirecting to payment gateway.';
+            // ── PAYMENT PROCESSING ────────────────────────────────────────
+            $payment_url     = null;
+            $redirectMessage = '';
 
             try {
-                if (($selectedPaymentMethod === 'bkash' || $selectedPaymentMethod === 'cod') && $payment_amount > 0) {
-                    $payment_url = $this->processBkashPayment($payment_amount, $order->id);
-                    if ($selectedPaymentMethod === 'cod') {
-                        $redirectMessage = 'Redirecting to bKash to pay delivery charge.';
+                if ($free_delivery && $selectedPaymentMethod === 'cod') {
+                    // FREE DELIVERY + COD → no payment needed, confirm immediately
+                    $order->update([
+                        'status'         => 'confirmed',
+                        'order_payment'  => 'COD',
+                    ]);
+
+                    // ── SMS: Order Confirmed (COD + Free Delivery) ──────────
+                    try {
+                        $this->sendOrderConfirmedSms($order);
+                    } catch (\Exception $smsErr) {
+                        \Log::warning('COD order SMS failed: ' . $smsErr->getMessage(), [
+                            'order_id' => $order->id,
+                        ]);
                     }
-                }
-                
-                // If payment gateway returns a redirect URL, use it
-                if ($payment_url && is_array($payment_url) && $payment_url['status'] === true) {
+
+                    // ── WhatsApp: Notify Admin (COD order) ─────────────────
+                    try {
+                        $this->notifyAdminNewOrder($order);
+                    } catch (\Exception $waErr) {
+                        \Log::warning('COD admin WhatsApp failed: ' . $waErr->getMessage());
+                    }
+
                     return response()->json([
-                        'status' => true,
-                        'type' => 'redirect_payment',
-                        'url' => $payment_url['url'],
-                        'message' => $redirectMessage
+                        'status'  => true,
+                        'type'    => 'success',
+                        'url'     => route('order.track') . '?invoice=' . $order->invoice_no,
+                        'message' => 'অর্ডার সফলভাবে সম্পন্ন হয়েছে! আপনার Invoice: ' . $order->invoice_no,
                     ]);
                 }
+
+                // Must pay via bKash (full amount for bKash orders, delivery charge for sub-threshold)
+                if ($payment_amount > 0) {
+                    $payment_url     = $this->processBkashPayment($payment_amount, $order->id);
+                    $redirectMessage = $forced_payment
+                        ? '১,০০০ টাকার কম অর্ডারে ডেলিভারি চার্জ আগে পরিশোধ করতে হবে।'
+                        : 'bKash-এ পেমেন্ট করুন।';
+                }
+
+                if ($payment_url && is_array($payment_url) && $payment_url['status'] === true) {
+                    return response()->json([
+                        'status'  => true,
+                        'type'    => 'redirect_payment',
+                        'url'     => $payment_url['url'],
+                        'message' => $redirectMessage,
+                    ]);
+                }
+
+                // Payment gateway failed — cancel order and redirect home
+                $order->update(['status' => 'canceled']);
+                return response()->json([
+                    'status'  => false,
+                    'type'    => 'payment_failed',
+                    'url'     => route('frontend.home'),
+                    'message' => 'পেমেন্ট ব্যর্থ হয়েছে। অর্ডারটি বাতিল হয়ে গেছে।',
+                ]);
+
             } catch (\Exception $paymentError) {
-                // Log payment error but don't fail the order
-                \Log::warning('Payment gateway error (order still saved): ' . $paymentError->getMessage(), [
-                    'order_id' => $order->id,
-                    'payment_method' => $request->payment_method
+                \Log::warning('Payment gateway error: ' . $paymentError->getMessage(), [
+                    'order_id'       => $order->id,
+                    'payment_method' => $request->payment_method,
+                ]);
+
+                // Cancel order on exception
+                $order->update(['status' => 'canceled']);
+                return response()->json([
+                    'status'  => false,
+                    'type'    => 'payment_failed',
+                    'url'     => route('frontend.home'),
+                    'message' => 'পেমেন্ট সম্পন্ন হয়নি। অর্ডারটি বাতিল হয়ে গেছে।',
                 ]);
             }
 
-            // Return success with order details page URL
-            if ($user && $user->usertype == 'dropshipper') {
-                return response()->json([
-                    'status' => true,
-                    'url' => route('dropshipper.orders.details', ['id' => $order->id]),
-                    'message' => 'Order placed successfully!'
-                ]);
-            }
-            
-            if ($user && $user->usertype == 'customer') {
-                return response()->json([
-                    'status' => true,
-                    'url' => route('customer.order.details', ['id' => $order->id]),
-                    'message' => 'Order placed successfully!'
-                ]);
-            }
-
+            // Fallback success → order tracking
             return response()->json([
-                'status' => true,
-                'type' => 'guest_confirmation',
-                'url' => URL::temporarySignedRoute(
-                    'guest.order.confirmation',
-                    now()->addMinutes(60),
-                    ['order' => $order->id]
-                ),
-                'message' => 'Order placed successfully!'
+                'status'  => true,
+                'type'    => 'success',
+                'url'     => route('order.track') . '?invoice=' . $order->invoice_no,
+                'message' => 'অর্ডার সফলভাবে সম্পন্ন হয়েছে!',
             ]);
 
         } catch (\Exception $e) {
@@ -428,7 +491,7 @@ class CustomerCheckoutController extends Controller
 
         // Price validation (selling price must be within min–max range)
         if ($request->selling_price < $product->min_price || $request->selling_price > $product->max_price) {
-            return back()->with('error', "Selling price must be between {$product->min_price} and {$product->max_price}");
+            return back()->with('error', "❌ Selling price ৳{$product->min_price} থেকে ৳{$product->max_price}-এর মধ্যে হতে হবে।");
         }
 
         // Check stock availability
@@ -436,12 +499,20 @@ class CustomerCheckoutController extends Controller
             return back()->with('error', 'Not enough stock available.');
         }
 
-        // etch delivery zone charge
-        $deliveryArea = DeliveryZone::find($request->delivery_area);
-        $deliveryCharge = $deliveryArea->zone_charge ?? 0;
+        // ── Delivery Zone ──────────────────────────────────────────────
+        $deliveryArea   = DeliveryZone::find($request->delivery_area);
+        $deliveryCharge = $deliveryArea ? (float)$deliveryArea->zone_charge : 0;
 
         // Calculate totals
-        $orderTotal = $request->selling_price * $request->qty;
+        $orderTotal = (float)$request->selling_price * (int)$request->qty;
+
+        // ── FREE DELIVERY (same rule as customer — ≥৳1,000) ──────────
+        $FREE_DELIVERY_THRESHOLD = 1000;
+        $isFreeDelivery = ($orderTotal >= $FREE_DELIVERY_THRESHOLD);
+        if ($isFreeDelivery) {
+            $deliveryCharge = 0;
+        }
+
         $grandTotal = $orderTotal + $deliveryCharge;
 
         DB::beginTransaction();
@@ -517,11 +588,25 @@ class CustomerCheckoutController extends Controller
         }
     }
 
-    // Generate invoice no: USP + zero-padded order ID (e.g. USP00044)
+    // Generate invoice no from DB settings (e.g. USP00044)
     private function generateInvoiceNo(int $orderId = 0): string
     {
         $num = $orderId > 0 ? $orderId : (Order::max('id') ?? 0) + 1;
-        return 'USP' . str_pad($num, 5, '0', STR_PAD_LEFT);
+
+        try {
+            $setting = \App\Models\Setting::first();
+            $prefix = strtoupper(trim($setting->invoice_prefix ?? 'USP'));
+            $digits = (int)($setting->invoice_digits ?? 5);
+            $startNo = (int)($setting->invoice_start_no ?? 1);
+            // Add start offset so invoice numbers don't restart from 1
+            $invoiceNum = $num + $startNo - 1;
+        } catch (\Exception $e) {
+            $prefix = 'USP';
+            $digits = 5;
+            $invoiceNum = $num;
+        }
+
+        return $prefix . str_pad($invoiceNum, $digits, '0', STR_PAD_LEFT);
     }
 
 

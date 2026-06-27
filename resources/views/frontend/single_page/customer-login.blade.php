@@ -123,7 +123,7 @@
             }
 
             .signup-link {
-                font-size: 11px;
+                font-size:13px;
                 display: inline-block;
                 margin-top: 10px;
             }

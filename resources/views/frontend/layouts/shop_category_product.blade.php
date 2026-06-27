@@ -27,7 +27,7 @@
                                     <a href="{{ route('seller.product.details',['slug'=>$product->slug,'shopID'=>$shopID]) }}">
                                         <button>
                                             @if(!empty($product->image))
-                                                <img src="{{ asset('upload/product_images/'.$product->image)}}" alt="{{ $product->name }}" />
+                                                <img src="{{ asset('upload/product_images/'.$product- loading="lazy">image)}}" alt="{{ $product->name }}" />
                                             @else 
                                                 <img src="{{asset('frontend/assets/images/no-image.png') }}" alt="{{ $product->name }}" />
                                             @endif
