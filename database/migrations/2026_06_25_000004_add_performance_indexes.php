@@ -26,10 +26,10 @@ class AddPerformanceIndexes extends Migration
         // ── Orders table indexes ─────────────────────────────────────
         Schema::table('orders', function (Blueprint $table) {
             $this->addIndexSafe($table, 'orders', 'user_id');
-            $this->addIndexSafe($table, 'orders', 'delivery_status');
+            $this->addIndexSafe($table, 'orders', 'status');
             $this->addIndexSafe($table, 'orders', 'payment_method');
             if (!$this->indexExists('orders', 'orders_user_status_index')) {
-                $table->index(['user_id', 'delivery_status'], 'orders_user_status_index');
+                $table->index(['user_id', 'status'], 'orders_user_status_index');
             }
         });
 
@@ -47,7 +47,7 @@ class AddPerformanceIndexes extends Migration
         Schema::table('order_details', function (Blueprint $table) {
             $this->addIndexSafe($table, 'order_details', 'order_id');
             $this->addIndexSafe($table, 'order_details', 'product_id');
-            $this->addIndexSafe($table, 'order_details', 'seller_id');
+            $this->addIndexSafe($table, 'order_details', 'vendor_id');
         });
 
         // ── Transactions ─────────────────────────────────────────────
@@ -96,9 +96,9 @@ class AddPerformanceIndexes extends Migration
         // Indexes are safe to drop on rollback
         $tables = [
             'products'     => ['status','category_id','hot_deals','featured','special_offer','special_deals','user_id'],
-            'orders'       => ['user_id','delivery_status','payment_method'],
+            'orders'       => ['user_id','status','payment_method'],
             'users'        => ['usertype','status','payment_status','refer_code','reseller_id','login_blocked_at'],
-            'order_details'=> ['order_id','product_id','seller_id'],
+            'order_details'=> ['order_id','product_id','vendor_id'],
             'transactions' => ['user_id','tnx_type','status'],
             'coupons'      => ['status'],
             'categories'   => ['is_show'],
