@@ -173,8 +173,8 @@ Route::get('/customer-login', [CheckoutController::class, 'customerLogin'])->nam
 Route::get('/customer-otp', [CheckoutController::class, 'SendCustomerOtp'])->name('send.otp');
 Route::post('/customer-otp/save', [CheckoutController::class, 'SendCustomerOtpSubmit'])->name('send.customer.otp');
 // Customer signup disabled — guest checkout used instead
-// Route::get('/customer-signup', [CheckoutController::class, 'customerSignup'])->name('customer.signup');
-// Route::post('/signup-store', [CheckoutController::class, 'signupStore'])->name('signup.store');
+Route::get('/customer-signup', [CheckoutController::class, 'customerSignup'])->name('customer.signup');
+Route::post('/signup-store', [CheckoutController::class, 'signupStore'])->name('signup.store');
 Route::get('/email-verify', [CheckoutController::class, 'emailVerify'])->name('email.verify');
 //Route::post('/verify-store', [CheckoutController::class, 'verifyStore'])->name('verify.store');
 Route::get('/checkout', [CheckoutController::class, 'checkOut'])->name('customer.checkout');

@@ -245,10 +245,8 @@ class FrontendController extends Controller
 
     public function brandWiseProduct($brand_id)
     {
-        /* $data['logo'] = Logo::first();
-        $data['contact'] = Contact::first();
         $data['categories'] = Product::select('category_id')->groupBy('category_id')->get();
-        $data['brands'] = Product::select('brand_id')->groupBy('brand_id')->get(); */
+        $data['brands'] = Product::select('brand_id')->groupBy('brand_id')->get();
         $data['brand'] = Brand::find($brand_id);
         $data['products'] = Product::where('brand_id', $brand_id)->orderBy('id', 'DESC')->paginate(10);
         return view('frontend.single_page.brand-wise-product', $data);
@@ -257,6 +255,7 @@ class FrontendController extends Controller
     public function productDetails($slug)
     {
         //dd($slug);
+        $ttl = (int)env('HOMEPAGE_CACHE_TTL', 300);
         $data['hot_deals'] = \Cache::remember('hp_hot_deals', $ttl, fn() => 
                 Product::select('id','name','name_bn','slug','price','discount','discount_type','image')
                 ->where('hot_deals', 1)->where('status', 1)->orderBy('id', 'DESC')->limit(20)->get());
