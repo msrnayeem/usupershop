@@ -12,11 +12,6 @@ services:
       - .:/var/www/html
       # Exclude node_modules and vendor from volume mounting to avoid host clashing, or keep them mounted if developing
     environment:
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_DATABASE=usupersh_db
-      - DB_USERNAME=root
-      - DB_PASSWORD=rootpassword
       - APP_ENV=local
       - APP_DEBUG=true
 
