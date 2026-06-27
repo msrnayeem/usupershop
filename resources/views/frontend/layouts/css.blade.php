@@ -570,7 +570,6 @@
         background: #f4f5f9 !important;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        overscroll-behavior-y: contain;
     }
 
     /* ── MOBILE ONLY (≤ 768px) ─────────────────────────── */
@@ -1263,7 +1262,6 @@
 
     body {
         font-family: 'Hind Siliguri', sans-serif !important;
-        overscroll-behavior-y: contain;
     }
 
     img {
@@ -3181,5 +3179,30 @@ Exact class names from blade templates
             width: 55px !important;
             height: 55px !important;
         }
+    }
+
+    /* ════ NAVBAR MENU LABEL FIX ═════════════════════════════════ */
+    .header-style-1 .header-nav .navbar-default .navbar-collapse .navbar-nav > li {
+        position: relative !important;
+    }
+    .header-style-1 .header-nav .navbar-default .navbar-collapse .navbar-nav > li .menu-label {
+        position: absolute !important;
+        top: -18px !important;
+        z-index: 10 !important;
+        font-size: 9px !important;
+        font-weight: 700 !important;
+        padding: 1px 5px !important;
+        border-radius: 4px !important;
+        line-height: normal !important;
+        letter-spacing: 0.5px !important;
+        transform: none !important;
+    }
+    /* Pricing item has higher padding/pill, adjust badge top further */
+    .header-style-1 .header-nav .navbar-default .navbar-collapse .navbar-nav > li.pricing-nav-item .menu-label {
+        top: -22px !important;
+    }
+    /* Adjust arrow position of the menu labels to match the new heights */
+    .header-style-1 .header-nav .navbar-default .navbar-collapse .navbar-nav > li .menu-label:after {
+        top: 100% !important;
     }
 </style>

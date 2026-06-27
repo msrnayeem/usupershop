@@ -812,6 +812,7 @@
                     mobile: mobile,
                     address: address,
                     delivery_area: delivery_area,
+                    delivery_zone: delivery_area,
                     payment_method: payment_method,
                     guest_checkout: mode === 'guest' ? 1 : 0,
                     _token: $('meta[name="csrf-token"]').attr('content')
@@ -848,13 +849,27 @@
                     }
                 },
                 error: function(error) {
-                    if (error.statusText === "Unauthorized") {
+                    if (error.status === 422) {
+                        var response = error.responseJSON;
+                        if (response && response.errors) {
+                            $.each(response.errors, function(key, messages) {
+                                $.each(messages, function(index, msg) {
+                                    error_msg(msg);
+                                });
+                            });
+                        } else if (response && response.message) {
+                            error_msg(response.message);
+                        } else {
+                            error_msg('Validation error occurred.');
+                        }
+                    } else if (error.statusText === "Unauthorized" || error.status === 401) {
                         warning_msg('Customer Login Required!');
                         setTimeout(() => {
                             window.location.href = "{{ route('customer.login') }}";
                         }, 1000);
                     } else {
                         console.log('Checkout error:', error);
+                        error_msg('Something went wrong. Please try again.');
                     }
                 }
 

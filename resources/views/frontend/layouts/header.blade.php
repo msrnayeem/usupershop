@@ -879,26 +879,26 @@
                                     
                                 @else
                                     <li class="dropdown dropdown-small">
-                                        <a class="english_lang" href="{{ route('seller.signup') }}" class="dropdown-toggle"
+                                        <a class="english_lang dropdown-toggle" href="{{ route('seller.signup') }}"
                                             data-hover="dropdown"><span class="value">Become a Seller</span></a>
-                                        <a class="bangla_lang" style="display:none" href="{{ route('seller.signup') }}"
-                                            class="dropdown-toggle" data-hover="dropdown"><span class="value">সেলার /
+                                        <a class="bangla_lang dropdown-toggle" style="display:none" href="{{ route('seller.signup') }}"
+                                            data-hover="dropdown"><span class="value">সেলার /
                                                 ভেন্ডর</span></a>
                                     </li>
                                 @endauth
                                 <li class="dropdown dropdown-small">
-                                    <a class="english_lang" href="#" class="dropdown-toggle" data-hover="dropdown"
+                                    <a class="english_lang dropdown-toggle" href="#" data-hover="dropdown"
                                         data-toggle="modal" data-target="#orderTrackingModal"><span class="value">Order
                                             Track</span></a>
-                                    <a class="bangla_lang" style="display:none" href="#" class="dropdown-toggle"
+                                    <a class="bangla_lang dropdown-toggle" style="display:none" href="#"
                                         data-hover="dropdown" data-toggle="modal"
                                         data-target="#orderTrackingModal"><span class="value">অর্ডার ট্র্যাক</span></a>
                                 </li>
                                 <li class="dropdown dropdown-small">
-                                    <a class="english_lang" class="dropdown-toggle" data-hover="dropdown"
+                                    <a class="english_lang dropdown-toggle" href="#" data-hover="dropdown"
                                         data-toggle="dropdown"><span class="value">Language Change
                                         </span><b class="caret"></b></a>
-                                    <a class="bangla_lang" style="display: none;" class="dropdown-toggle"
+                                    <a class="bangla_lang dropdown-toggle" href="#" style="display: none;"
                                         data-hover="dropdown" data-toggle="dropdown"><span class="value">ভাষা পরিবর্তন
                                             করুন
                                         </span><b class="caret"></b></a>
@@ -917,6 +917,7 @@
 
                                     </ul>
                                 </li>
+
                             </ul>
                         </div>
                         <!-- /.cnt-cart -->

@@ -53,7 +53,7 @@
     <style>
       /* PWA / Mobile App feel */
       html { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
-      body { -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; }
+      body { -webkit-overflow-scrolling: touch; }
       * { -webkit-tap-highlight-color: rgba(0,0,0,0); }
       /* Bottom safe area for iPhone notch */
       .body-content { padding-bottom: env(safe-area-inset-bottom, 0px); }
@@ -69,7 +69,7 @@
     <meta name="theme-color" content="#ffffff">
     <style>
       html { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
-      body { -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; }
+      body { -webkit-overflow-scrolling: touch; }
       * { -webkit-tap-highlight-color: rgba(0,0,0,0); }
       /* iPhone safe area */
       body { padding-top: env(safe-area-inset-top, 0px); }
@@ -1461,21 +1461,6 @@
     </a>
     @endif
 
-    {{-- ── Language Toggle (Floating) ─────────────────────────── --}}
-    @php $currentLang = Session::get('language', request()->cookie('lang', 'english')); @endphp
-    <div style="position:fixed;top:10px;right:62px;z-index:10000">
-        @if($currentLang === 'bangla')
-        <a href="{{ route('english.language') }}" class="lang-toggle-btn" title="Switch to English">
-            <span class="lang-flag">🇺🇸</span>
-            <span class="lang-text">EN</span>
-        </a>
-        @else
-        <a href="{{ route('bangla.language') }}" class="lang-toggle-btn" title="বাংলায় পরিবর্তন করুন">
-            <span class="lang-flag">🇧🇩</span>
-            <span class="lang-text">BN</span>
-        </a>
-        @endif
-    </div>
 
 </body>
 

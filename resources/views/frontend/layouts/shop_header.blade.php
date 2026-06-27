@@ -1,5 +1,4 @@
 <style>
-
     .cart-item.product-summary .item {
         width: 100%;
         display: flex;
@@ -10,7 +9,7 @@
         position: relative;
     }
 
-    .cart-item.product-summary .item span.action{
+    .cart-item.product-summary .item span.action {
         position: absolute;
         right: -1px;
         font-size: 15px;
@@ -48,19 +47,20 @@
 
     .cart-item.product-summary .item .details .name {
         margin: 0px;
-        font-size:14px !important;
+        font-size: 14px !important;
         font-weight: 600;
     }
 
     .cart-item.product-summary .item .details .price {
         margin: 0px;
-        font-size:14px;
+        font-size: 14px;
     }
 
     .cart-item.product-summary .item .details {
         margin: auto;
         vertical-align: middle;
     }
+
     .main-header .logo-holder {
         margin-top: 0px;
     }
@@ -151,7 +151,8 @@
         height: 30px;
         border-radius: 50%;
     }
-    .header-user img{
+
+    .header-user img {
         width: 33px;
         height: 33px;
     }
@@ -213,7 +214,7 @@
             display: flex;
         }
 
-       
+
     }
 
     @media (min-width: 992px) and (max-width: 1199px) {
@@ -690,7 +691,7 @@
     }
 
     @media (max-width: 776px) {
-        .main-header .top-search-holder{
+        .main-header .top-search-holder {
             padding-left: 6px;
         }
     }
@@ -725,7 +726,7 @@
             height: 50%;
         }
 
-      
+
 
     }
 
@@ -749,6 +750,7 @@
             /* margin-top: 50px !important; */
         }
     }
+
     @media (max-width: 576px) {
         .home-banner-row {
             margin-top: 101px !important;
@@ -790,34 +792,36 @@
                                         <li>
                                             <a class="english_lang" href="{{ route('seller.dashboard') }}"><i
                                                     class="icon fa fa-user"></i>My Account</a>
-                                            <a class="bangla_lang" style="display:none" href="{{ route('seller.dashboard') }}"><i
-                                                    class="icon fa fa-user"></i>আমার একাউন্ট</a>
+                                            <a class="bangla_lang" style="display:none"
+                                                href="{{ route('seller.dashboard') }}"><i class="icon fa fa-user"></i>আমার
+                                                একাউন্ট</a>
                                         </li>
                                     @endif
                                     @if (auth()->user()->usertype === 'seller')
                                         <li>
                                             <a class="english_lang" href="{{ route('seller.dashboard') }}"><i
                                                     class="icon fa fa-user"></i>My Account</a>
-                                            <a class="bangla_lang" style="display:none" href="{{ route('seller.dashboard') }}"><i
-                                                    class="icon fa fa-user"></i>আমার একাউন্ট</a>
+                                            <a class="bangla_lang" style="display:none"
+                                                href="{{ route('seller.dashboard') }}"><i class="icon fa fa-user"></i>আমার
+                                                একাউন্ট</a>
                                         </li>
                                     @endif
                                     @if (auth()->user()->usertype === 'dropshipper')
                                         <li>
                                             <a class="english_lang" href="{{ route('dropshipper.dashboard') }}"><i
                                                     class="icon fa fa-user"></i>My Account</a>
-                                            <a class="bangla_lang" style="display:none" href="{{ route('dropshipper.dashboard') }}"><i
-                                                    class="icon fa fa-user"></i>আমার একাউন্ট</a>
+                                            <a class="bangla_lang" style="display:none"
+                                                href="{{ route('dropshipper.dashboard') }}"><i class="icon fa fa-user"></i>আমার
+                                                একাউন্ট</a>
                                         </li>
                                     @endif
                                 @else
                                     <li>
                                         <a class="english_lang" href="{{ route('customer.login') }}"><i
                                                 class="icon fa fa-lock"></i>Login</a>
-                                        <a class="bangla_lang" style="display:none"
-                                            href="{{ route('customer.login') }}"><i
+                                        <a class="bangla_lang" style="display:none" href="{{ route('customer.login') }}"><i
                                                 class="icon fa fa-lock"></i>লগইন</a>
-                                        
+
                                     </li>
                                 @endauth
                             </ul>
@@ -828,29 +832,30 @@
                             <ul class="list-unstyled list-inline">
 
                                 @auth
-                                    
+
                                 @else
                                     <li class="dropdown dropdown-small">
-                                        <a class="english_lang" href="{{ route('seller.signup') }}" class="dropdown-toggle"
+                                        <a class="english_lang dropdown-toggle" href="{{ route('seller.signup') }}"
                                             data-hover="dropdown"><span class="value">Become a Seller</span></a>
-                                        <a class="bangla_lang" style="display:none" href="{{ route('seller.signup') }}"
-                                            class="dropdown-toggle" data-hover="dropdown"><span class="value">সেলার /
+                                        <a class="bangla_lang dropdown-toggle" style="display:none"
+                                            href="{{ route('seller.signup') }}" data-hover="dropdown"><span
+                                                class="value">সেলার /
                                                 ভেন্ডর</span></a>
                                     </li>
                                 @endauth
                                 <li class="dropdown dropdown-small">
-                                    <a class="english_lang" href="#" class="dropdown-toggle" data-hover="dropdown"
+                                    <a class="english_lang dropdown-toggle" href="#" data-hover="dropdown"
                                         data-toggle="modal" data-target="#orderTrackingModal"><span class="value">Order
                                             Track</span></a>
-                                    <a class="bangla_lang" style="display:none" href="#" class="dropdown-toggle"
+                                    <a class="bangla_lang dropdown-toggle" style="display:none" href="#"
                                         data-hover="dropdown" data-toggle="modal"
                                         data-target="#orderTrackingModal"><span class="value">অর্ডার ট্র্যাক</span></a>
                                 </li>
                                 <li class="dropdown dropdown-small">
-                                    <a class="english_lang" class="dropdown-toggle" data-hover="dropdown"
+                                    <a class="english_lang dropdown-toggle" href="#" data-hover="dropdown"
                                         data-toggle="dropdown"><span class="value">Language Change
                                         </span><b class="caret"></b></a>
-                                    <a class="bangla_lang" style="display: none;" class="dropdown-toggle"
+                                    <a class="bangla_lang dropdown-toggle" href="#" style="display: none;"
                                         data-hover="dropdown" data-toggle="dropdown"><span class="value">ভাষা পরিবর্তন
                                             করুন
                                         </span><b class="caret"></b></a>
@@ -865,6 +870,7 @@
 
                                     </ul>
                                 </li>
+
                             </ul>
                         </div>
                         <!-- /.cnt-cart -->
@@ -876,8 +882,7 @@
                                     <div class="modal-header">
                                         <h5 class="modal-title english_lang" id="orderTrackingModalLabel">Order
                                             Tracking</h5>
-                                        <button type="button" class="close" data-dismiss="modal"
-                                            aria-label="Close">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
@@ -978,7 +983,8 @@
                         <div class="dropdown dropdown-cart">
                             <a href="#" class="dropdown-toggle lnk-cart" data-toggle="dropdown">
                                 <div class="items-cart-inner">
-                                    <div class="basket" style="border: none; font-size: 18px; margin-right: 22px; margin-top: 5px;">
+                                    <div class="basket"
+                                        style="border: none; font-size: 18px; margin-right: 22px; margin-top: 5px;">
                                         <i class="glyphicon glyphicon-shopping-cart"></i>
                                     </div>
                                     <div class="basket-item-count">
@@ -992,7 +998,8 @@
                                     </div>
                                     <!-- /.cart-item -->
                                     <div class="clearfix"></div>
-                                    {{--  <hr /> --}}
+                                    {{--
+                                    <hr /> --}}
 
                                     <div class="clearfix cart-total">
                                         <div class="pull-right">
@@ -1027,9 +1034,8 @@
                         <div class="search-area">
                             <form action="{{ route('search.product') }}" method="GET">
                                 <div class="control-group" style="position: relative;">
-                                    <input class="search-field" onfocus="showSearchResult()"
-                                        onblur="hideSearchResult()" name="search" id="search"
-                                        placeholder="Search here..." />
+                                    <input class="search-field" onfocus="showSearchResult()" onblur="hideSearchResult()"
+                                        name="search" id="search" placeholder="Search here..." />
                                     <button type="button" class="search-button"></button>
                                 </div>
                             </form>
@@ -1061,15 +1067,15 @@
                 <div class="col-xs-10 col-sm-12 col-md-7 top-search-holder">
                     <!-- /.contact-row -->
                     <!-- ==================== SEARCH AREA =================== -->
-                        <form action="{{ route('search.product') }}" method="GET">
-                            <div class="control-group">
-                                <input class="search-field" onfocus="showSearchResult_desktop()"
-                                    onblur="hideSearchResult_desktop()" name="search_desktop" id="search_desktop"
-                                    placeholder="Search here..." />
-                                <button type="button" class="search-button"></button>
-                            </div>
-                        </form>
-                        <div id="suggestProduct_desktop"></div>
+                    <form action="{{ route('search.product') }}" method="GET">
+                        <div class="control-group">
+                            <input class="search-field" onfocus="showSearchResult_desktop()"
+                                onblur="hideSearchResult_desktop()" name="search_desktop" id="search_desktop"
+                                placeholder="Search here..." />
+                            <button type="button" class="search-button"></button>
+                        </div>
+                    </form>
+                    <div id="suggestProduct_desktop"></div>
                     <!-- ================= SEARCH AREA : END ================= -->
                 </div>
                 <!-- /.top-search-holder -->
@@ -1090,11 +1096,12 @@
                         <ul class="dropdown-menu">
                             <li class="addTotalCartItemSection">
                                 <div class="cart-item product-summary addToCartProducts">
-                                    
+
                                 </div>
                                 <!-- /.cart-item -->
                                 <div class="clearfix"></div>
-                                {{--  <hr /> --}}
+                                {{--
+                                <hr /> --}}
 
                                 <div class="clearfix cart-total">
                                     <div class="pull-right">
@@ -1142,24 +1149,24 @@
                                 </li>
 
                                 <?php 
-                                    $limit=6;
-                                    $categories = Helper::getCategories();
-                                    $total=count($categories);
-                                    foreach ($categories as $key=>$category):
-                                    if($key<$limit){
+                                    $limit = 6;
+$categories = Helper::getCategories();
+$total = count($categories);
+foreach ($categories as $key => $category):
+    if ($key < $limit) {
                                 ?>
                                 <li>
                                     <a class="english_lang"
                                         href="{{ route('category.wise.product', $category->category_id) }}">
-                                        <?php echo $category['category']['name']; ?>
+                                        <?php        echo $category['category']['name']; ?>
                                     </a>
                                     <a class="bangla_lang" style="display:none"
                                         href="{{ route('category.wise.product', $category->category_id) }}">
-                                        <?php echo $category['category']['name_bn']; ?>
+                                        <?php        echo $category['category']['name_bn']; ?>
                                     </a>
                                 </li>
-                                <?php }else{
-                                    if($key==$limit){
+                                <?php    } else {
+        if ($key == $limit) {
                                         ?>
                                 <li class="nav-item dropdown">
                                     <a class="english_lang nav-link dropdown-toggle" href="#" role="button"
@@ -1170,32 +1177,33 @@
                                         <li>
                                             <a class="english_lang dropdown-item"
                                                 href="{{ route('category.wise.product', $category->category_id) }}">
-                                                <?php echo $category['category']['name']; ?>
+                                                <?php            echo $category['category']['name']; ?>
                                             </a>
                                             <a class="dropdown-item bangla_lang" style="display:none"
                                                 href="{{ route('category.wise.product', $category->category_id) }}">
-                                                <?php echo $category['category']['name_bn']; ?>
+                                                <?php            echo $category['category']['name_bn']; ?>
                                             </a>
                                         </li>
 
 
-                                        <?php }else{ ?>
+                                        <?php        } else { ?>
                                         <li>
                                             <a class="english_lang dropdown-item"
                                                 href="{{ route('category.wise.product', $category->category_id) }}">
-                                                <?php echo $category['category']['name']; ?>
+                                                <?php            echo $category['category']['name']; ?>
                                             </a>
                                             <a class="dropdown-item bangla_lang" style="display:none"
                                                 href="{{ route('category.wise.product', $category->category_id) }}">
-                                                <?php echo $category['category']['name_bn']; ?>
+                                                <?php            echo $category['category']['name_bn']; ?>
                                             </a>
                                         </li>
 
-                                        <?php } 
-                                    if($total==($key+1)){
-                                        echo "</ul></li>";
-                                    }
-                                } endforeach ?>
+                                        <?php        }
+        if ($total == ($key + 1)) {
+            echo "</ul></li>";
+        }
+    }
+endforeach ?>
 
                                         <li>
                                             <a class="english_lang" href="{{ route('product.list') }}">Shop</a>
@@ -1220,8 +1228,8 @@
                                                 style="display:none">অফার</span>
                                         </li>
                                         {{-- <li>
-                                    <a href="{{ route('contact.us') }}">Contact Us</a>
-                                </li> --}}
+                                            <a href="{{ route('contact.us') }}">Contact Us</a>
+                                        </li> --}}
                                         <!--<li class="dropdown navbar-right special-menu">
                                     <a class="english_lang" href="#">Todays offer</a>
                                     <a class="bangla_lang" style="display:none" href="#">আজকের অফার</a>
@@ -1243,12 +1251,12 @@
     <!-- ============== NAVBAR : END =============== -->
 </header>
 <script type="text/javascript">
-    $(document).ready(function() {
+    $(document).ready(function () {
 
-        $(".header-user").on("click", function() {
+        $(".header-user").on("click", function () {
             $("body").css("overflow", "hidden"),
                 $(".nav-sidebar").addClass("active"),
-                $(".nav-close").on("click", function() {
+                $(".nav-close").on("click", function () {
                     $("body").css("overflow", "inherit"),
                         $(".nav-sidebar").removeClass("active"),
                         $(".backdrop").fadeOut();
@@ -1257,9 +1265,9 @@
 
         $(".header-user, .header-cart, .header-cate, .cart-btn, .cate-btn").on(
             "click",
-            function() {
+            function () {
                 $(".backdrop").fadeIn(),
-                    $(".backdrop").on("click", function() {
+                    $(".backdrop").on("click", function () {
                         $(this).fadeOut(),
                             $("body").css("overflow", "inherit"),
                             $(".nav-sidebar").removeClass("active"),
@@ -1280,14 +1288,14 @@
         let currentUri = window.location.href;
         $("ul.top-menu li").removeClass('active');
 
-        $('ul.top-menu li a').each(function(e) {
+        $('ul.top-menu li a').each(function (e) {
             let uri = $(this).attr('href');
             if (uri == currentUri) {
                 $(this).parent().addClass('active');
             }
         });
 
-        $("body").on("keyup", "#search", function() {
+        $("body").on("keyup", "#search", function () {
             let searchData = $("#search").val();
             //console.log(searchData);
             if (searchData.length > 0) {
@@ -1298,11 +1306,11 @@
                         search: searchData,
                         _token: "{{ csrf_token() }}",
                     },
-                    success: function(result) {
+                    success: function (result) {
 
                         var html = '';
                         if (result.length > 0) {
-                            result.forEach(function(product) {
+                            result.forEach(function (product) {
                                 // Generate URL from Laravel route with placeholder
                                 let product_url = "{{ route('product.details.info', ['slug' => ':slug']) }}";
 
@@ -1322,14 +1330,14 @@
                             html = '<li style="color: red; padding: 14px 20px; list-style: none; text-align: center;">Not Found</li>';
                         }
                         $('#suggestProduct').html(html)
-                        
+
                     }
                 });
             }
             if (searchData.length < 1) $('#suggestProduct').html("");
         });
 
-        $("body").on("keyup", "#search_desktop", function() {
+        $("body").on("keyup", "#search_desktop", function () {
             let searchData = $("#search_desktop").val();
             //console.log(searchData);
             if (searchData.length > 0) {
@@ -1340,10 +1348,10 @@
                         search: searchData,
                         _token: "{{ csrf_token() }}",
                     },
-                    success: function(result) {
+                    success: function (result) {
                         var html = '';
                         if (result.length > 0) {
-                            result.forEach(function(product) {
+                            result.forEach(function (product) {
                                 // Generate URL from Laravel route with placeholder
                                 let product_url = "{{ route('product.details.info', ['slug' => ':slug']) }}";
 
@@ -1373,7 +1381,7 @@
         function renderSearchResult(data) {
             let html = '';
             if (data.length > 0) {
-                data.forEach(function(product) {
+                data.forEach(function (product) {
                     // Generate URL from Laravel route with placeholder
                     let product_url = "{{ route('product.details.info', ['slug' => ':slug']) }}";
 
@@ -1412,7 +1420,7 @@
             $('#suggestProduct_desktop').slideUp();
         }
 
-        $(".changeLng").click(function() {
+        $(".changeLng").click(function () {
             let lang = $(this).attr("lang");
             if (lang == 'bangla') {
 
