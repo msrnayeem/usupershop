@@ -35,3 +35,6 @@ Thumbs.db
 # Database dumps & Deployment files
 
 .ftp-deploy-sync-state.json
+
+# Zip archives
+*.zip

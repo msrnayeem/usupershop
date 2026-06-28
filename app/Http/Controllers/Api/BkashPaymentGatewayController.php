@@ -15,7 +15,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Shipping;
 use App\Traits\ReferCommissionTrait;
-use App\utilities\Constant;
+use App\Utilities\Constant;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 

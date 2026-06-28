@@ -697,14 +697,14 @@ class OrderController extends Controller
         Transaction::create([
             'user_id'      => $order->dropshipper_id,
             'from_user_id' => $order->user_id,
-            'wallet_type'  => \App\utilities\Constant::WALLET_TYPE['balance_wallet'],
-            'tnx_type'     => \App\utilities\Constant::TRANSACTION_TYPE['product_seles'],
+            'wallet_type'  => \App\Utilities\Constant::WALLET_TYPE['balance_wallet'],
+            'tnx_type'     => \App\Utilities\Constant::TRANSACTION_TYPE['product_seles'],
             'credit'       => $profit,
             'debit'        => 0,
             'note'         => 'Dropshipper profit from Order No: ' . $order->order_no,
             'description'  => json_encode(['order_id' => $order->id, 'order_no' => $order->order_no]),
-            'status'       => \App\utilities\Constant::STATUS['approved'],
-            'in_status'    => \App\utilities\Constant::IN_STATUS['active'],
+            'status'       => \App\Utilities\Constant::STATUS['approved'],
+            'in_status'    => \App\Utilities\Constant::IN_STATUS['active'],
             'date'         => time(),
         ]);
 
@@ -728,8 +728,8 @@ class OrderController extends Controller
         // ── 1. Find all credit transactions for this order ─────────────
         $paid = Transaction::where('description', 'LIKE', '%"order_id":"' . $order->id . '"%')
             ->whereIn('tnx_type', [
-                \App\utilities\Constant::TRANSACTION_TYPE['product_seles'],
-                \App\utilities\Constant::TRANSACTION_TYPE['reseller_seles_commission'],
+                \App\Utilities::Constant::TRANSACTION_TYPE['product_seles'],
+                \App\Utilities::Constant::TRANSACTION_TYPE['reseller_seles_commission'],
             ])
             ->where('credit', '>', 0)
             ->get();
@@ -748,10 +748,10 @@ class OrderController extends Controller
             }
 
             // Also reverse sales_amount / reseller_commission_amount counters
-            if ($txn->tnx_type == \App\utilities\Constant::TRANSACTION_TYPE['product_seles']) {
+            if ($txn->tnx_type == \App\Utilities::Constant::TRANSACTION_TYPE['product_seles']) {
                 $user->decrement('sales_amount', min($amount, floatval($user->sales_amount)));
             }
-            if ($txn->tnx_type == \App\utilities\Constant::TRANSACTION_TYPE['reseller_seles_commission']) {
+            if ($txn->tnx_type == \App\Utilities::Constant::TRANSACTION_TYPE['reseller_seles_commission']) {
                 $user->decrement('reseller_commission_amount', min($amount, floatval($user->reseller_commission_amount)));
             }
 
@@ -759,14 +759,14 @@ class OrderController extends Controller
             Transaction::create([
                 'user_id'      => $txn->user_id,
                 'from_user_id' => $order->user_id,
-                'wallet_type'  => \App\utilities\Constant::WALLET_TYPE['balance_wallet'],
+                'wallet_type'  => \App\Utilities::Constant::WALLET_TYPE['balance_wallet'],
                 'tnx_type'     => $txn->tnx_type,
                 'credit'       => 0,
                 'debit'        => $deductable,
                 'note'         => $note,
                 'description'  => json_encode(['order_id' => $order->id, 'order_no' => $orderNo, 'reversed_txn_id' => $txn->id]),
-                'status'       => \App\utilities\Constant::STATUS['approved'],
-                'in_status'    => \App\utilities\Constant::IN_STATUS['active'],
+                'status'       => \App\Utilities::Constant::STATUS['approved'],
+                'in_status'    => \App\Utilities::Constant::IN_STATUS['active'],
                 'date'         => time(),
             ]);
 
@@ -799,14 +799,14 @@ class OrderController extends Controller
                 Transaction::create([
                     'user_id'      => $order->dropshipper_id,
                     'from_user_id' => $order->user_id,
-                    'wallet_type'  => \App\utilities\Constant::WALLET_TYPE['balance_wallet'],
-                    'tnx_type'     => \App\utilities\Constant::TRANSACTION_TYPE['product_seles'],
+                    'wallet_type'  => \App\Utilities::Constant::WALLET_TYPE['balance_wallet'],
+                    'tnx_type'     => \App\Utilities::Constant::TRANSACTION_TYPE['product_seles'],
                     'credit'       => 0,
                     'debit'        => $deductable,
                     'note'         => 'Dropshipper profit reversed — Order ' . $orderNo . ' (' . ucfirst($order->status) . ')',
                     'description'  => json_encode(['order_id' => $order->id, 'order_no' => $orderNo]),
-                    'status'       => \App\utilities\Constant::STATUS['approved'],
-                    'in_status'    => \App\utilities\Constant::IN_STATUS['active'],
+                    'status'       => \App\Utilities::Constant::STATUS['approved'],
+                    'in_status'    => \App\Utilities::Constant::IN_STATUS['active'],
                     'date'         => time(),
                 ]);
 
@@ -1414,13 +1414,13 @@ class OrderController extends Controller
             'user_id'      => $seller->id,
             'from_user_id' => $order->user_id,
             'wallet_type'  => 1,
-            'tnx_type'     => \App\utilities\Constant::TRANSACTION_TYPE['refer_commission'],
+            'tnx_type'     => \App\Utilities::Constant::TRANSACTION_TYPE['refer_commission'],
             'credit'       => $commissionAmt,
             'debit'        => 0,
             'note'         => "Share Link Commission (10%) — Order: " . ($order->order_no ?? $order->id),
             'description'  => json_encode(['order_id' => (string)$order->id, 'type' => 'seller_share_link']),
-            'status'       => \App\utilities\Constant::STATUS['approved'],
-            'in_status'    => \App\utilities\Constant::IN_STATUS['active'],
+            'status'       => \App\Utilities::Constant::STATUS['approved'],
+            'in_status'    => \App\Utilities::Constant::IN_STATUS['active'],
             'date'         => time(),
         ]);
 
@@ -1455,13 +1455,13 @@ class OrderController extends Controller
             'user_id'      => $seller->id,
             'from_user_id' => $order->user_id,
             'wallet_type'  => 1,
-            'tnx_type'     => \App\utilities\Constant::TRANSACTION_TYPE['refer_commission'],
+            'tnx_type'     => \App\Utilities\Constant::TRANSACTION_TYPE['refer_commission'],
             'credit'       => 0,
             'debit'        => $commissionAmt,
             'note'         => "Share Link Commission Reversed — Order Cancelled: " . ($order->order_no ?? $order->id),
             'description'  => json_encode(['order_id' => (string)$order->id, 'type' => 'seller_share_link_reverse']),
-            'status'       => \App\utilities\Constant::STATUS['approved'],
-            'in_status'    => \App\utilities\Constant::IN_STATUS['active'],
+            'status'       => \App\Utilities\Constant::STATUS['approved'],
+            'in_status'    => \App\Utilities\Constant::IN_STATUS['active'],
             'date'         => time(),
         ]);
 

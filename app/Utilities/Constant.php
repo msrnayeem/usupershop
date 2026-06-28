@@ -1,5 +1,5 @@
 <?php
-namespace App\utilities;
+namespace App\Utilities;
 class Constant {
 
     const EPS_INFO = [

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use App\Models\DropshipperProfit;
-use App\utilities\Constant;
+use App\Utilities\Constant;
 use Illuminate\Http\Request;
 
 class AdminReportController extends Controller

@@ -3,7 +3,7 @@ namespace App\Traits;
 
 use App\Models\Transaction;
 use App\Models\User;
-use App\utilities\Constant;
+use App\Utilities\Constant;
 use Illuminate\Support\Facades\Log;
 
 trait OrderAmountDistributionTrait

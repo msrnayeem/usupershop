@@ -3,7 +3,7 @@ namespace App\Traits;
 
 use App\Models\Transaction;
 use App\Models\User;
-use App\utilities\Constant;
+use App\Utilities\Constant;
 use Helper;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;

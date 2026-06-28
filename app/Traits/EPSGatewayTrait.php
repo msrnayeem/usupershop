@@ -1,6 +1,6 @@
 <?php
 namespace App\Traits;
-use App\utilities\Constant;
+use App\Utilities\Constant;
 use Illuminate\Support\Facades\Log;
 
 trait EPSGatewayTrait {

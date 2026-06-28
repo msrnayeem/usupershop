@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Dropshipper;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use App\Models\User;
-use App\utilities\Constant;
+use App\Utilities\Constant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
