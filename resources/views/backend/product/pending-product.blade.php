@@ -1,88 +1,65 @@
 @extends('backend.layouts.master')
 @section('content')
-    <style>
-        .table-bordered td, .table-bordered th{
-            text-align: center;
-        }
-    </style>
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="m-0"><i class='fas fa-hand-point-right'></i> Pending Products</h5>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Products</li>
-                            &nbsp;&nbsp;&nbsp;
-                            {{-- <a class="btn btn-sm btn-primary float-right" href="{{ route('products.add') }}"><i
-                                    class="fas fa-plus-circle"></i> Add Product</a> --}}
-                        </ol>
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-clock" style="color:#f59e0b;margin-right:8px;"></i>
+                    Pending Products
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('home') }}" style="color:#6366f1;text-decoration:none;">Home</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    <a href="{{ route('products.view') }}" style="color:#6366f1;text-decoration:none;">Products</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    Pending
+                </p>
             </div>
-            <!-- /.container-fluid -->
         </div>
-        <!-- /.content-header -->
 
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <!-- Main row -->
                 <div class="row">
-                    <!-- Left col -->
                     <section class="col-md-12">
-                        <!-- Custom tabs (Charts with tabs)-->
                         <div class="card">
-                          
-                            <!-- /.card-header -->
+                            <div class="card-header">
+                                <span class="card-title">
+                                    <i class="fas fa-list" style="color:#f59e0b;margin-right:6px;"></i>
+                                    Manage Pending Products
+                                </span>
+                            </div>
                             <div class="card-body">
-                                <table id="productPendingTbl" class="table table-bordered table-striped nowrap dt-responsive"
-                                    style="width: 100%">
+                                <table id="productPendingTbl" class="table table-bordered table-striped nowrap dt-responsive" style="width: 100%">
                                     <thead>
                                         <tr>
-                                            <th width="30px">SL.</th>
-                                            <th>Image</th>
-                                            <th>Category</th>
-                                            <th>Brand</th>
-                                            <th>Product Name</th>
-                                            <th>Product Code</th>
-                                            <th>Origin</th>
-                                            <th>TP</th>
-                                            <th>MRP</th>
-                                            <th>Dis.</th>
-                                            <th>D.Price</th>
-                                            <th>Status</th>
-                                            <th>Created By</th>
-                                            <th width="160px">Action</th>
+                                            <th class="text-center" width="30px">SL.</th>
+                                            <th class="text-center">Image</th>
+                                            <th class="text-center">Category</th>
+                                            <th class="text-center">Brand</th>
+                                            <th class="text-center">Product Name</th>
+                                            <th class="text-center">Product Code</th>
+                                            <th class="text-center">Origin</th>
+                                            <th class="text-center">TP</th>
+                                            <th class="text-center">MRP</th>
+                                            <th class="text-center">Dis.</th>
+                                            <th class="text-center">D.Price</th>
+                                            <th class="text-center">Status</th>
+                                            <th class="text-center">Created By</th>
+                                            <th class="text-center" width="160px">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-
-                                    </tbody>
+                                    <tbody></tbody>
                                 </table>
                             </div>
-                            <!-- /.card-body -->
                         </div>
-                        <!-- /.card -->
-                        <!-- /.card -->
                     </section>
-                    <!-- /.Left col -->
                 </div>
-                <!-- /.row (main row) -->
             </div>
-            <!-- /.container-fluid -->
         </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
 
     <script>
         $(function() {
@@ -93,83 +70,28 @@
                     url: "{{ route('products.pendinglist') }}",
                     data: function(data) {
                         let customFilter = {};
-
                         customFilter.category_id = null;
                         data.customFilter = customFilter;
                     },
                     type: "GET",
                 },
                 columns: [
-                    {
-                        data: "sn",
-                        searchable: false,
-                        orderable: false
-                    },
-                    {
-                        data: "image",
-                        name: "image",
-                        searchable: false,
-                        orderable: false
-                    },
-                    {
-                        data: "category_id",
-                        name: "category_id"
-                    },
-                    {
-                        data: "brand_name",
-                        name: "brand_id"
-                    },
-                    {
-                        data: "name",
-                        name: "name"
-                    },
-                    {
-                        data: "sku",
-                        name: "sku"
-                    },
-                    {
-                        data: "country_id",
-                        name: "country_id"
-                    },
-                    {
-                        data: "trade_price",
-                        name: "trade_price"
-                    },
-                    {
-                        data: "price",
-                        name: "price"
-                    },
-                    {
-                        data: "discount",
-                        name: "discount"
-                    },
-                    {
-                        data: "disValue",
-                        name: "disValue",
-                        searchable: false,
-                        orderable: false
-                    },
-                    {
-                        data: "status",
-                        name: "status",
-                        searchable: false,
-                        orderable: false
-                    },
-                    {
-                        data: "created_by",
-                        name: "created_by"
-                    },
-                    {
-                        data: "action",
-                        name: "action",
-                        searchable: false,
-                        orderable: false
-                    },
+                    {data: "sn", searchable: false, orderable: false, className: "text-center"},
+                    {data: "image", name: "image", searchable: false, orderable: false, className: "text-center"},
+                    {data: "category_id", name: "category_id", className: "text-center"},
+                    {data: "brand_name", name: "brand_id", className: "text-center"},
+                    {data: "name", name: "name", className: "text-center"},
+                    {data: "sku", name: "sku", className: "text-center"},
+                    {data: "country_id", name: "country_id", className: "text-center"},
+                    {data: "trade_price", name: "trade_price", className: "text-center"},
+                    {data: "price", name: "price", className: "text-center"},
+                    {data: "discount", name: "discount", className: "text-center"},
+                    {data: "disValue", name: "disValue", searchable: false, orderable: false, className: "text-center"},
+                    {data: "status", name: "status", searchable: false, orderable: false, className: "text-center"},
+                    {data: "created_by", name: "created_by", className: "text-center"},
+                    {data: "action", name: "action", searchable: false, orderable: false, className: "text-center"},
                 ],
-                lengthMenu: [
-                    [15, 50, 100, -1],
-                    [15, 50, 100, "All"]
-                ],
+                lengthMenu: [[15, 50, 100, -1], [15, 50, 100, "All"]],
             });
         });
     </script>
