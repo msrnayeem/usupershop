@@ -2,120 +2,82 @@
 @section('content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="m-0"><i class='fas fa-hand-point-right'></i> Manage Sub Location</h5>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Sub Location</li>
-                            &nbsp;&nbsp;&nbsp;
-                            <a class="btn btn-sm btn-primary float-right" href="{{ route('areas.sub_location.add') }}"><i
-                                    class="fas fa-plus-circle"></i> Add Sub Location</a>
-                        </ol>
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-map-marked-alt" style="color:#6366f1;margin-right:8px;"></i>
+                    Manage Sub Locations
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('home') }}" style="color:#6366f1;text-decoration:none;">Home</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    Sub Locations List
+                </p>
             </div>
-            <!-- /.container-fluid -->
+            <a class="btn btn-sm btn-primary" href="{{ route('areas.sub_location.add') }}" style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#6366f1;border:none;border-radius:8px;font-size:13px;font-weight:600;color:#fff;text-decoration:none;">
+                <i class="fas fa-plus-circle"></i> Add Sub Location
+            </a>
         </div>
-        <!-- /.content-header -->
 
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <!-- Main row -->
-                <div class="row">
-                    <!-- Left col -->
-                    <section class="col-md-12">
-                        <!-- Custom tabs (Charts with tabs)-->
-                        <div class="card">
-                            <!-- <div class="card-header">
-                                <h3>
-                                    Category List
-                                    <a class="btn btn-sm btn-primary float-right" href="{{ route('categories.add') }}"><i
-                                            class="fas fa-plus-circle"></i> Add Category</a>
-                                </h3>
-                            </div> -->
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <table id="subLocationTbl" class="table table-bordered table-striped nowrap dt-responsive"
-                                    style="width: 100%">
-                                    <thead>
-                                        <tr>
-                                            <th width="6%">SL.</th>
-                                            <th>Division</th>
-                                            <th>Location</th>
-                                            <th>Sub Location</th>
-                                            <th width="12%">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- /.card-body -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <i class="fas fa-list" style="color:#6366f1;margin-right:6px;"></i>
+                            Sub Locations / Area Hubs List
+                        </span>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="subLocationTbl" class="table table-bordered table-striped nowrap dt-responsive" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th width="8%" class="text-center">SL.</th>
+                                        <th>Division</th>
+                                        <th>Location / District</th>
+                                        <th>Sub Location / Area</th>
+                                        <th width="15%" class="text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
                         </div>
-                        <!-- /.card -->
-                        <!-- /.card -->
-                    </section>
-                    <!-- /.Left col -->
+                    </div>
                 </div>
-                <!-- /.row (main row) -->
             </div>
-            <!-- /.container-fluid -->
         </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
+@endsection
 
+@push('scripts')
     <script>
         $(function() {
             $("#subLocationTbl").DataTable({
                 processing: true,
                 serverSide: true,
+                responsive: true,
                 ajax: {
                     url: "{{ route('areas.sub_location.list') }}",
                     data: function(data) {
                         let customFilter = {};
-
                         customFilter.division_id = null;
                         data.customFilter = customFilter;
                     },
                     type: "GET",
                 },
-                columns: [{
-                        data: "sn",
-                        searchable: false,
-                        orderable: false
-                    },
-                    {
-                        data: "division_id",
-                        name: "division_id"
-                    },
-                    {
-                        data: "location_id",
-                        name: "location_id"
-                    },
-                    {
-                        data: "sub_location_name",
-                        name: "sub_location_name"
-                    },
-                    {
-                        data: "action",
-                        name: "action",
-                        searchable: false,
-                        orderable: false
-                    },
+                columns: [
+                    { data: "sn", searchable: false, orderable: false, className: 'text-center' },
+                    { data: "division_id", name: "division_id", className: 'font-weight-bold text-dark' },
+                    { data: "location_id", name: "location_id" },
+                    { data: "sub_location_name", name: "sub_location_name" },
+                    { data: "action", name: "action", searchable: false, orderable: false, className: 'text-center' }
                 ]
             });
         });
     </script>
-@endsection
+@endpush
