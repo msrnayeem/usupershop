@@ -97,18 +97,18 @@
 
 ---
 
-## 🔵 Phase 6 — Finance
+## ✅ Phase 6 — Finance (Done)
 
 | # | Status | Route Name | View File |
 |---|--------|-----------|-----------|
-| 54 | `[ ]` | `wallets.view` | `wallets/view-wallets.blade.php` |
-| 55 | `[ ]` | `wallets.history` | `wallets/history-wallets.blade.php` |
-| 56 | `[ ]` | `varified.account` | `wallets/varified-account.blade.php` |
-| 57 | `[ ]` | `subscriptions.view` | `subscription/view-subscription.blade.php` |
-| 58 | `[ ]` | `paymentgatways.view` | `payment-gateway/view-paymentgateway.blade.php` |
-| 59 | `[ ]` | `withdrawal.methods.index` | `withdrawal-methods/index.blade.php` |
-| 60 | `[ ]` | `withdrawal.methods.create` | `withdrawal-methods/create.blade.php` |
-| 61 | `[ ]` | `withdrawal.methods.edit` | `withdrawal-methods/edit.blade.php` |
+| 54 | `[x]` | `wallets.view` | `wallets/view-wallets.blade.php` |
+| 55 | `[x]` | `wallets.history` | `wallets/history-wallets.blade.php` |
+| 56 | `[x]` | `varified.account` | `wallets/varified-account.blade.php` |
+| 57 | `[x]` | `subscriptions.view` | `subscription/view-subscription.blade.php` |
+| 58 | `[x]` | `paymentgatways.view` | `payment-gateway/view-paymentgateway.blade.php` |
+| 59 | `[x]` | `withdrawal.methods.index` | `withdrawal-methods/index.blade.php` |
+| 60 | `[x]` | `withdrawal.methods.create` | `withdrawal-methods/create.blade.php` |
+| 61 | `[x]` | `withdrawal.methods.edit` | `withdrawal-methods/edit.blade.php` |
 
 ---
 
@@ -216,10 +216,10 @@
 | 3 | Products | 8 | ✅ 8 |
 | 4 | Catalog | 12 | ✅ 12 |
 | 5 | Users | 20 | ✅ 20 |
-| 6 | Finance | 8 | 0 |
+| 6 | Finance | 8 | ✅ 8 |
 | 7 | Reports | 5 | 0 |
 | 8 | Settings | 12 | 0 |
 | 9 | Content | 8 | 0 |
 | 10 | Delivery & Misc | 3 | 0 |
 | 11 | Seller Panel | 30 | 0 |
-| **Total** | | **121** | **55** |
+| **Total** | | **121** | **63** |

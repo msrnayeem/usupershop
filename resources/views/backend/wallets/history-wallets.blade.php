@@ -2,125 +2,99 @@
 @section('content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="m-0"><i class='fas fa-hand-point-right'></i>  Wallets History</h5>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Wallets</li>
-                        </ol>
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-history" style="color:#6366f1;margin-right:8px;"></i>
+                    Wallets History
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('home') }}" style="color:#6366f1;text-decoration:none;">Home</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    <a href="{{ route('wallets.view') }}" style="color:#6366f1;text-decoration:none;">Wallets</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    History
+                </p>
             </div>
-            <!-- /.container-fluid -->
+            <a class="btn btn-sm btn-primary" href="{{ route('wallets.view') }}" style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#6366f1;border:none;border-radius:8px;font-size:13px;font-weight:600;color:#fff;text-decoration:none;">
+                <i class="fas fa-wallet"></i> Manage Wallets
+            </a>
         </div>
-        <!-- /.content-header -->
 
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <!-- Main row -->
-                <div class="row">
-                    <!-- Left col -->
-                    <section class="col-md-12">
-                        <!-- Custom tabs (Charts with tabs)-->
-                        <div class="card">
-                            <div class="card-header">
-                                <h5>
-                                    Wallet List
-                                  
-                                </h5>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table id="example1" class="table table-bordered table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th width="6%">SN</th>
-                                                <th>User Name</th>
-                                                <th>Nid Number</th>
-                                                <th> Phone No</th>
-                                                <th>Payment Type</th>
-                                                <th>Transaction Status</th>
-                                                <th>Transaction Date</th>
-                                                <th>Transaction Balance</th>
-                                              
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @if($wallets!=null)
-                                            @forelse ($wallets as $key=>$wallet)
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <i class="fas fa-list" style="color:#6366f1;margin-right:6px;"></i>
+                            Transaction Records History
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="example1" class="dataTables table table-bordered table-striped nowrap dt-responsive" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th width="6%" class="text-center">SN</th>
+                                        <th>User Name</th>
+                                        <th>Nid Number</th>
+                                        <th>Phone No</th>
+                                        <th>Payment Type</th>
+                                        <th>Transaction Status</th>
+                                        <th>Transaction Date</th>
+                                        <th>Transaction Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if($wallets!=null)
+                                        @forelse ($wallets as $key=>$wallet)
                                             <tr class="{{ $wallet->id }}">
-                                                <td>{{ $key + 1 }}</td>
-                                                <td>{{ $wallet->name ?? ''}}</td>
-                                            
-                                                <td >{{ $wallet->nid_no ?? ''}}</td>
+                                                <td class="text-center">{{ $key + 1 }}</td>
+                                                <td style="font-weight:700;color:#0f172a;">{{ $wallet->name ?? ''}}</td>
+                                                <td>{{ $wallet->nid_no ?? 'N/A'}}</td>
                                                 <td class="wallet-mobile">{{ $wallet->mobile_no ?? ''}}</td>
-                        
-                                                <td  class="wallet-payment-type">{{ $wallet->payment_type ?? ''}}</td>
-                                                <td class="wallet-transaction_status">{{ $wallet->transaction_status ?? ''}}</td>
-                                                <td class="wallet-date">{{ $wallet->transaction_date ?? ''}}</td>
-                                                <td class="wallet-balance">{{ $wallet->transaction_balance ?? ''}}</td>
-                                                
-                                            </tr>
-                                            @empty
-                                                <td colspan="9">
-                                                    <p class="text-center">Wallets Not Found!!</p>
+                                                <td class="wallet-payment-type">
+                                                    @if(strtolower($wallet->payment_type ?? '') == 'bkash')
+                                                        <span class="badge badge-danger" style="background:#e11d48;padding:5px 10px;border-radius:6px;">bKash</span>
+                                                    @elseif(strtolower($wallet->payment_type ?? '') == 'nagad')
+                                                        <span class="badge badge-warning" style="background:#ea580c;color:#fff;padding:5px 10px;border-radius:6px;">Nagad</span>
+                                                    @else
+                                                        <span class="badge badge-secondary" style="padding:5px 10px;border-radius:6px;">{{ $wallet->payment_type ?? 'Other' }}</span>
+                                                    @endif
                                                 </td>
-                                            @endforelse
-                                           
-                                            @endif
-                                        </tbody>
-                                    </table>
-                                </div>
-                            
-                            </div>
-                            <!-- /.card-body -->
+                                                <td class="wallet-transaction_status">
+                                                    <span class="badge badge-success" style="padding:5px 10px;border-radius:6px;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;">{{ $wallet->transaction_status ?? 'Paid' }}</span>
+                                                </td>
+                                                <td class="wallet-date" style="font-size:13px;color:#475569;">{{ $wallet->transaction_date ?? ''}}</td>
+                                                <td class="wallet-balance" style="font-weight:700;color:#16a34a;">৳{{ number_format($wallet->transaction_balance ?? 0, 2) }}</td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="8" class="text-center py-5 text-muted">
+                                                    <i class="fas fa-history fa-3x mb-2" style="opacity:0.8;"></i>
+                                                    <p style="font-weight:600;margin-bottom:0;color:#1e293b;">No Transaction History Found</p>
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    @endif
+                                </tbody>
+                            </table>
                         </div>
-                        <!-- /.card -->
-                        <!-- /.card -->
-                    </section>
-                    <!-- /.Left col -->
+                    </div>
                 </div>
-               
             </div>
-            <!-- /.container-fluid -->
         </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
 @endsection
-@section('custom_js')
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    // Handle modal open button click
-    document.querySelectorAll('.open-modal').forEach(button => {
-        button.addEventListener('click', function (event) {
-            const row = event.target.closest('tr'); // Get the row of the clicked button
-            
-            const mobileNo = row.querySelector('.wallet-mobile').textContent.trim();
-            const userid = row.querySelector('.userID').textContent.trim();
-            const paymentType = row.querySelector('.wallet-payment-type').textContent.trim();
-            const balance = row.querySelector('.wallet-balance').textContent.trim();
-            
-            // Populate modal fields
-            document.getElementById('mobile_no').value = mobileNo;
-            document.getElementById('user_id').value = userid;
-            document.getElementById('payment_type').value = paymentType;
-            document.getElementById('balance').value = balance;
+
+@push('scripts')
+    <script>
+        $(document).ready(function () {
+            $('.dataTables').DataTable({
+                responsive: true
+            });
         });
-    });
-});
-</script>
-
-
-@endsection
+    </script>
+@endpush

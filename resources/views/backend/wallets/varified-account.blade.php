@@ -2,207 +2,125 @@
 @section('content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="m-0"><i class='fas fa-hand-point-right'></i> Manage Varified Account</h5>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Varified Account</li>
-                        </ol>
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-user-check" style="color:#6366f1;margin-right:8px;"></i>
+                    Verified Accounts
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('home') }}" style="color:#6366f1;text-decoration:none;">Home</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    Verified Accounts
+                </p>
             </div>
-            <!-- /.container-fluid -->
+            <a class="btn btn-sm btn-primary" href="{{ route('wallets.view') }}" style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#6366f1;border:none;border-radius:8px;font-size:13px;font-weight:600;color:#fff;text-decoration:none;">
+                <i class="fas fa-wallet"></i> Manage Wallets
+            </a>
         </div>
-        <!-- /.content-header -->
 
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <!-- Main row -->
-                <div class="row">
-                    <!-- Left col -->
-                    <section class="col-md-12">
-                        <!-- Custom tabs (Charts with tabs)-->
-                        <div class="card">
-                           
-                            <div class="card-header">
-                                <div class="row w-100">
-                                    <div class="col">
-                                        <h5 class="mb-0">Varified Account List</h5>
-                                    </div>
-                                    <!--<div class="col text-right">-->
-                                    <!--    <a href="{{ route('wallets.received') }}" class="btn btn-sm btn-primary">Wallet History</a>-->
-                                    <!--</div>-->
-                                </div>
-                            </div>
-                            
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table id="example1" class="table table-bordered table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th width="6%">SN</th>
-                                                <th>User Name</th>
-                                                <th class="d-none">User id</th>
-                                                <th>Nid Number</th>
-                                                <th>Bkash Phone No</th>
-                                                <th>Nid Front Image</th>
-                                                <th>Nid Back Image</th>
-                                                <!--<th>Payment Type</th>-->
-                                                <!--<th>Transaction Status</th>-->
-                                                <!--<th>Balance</th>-->
-                                              
-                                                <!--<th width="12%">Action</th>-->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <i class="fas fa-id-card" style="color:#6366f1;margin-right:6px;"></i>
+                            Verified Account Credentials
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="example1" class="dataTables table table-bordered table-striped nowrap dt-responsive" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th width="6%" class="text-center">SN</th>
+                                        <th>User Name</th>
+                                        <th class="d-none">User id</th>
+                                        <th>Nid Number</th>
+                                        <th>Bkash Phone No</th>
+                                        <th class="text-center">Nid Front Image</th>
+                                        <th class="text-center">Nid Back Image</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if($wallets!=null)
+                                        @forelse ($wallets as $key=>$wallet)
+                                            <tr class="{{ $wallet->id }}">
+                                                <td class="text-center">{{ $key + 1 }}</td>
+                                                <td style="font-weight:700;color:#0f172a;">{{ $wallet->name ?? ''}}</td>
+                                                <td class="d-none userID">{{ $wallet->user_id}}</td>
+                                                <td style="font-weight:600;color:#475569;">{{ $wallet->nid_no ?? 'N/A'}}</td>
+                                                <td class="wallet-mobile">{{ $wallet->mobile_no ?? ''}}</td>
+                                                <td class="text-center">
+                                                    <img style="width: 80px;height:50px;cursor:pointer;border-radius:6px;object-fit:cover;border:1px solid #cbd5e1;"
+                                                         src="{{ !empty($wallet->front_image) ? url('public/upload/profile_verify/' . $wallet->front_image) : url('frontend/no-image-icon.jpg') }}"
+                                                         class="img-clickable"
+                                                         data-toggle="modal"
+                                                         data-target="#imageModal"
+                                                         data-image="{{ !empty($wallet->front_image) ? url('public/upload/profile_verify/' . $wallet->front_image) : url('frontend/no-image-icon.jpg') }}">
+                                                </td>
+                                                <td class="text-center">
+                                                    <img style="width: 80px;height:50px;cursor:pointer;border-radius:6px;object-fit:cover;border:1px solid #cbd5e1;"
+                                                         src="{{ !empty($wallet->back_image) ? url('public/upload/profile_verify/' . $wallet->back_image) : url('frontend/no-image-icon.jpg') }}"
+                                                         class="img-clickable"
+                                                         data-toggle="modal"
+                                                         data-target="#imageModal"
+                                                         data-image="{{ !empty($wallet->back_image) ? url('public/upload/profile_verify/' . $wallet->back_image) : url('frontend/no-image-icon.jpg') }}">
+                                                </td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                          @if($wallets!=null)
-    @forelse ($wallets as $key=>$wallet)
-    <tr class="{{ $wallet->id }}">
-        <td>{{ $key + 1 }}</td>
-        <td>{{ $wallet->name ?? ''}}</td>
-        <td class="d-none userID">{{ $wallet->user_id}}</td>
-        <td>{{ $wallet->nid_no ?? ''}}</td>
-        <td class="wallet-mobile">{{ $wallet->mobile_no ?? ''}}</td>
-        <td>
-            <img style="width: 60px;height:40px; cursor:pointer"
-                src="{{ !empty($wallet->front_image) ? url('public/upload/profile_verify/' . $wallet->front_image) : url('frontend/no-image-icon.jpg') }}"
-                class="img-clickable"
-                data-toggle="modal"
-                data-target="#imageModal"
-                data-image="{{ !empty($wallet->front_image) ? url('public/upload/profile_verify/' . $wallet->front_image) : url('frontend/no-image-icon.jpg') }}">
-        </td>
-        <td>
-            <img style="width: 60px;height:40px; cursor:pointer"
-                src="{{ !empty($wallet->back_image) ? url('public/upload/profile_verify/' . $wallet->back_image) : url('frontend/no-image-icon.jpg') }}"
-                class="img-clickable"
-                data-toggle="modal"
-                data-target="#imageModal"
-                data-image="{{ !empty($wallet->back_image) ? url('public/upload/profile_verify/' . $wallet->back_image) : url('frontend/no-image-icon.jpg') }}">
-        </td>
-    </tr>
-    @empty
-        <td colspan="9">
-            <p class="text-center">Wallets Not Found!!</p>
-        </td>
-    @endforelse
-@endif
-
-
-
-                                        </tbody>
-                                    </table>
-                                </div>
-                            
-                            </div>
-                            <!-- /.card-body -->
+                                        @empty
+                                            <tr>
+                                                <td colspan="7" class="text-center py-5 text-muted">
+                                                    <i class="fas fa-user-check fa-3x mb-2" style="opacity:0.8;"></i>
+                                                    <p style="font-weight:600;margin-bottom:0;color:#1e293b;">No Verified Accounts Found</p>
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    @endif
+                                </tbody>
+                            </table>
                         </div>
-                        <!-- /.card -->
-                        <!-- /.card -->
-                    </section>
-                    <!-- /.Left col -->
+                    </div>
                 </div>
-                <!-- /.row (main row) -->
-                <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="paymentModalLabel">Payment Details</h5>
+
+                <!-- Image Modal Structure -->
+                <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content border-0" style="border-radius:12px;overflow:hidden;box-shadow:0 10px 25px -5px rgba(0,0,0,0.15);">
+                            <div class="modal-header" style="border-bottom:1px solid #e2e8f0;background:#f8fafc;">
+                                <h6 class="modal-title font-weight-bold" id="imageModalLabel" style="color:#0f172a;">Verification Document Preview</h6>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <div class="modal-body">
-                                <form method="post" class="form" action="{{ route('wallets.money') }}">
-                                    @csrf
-                                    <input type="hidden" id="user_id" name="user_id" value=""/>
-                                    <div class="form-group">
-                                        <label for="mobile_no">Bkash Phone Number</label>
-                                        <input type="text" class="form-control" id="mobile_no" name="mobile_no" readonly>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="payment_type">Payment Type</label>
-                                        <select disabled class="custom-select" id="payment_type" name="payment_type">
-                                            <option value="Bkash">Bkash</option>
-                                            <option value="Nagad">Nagad</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="balance">Balance</label>
-                                        <input type="number" class="form-control" id="balance" name="balance" readonly>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="balance">Transaction ID</label>
-                                        <input type="text" class="form-control" id="transaction_id" name="transaction_id" >
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </form>
+                            <div class="modal-body text-center" style="background:#0f172a;padding:20px;">
+                                <img id="modalImage" src="" class="img-fluid" style="max-height:75vh;border-radius:6px;box-shadow:0 4px 15px rgba(0,0,0,0.5);">
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Modal Structure -->
-<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-body text-center">
-        <img id="modalImage" src="" class="img-fluid" style="max-height:80vh;">
-      </div>
-    </div>
-  </div>
-</div>
-
-
             </div>
-            <!-- /.container-fluid -->
         </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
 @endsection
-@section('custom_js')
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    // Handle modal open button click
-    document.querySelectorAll('.open-modal').forEach(button => {
-        button.addEventListener('click', function (event) {
-            const row = event.target.closest('tr'); // Get the row of the clicked button
-            
-            const mobileNo = row.querySelector('.wallet-mobile').textContent.trim();
-            const userid = row.querySelector('.userID').textContent.trim();
-            const paymentType = row.querySelector('.wallet-payment-type').textContent.trim();
-            const balance = row.querySelector('.wallet-balance').textContent.trim();
-            
-            // Populate modal fields
-            document.getElementById('mobile_no').value = mobileNo;
-            document.getElementById('user_id').value = userid;
-            document.getElementById('payment_type').value = paymentType;
-            document.getElementById('balance').value = balance;
-        });
-    });
-});
-</script>
-<!-- Script -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const modalImage = document.getElementById("modalImage");
-        document.querySelectorAll(".img-clickable").forEach(img => {
-            img.addEventListener("click", function () {
-                modalImage.src = this.dataset.image;
+
+@push('scripts')
+    <script>
+        $(document).ready(function () {
+            $('.dataTables').DataTable({
+                responsive: true
             });
         });
-    });
-</script>
 
-
-@endsection
+        document.addEventListener("DOMContentLoaded", function () {
+            const modalImage = document.getElementById("modalImage");
+            document.querySelectorAll(".img-clickable").forEach(img => {
+                img.addEventListener("click", function () {
+                    modalImage.src = this.dataset.image;
+                });
+            });
+        });
+    </script>
+@endpush
