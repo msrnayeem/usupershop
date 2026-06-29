@@ -2,36 +2,28 @@
 
 @section('content')
     <div class="content-wrapper">
-        <!-- Content Header -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="m-0">
-                            <i class='fas fa-hand-point-right'></i>
-                            @if(isset($status))
-                                {{ ucfirst($status) }} Orders
-                            @else
-                                All Orders
-                            @endif
-                        </h5>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">
-                                @if(isset($status))
-                                    {{ ucfirst($status) }} Orders
-                                @else
-                                    All Orders
-                                @endif
-                            </li>
-                        </ol>
-                    </div>
-                </div>
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-shopping-basket" style="color:#6366f1;margin-right:8px;"></i>
+                    @if(isset($status))
+                        {{ ucfirst($status) }} Orders
+                    @else
+                        All Orders
+                    @endif
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('home') }}" style="color:#6366f1;text-decoration:none;">Home</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    @if(isset($status))
+                        {{ ucfirst($status) }} Orders
+                    @else
+                        All Orders
+                    @endif
+                </p>
             </div>
         </div>
-        <!-- /.content-header -->
 
         <!-- Main content -->
         <section class="content">
@@ -39,63 +31,67 @@
                 <div class="row">
                     <section class="col-md-12">
                         <div class="card">
+                            <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                                <span class="card-title">
+                                    <i class="fas fa-shopping-cart" style="color:#6366f1;margin-right:6px;"></i>
+                                    @if(isset($status))
+                                        Manage {{ ucfirst($status) }} Orders
+                                    @else
+                                        Manage All Orders
+                                    @endif
+                                </span>
+                            </div>
                             <div class="card-body">
-                                <div class="msg"></div>
+                                <div class="msg mb-3"></div>
                                 <table id="OrderTbl" class="table table-bordered table-striped nowrap dt-responsive" style="width: 100%">
                                     <thead>
-                                        <tr style="background:#b6f7f4">
-                                            <th width="4%">SN</th>
+                                        <tr>
+                                            <th width="4%" class="text-center">SN</th>
                                             <th class="text-center" width="4%">
-                                                <input type="checkbox" id="selectAllOrders" style="width:17px;height:17px;">
+                                                <input type="checkbox" id="selectAllOrders" style="width:16px;height:16px;">
                                             </th>
-                                            <th>Order No</th>
-                                            <th>Total Amount</th>
-                                            <th>Payment Type</th>
-                                            <th>Order Date</th>
-                                            <th>Status</th>
-                                            <th width="12%">Action</th>
+                                            <th class="text-center">Order No</th>
+                                            <th class="text-center">Total Amount</th>
+                                            <th class="text-center">Payment Type</th>
+                                            <th class="text-center">Order Date</th>
+                                            <th class="text-center">Status</th>
+                                            <th width="12%" class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
                                 </table>
 
-                                <!-- Bulk Actions Row -->
-                                <div class="row mt-3">
-                                    <div class="col-md-6">
-                                        <!-- Status Update Form -->
-                                        <form name="addDeliveryStatusForm" class="form-inline" method="post" action="#"
-                                            autocomplete="off" onsubmit="return false">
-                                            <div class="form-group mx-sm-3 mb-2" style="margin-left:0px !important;">
-                                                <select name="status" class="form-control form-control-sm" style="height:25px;">
-                                                    <option value="">Select Order Status</option>
-                                                    <option value="pending">Pending</option>
-                                                    <option value="confirmed">Confirmed</option>
-                                                    <option value="packaging">Packaging</option>
-                                                    <option value="shipment">Shipment</option>
-                                                    <option value="delivered">Delivered</option>
-                                                    <option value="canceled">Canceled</option>
-                                                    <option value="return">Return</option>
-                                                </select>
-                                            </div>
-                                            <button type="submit" class="btn btn-danger btn-sm mb-2"><i
-                                                    class='fas fa-paper-plane'></i> Change Order Status</button>
-                                        </form>
+                                {{-- Bulk Action Bar --}}
+                                <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:18px;padding:14px 16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;align-items:center;">
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        <span style="font-size:12px;font-weight:600;color:#64748b;">Bulk Status:</span>
+                                        <select name="status" style="height:34px;padding:0 10px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;background:#fff;color:#0f172a;min-width:160px;">
+                                            <option value="">Select Status</option>
+                                            <option value="pending">Pending</option>
+                                            <option value="confirmed">Confirmed</option>
+                                            <option value="packaging">Packaging</option>
+                                            <option value="shipment">Shipment</option>
+                                            <option value="delivered">Delivered</option>
+                                            <option value="canceled">Canceled</option>
+                                            <option value="return">Return</option>
+                                        </select>
+                                        <button type="submit" id="bulkStatusBtn"
+                                            style="height:34px;padding:0 14px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+                                            <i class="fas fa-paper-plane"></i> Apply
+                                        </button>
                                     </div>
-                                    <div class="col-md-6">
-                                        <!-- Courier Assignment Form -->
-                                        <form name="bulkCourierForm" class="form-inline" method="post" action="#"
-                                            autocomplete="off" onsubmit="return false">
-                                            <div class="form-group mx-sm-3 mb-2" style="margin-left:0px !important;">
-                                                <select name="courier" class="form-control form-control-sm" style="height:25px;">
-                                                    <option value="">Select Courier</option>
-                                                    <option value="steadfast">Steadfast</option>
-                                                    <option value="pathao">Pathao</option>
-                                                    <option value="redx">RedX</option>
-                                                </select>
-                                            </div>
-                                            <button type="submit" class="btn btn-success btn-sm mb-2"><i
-                                                    class='fas fa-shipping-fast'></i> Send to Courier</button>
-                                        </form>
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        <span style="font-size:12px;font-weight:600;color:#64748b;">Courier:</span>
+                                        <select name="courier" style="height:34px;padding:0 10px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;background:#fff;color:#0f172a;min-width:140px;">
+                                            <option value="">Select Courier</option>
+                                            <option value="steadfast">Steadfast</option>
+                                            <option value="pathao">Pathao</option>
+                                            <option value="redx">RedX</option>
+                                        </select>
+                                        <button type="submit" id="bulkCourierBtn"
+                                            style="height:34px;padding:0 14px;background:#10b981;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+                                            <i class="fas fa-shipping-fast"></i> Send
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -115,14 +111,14 @@
                 serverSide: true,
                 ajax: "{{ isset($status) ? route('orders.' . $status . '.data') : route('orders.list') }}",
                 columns: [
-                    {data: "sn", searchable: false, orderable: false},
+                    {data: "sn", searchable: false, orderable: false, className: "text-center"},
                     {data: "check_box", searchable: false, orderable: false, className: "text-center"},
-                    {data: "order_no", name: "order_no"},
-                    {data: "order_total", name: "order_total", render: function(data){ return '৳' + parseFloat(data).toLocaleString(); }},
-                    {data: "payment_id", name: "payment_id", searchable: false, orderable: false},
-                    {data: "order_date", name: "order_date"},
-                    {data: "status", name: "status", searchable: false, orderable: false},
-                    {data: "action", name: "action", searchable: false, orderable: false},
+                    {data: "order_no", name: "order_no", className: "text-center"},
+                    {data: "order_total", name: "order_total", className: "text-center", render: function(data){ return '৳' + parseFloat(data).toLocaleString(); }},
+                    {data: "payment_id", name: "payment_id", searchable: false, orderable: false, className: "text-center"},
+                    {data: "order_date", name: "order_date", className: "text-center"},
+                    {data: "status", name: "status", searchable: false, orderable: false, className: "text-center"},
+                    {data: "action", name: "action", searchable: false, orderable: false, className: "text-center"},
                 ],
                 lengthMenu: [[15, 50, 100, -1], [15, 50, 100, "All"]],
                 pageLength: 15
@@ -152,10 +148,10 @@
             }
 
             // Status update logic
-            $("form[name=addDeliveryStatusForm]").submit(function() {
+            $("#bulkStatusBtn").click(function() {
                 var status = $("select[name=status]").val();
                 if (status == "" || selectedODRs.length < 1) {
-                    alert("Select at least one order ID and Order Status !");
+                    alert("Select at least one order and status!");
                     return;
                 }
 
@@ -183,7 +179,7 @@
             });
 
             // Bulk courier assignment
-            $("form[name=bulkCourierForm]").submit(function() {
+            $("#bulkCourierBtn").click(function() {
                 var courier = $("select[name=courier]").val();
                 if (courier == "" || selectedODRs.length < 1) {
                     alert("Please select at least one order and a courier!");

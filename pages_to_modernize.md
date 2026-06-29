@@ -17,22 +17,22 @@
 
 ---
 
-## 🟨 Phase 2 — Orders
+## ✅ Phase 2 — Orders (Done)
 
 | # | Status | Route Name | View File |
 |---|--------|-----------|-----------|
-| 2 | `[ ]` | `orders.all.list` | `order/all-order-list.blade.php` |
-| 3 | `[ ]` | `orders.pending.list` | `order/pending-list.blade.php` |
-| 4 | `[ ]` | `orders.pending.details` | `order/pending-order-details.blade.php` |
-| 5 | `[ ]` | `orders.delivered.list` | `order/order-list.blade.php` |
-| 6 | `[ ]` | `orders.return.list` | `order/approved-list.blade.php` |
-| 7 | `[ ]` | `orders.canceled.list` | `order/order-list.blade.php` |
-| 8 | `[ ]` | `orders.courier.list` | `order/courier_orders.blade.php` |
-| 9 | `[ ]` | `orders.seller.list` | `order/seller-order-list.blade.php` |
-| 10 | `[ ]` | `orders.details` | `order/order-details.blade.php` |
-| 11 | `[ ]` | `orders.commission` | `order/order_commission_list.blade.php` |
-| 12 | `[ ]` | `orders.seller.commission` | `order/seller_wise_commission_list.blade.php` |
-| 13 | `[ ]` | `orders.print` | `order/print-pending-order-details.blade.php` |
+| 2 | `[x]` | `orders.all.list` | `order/all-order-list.blade.php` |
+| 3 | `[x]` | `orders.pending.list` | `order/pending-list.blade.php` |
+| 4 | `[x]` | `orders.pending.details` | `order/pending-order-details.blade.php` |
+| 5 | `[x]` | `orders.delivered.list` | `order/order-list.blade.php` |
+| 6 | `[x]` | `orders.return.list` | `order/approved-list.blade.php` |
+| 7 | `[x]` | `orders.canceled.list` | `order/order-list.blade.php` |
+| 8 | `[x]` | `orders.courier.list` | `order/courier_orders.blade.php` |
+| 9 | `[x]` | `orders.seller.list` | `order/seller-order-list.blade.php` |
+| 10 | `[x]` | `orders.details` | `order/order-details.blade.php` |
+| 11 | `[x]` | `orders.commission` | `order/order_commission_list.blade.php` |
+| 12 | `[x]` | `orders.seller.commission` | `order/seller_wise_commission_list.blade.php` |
+| 13 | `[x]` | `orders.print` | `order/print-pending-order-details.blade.php` |
 
 ---
 
@@ -212,7 +212,7 @@
 | Phase | Section | Total Pages | Done |
 |-------|---------|-------------|------|
 | 0 | Shared Layouts | 3 | ✅ 3 |
-| 2 | Orders | 12 | 0 |
+| 2 | Orders | 12 | ✅ 12 |
 | 3 | Products | 8 | 0 |
 | 4 | Catalog | 12 | 0 |
 | 5 | Users | 20 | 0 |
@@ -222,4 +222,4 @@
 | 9 | Content | 8 | 0 |
 | 10 | Delivery & Misc | 3 | 0 |
 | 11 | Seller Panel | 30 | 0 |
-| **Total** | | **121** | **3** |
+| **Total** | | **121** | **15** |
