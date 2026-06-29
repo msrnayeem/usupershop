@@ -28,20 +28,22 @@
                     <span class="card-title"><i class="fas fa-exclamation-triangle mr-2"></i>Low Stock Products (Qty ≤ 5)</span>
                 </div>
                 <div class="card-body">
-                    <table id="lowstockTbl" class="table table-bordered table-striped nowrap dt-responsive" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th class="text-center">#</th>
-                                <th class="text-center">Image</th>
-                                <th class="text-center">Product Name</th>
-                                <th class="text-center">Price</th>
-                                <th class="text-center">Stock Left</th>
-                                <th class="text-center">Vendor</th>
-                                <th class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table id="lowstockTbl" class="table table-bordered table-striped nowrap" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">#</th>
+                                    <th class="text-center">Image</th>
+                                    <th class="text-center">Product Name</th>
+                                    <th class="text-center">Price</th>
+                                    <th class="text-center">Stock Left</th>
+                                    <th class="text-center">Vendor</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -64,8 +66,7 @@ $(document).ready(function () {
       { data: 'vendor', className: "text-center" },
       { data: 'action', orderable: false, className: "text-center" }
     ],
-    order: [[4, 'asc']],
-    responsive: true
+    order: [[4, 'asc']]
   });
 });
 </script>

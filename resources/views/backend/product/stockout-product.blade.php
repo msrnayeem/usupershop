@@ -68,20 +68,22 @@
                     <span class="card-title"><i class="fas fa-times-circle mr-2"></i>Stock Out Products</span>
                 </div>
                 <div class="card-body">
-                    <table id="stockoutTbl" class="table table-bordered table-striped nowrap dt-responsive" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th class="text-center">#</th>
-                                <th class="text-center">Image</th>
-                                <th class="text-center">Product Name</th>
-                                <th class="text-center">Price</th>
-                                <th class="text-center">Stock</th>
-                                <th class="text-center">Vendor</th>
-                                <th class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table id="stockoutTbl" class="table table-bordered table-striped nowrap" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">#</th>
+                                    <th class="text-center">Image</th>
+                                    <th class="text-center">Product Name</th>
+                                    <th class="text-center">Price</th>
+                                    <th class="text-center">Stock</th>
+                                    <th class="text-center">Vendor</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -104,8 +106,7 @@ $(document).ready(function () {
       { data: 'vendor', className: "text-center" },
       { data: 'action', orderable: false, className: "text-center" }
     ],
-    order: [[0, 'desc']],
-    responsive: true
+    order: [[0, 'desc']]
   });
 });
 </script>

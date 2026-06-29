@@ -35,20 +35,20 @@
                                 <table id="productPendingTbl" class="table table-bordered table-striped nowrap dt-responsive" style="width: 100%">
                                     <thead>
                                         <tr>
-                                            <th class="text-center" width="30px">SL.</th>
-                                            <th class="text-center">Image</th>
-                                            <th class="text-center">Category</th>
-                                            <th class="text-center">Brand</th>
-                                            <th class="text-center">Product Name</th>
+                                            <th class="text-center all" width="30px">SL.</th>
+                                            <th class="text-center all">Image</th>
+                                            <th class="text-center none">Category</th>
+                                            <th class="text-center none">Brand</th>
+                                            <th class="text-center all">Product Name</th>
                                             <th class="text-center">Product Code</th>
-                                            <th class="text-center">Origin</th>
+                                            <th class="text-center none">Origin</th>
                                             <th class="text-center">TP</th>
                                             <th class="text-center">MRP</th>
                                             <th class="text-center">Dis.</th>
                                             <th class="text-center">D.Price</th>
                                             <th class="text-center">Status</th>
                                             <th class="text-center">Created By</th>
-                                            <th class="text-center" width="160px">Action</th>
+                                            <th class="text-center all" width="160px">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -66,6 +66,7 @@
             $("#productPendingTbl").DataTable({
                 processing: true,
                 serverSide: true,
+                responsive: true,
                 ajax: {
                     url: "{{ route('products.pendinglist') }}",
                     data: function(data) {
