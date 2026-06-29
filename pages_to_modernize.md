@@ -51,22 +51,22 @@
 
 ---
 
-## 🟩 Phase 4 — Catalog
+## ✅ Phase 4 — Catalog (Done)
 
 | # | Status | Route Name | View File |
 |---|--------|-----------|-----------|
-| 22 | `[ ]` | `categories.add` | `category/add-category.blade.php` |
-| 23 | `[ ]` | `categories.view` | `category/view-category.blade.php` |
-| 24 | `[ ]` | `subcategories.add` | `subcategory/add-subcategory.blade.php` |
-| 25 | `[ ]` | `subcategories.view` | `subcategory/view-subcategory.blade.php` |
-| 26 | `[ ]` | `brands.add` | `brand/add-brand.blade.php` |
-| 27 | `[ ]` | `brands.view` | `brand/view-brand.blade.php` |
-| 28 | `[ ]` | `colors.add` | `color/add-color.blade.php` |
-| 29 | `[ ]` | `colors.view` | `color/view-color.blade.php` |
-| 30 | `[ ]` | `sizes.add` | `size/add-size.blade.php` |
-| 31 | `[ ]` | `sizes.view` | `size/view-size.blade.php` |
-| 32 | `[ ]` | `coupons.add` | `coupon/add-coupon.blade.php` |
-| 33 | `[ ]` | `coupons.view` | `coupon/view-coupon.blade.php` |
+| 22 | `[x]` | `categories.add` | `category/add-category.blade.php` |
+| 23 | `[x]` | `categories.view` | `category/view-category.blade.php` |
+| 24 | `[x]` | `subcategories.add` | `subcategory/add-subcategory.blade.php` |
+| 25 | `[x]` | `subcategories.view` | `subcategory/view-subcategory.blade.php` |
+| 26 | `[x]` | `brands.add` | `brand/add-brand.blade.php` |
+| 27 | `[x]` | `brands.view` | `brand/view-brand.blade.php` |
+| 28 | `[x]` | `colors.add` | `color/add-color.blade.php` |
+| 29 | `[x]` | `colors.view` | `color/view-color.blade.php` |
+| 30 | `[x]` | `sizes.add` | `size/add-size.blade.php` |
+| 31 | `[x]` | `sizes.view` | `size/view-size.blade.php` |
+| 32 | `[x]` | `coupons.add` | `coupon/add-coupon.blade.php` |
+| 33 | `[x]` | `coupons.view` | `coupon/view-coupon.blade.php` |
 
 ---
 
@@ -214,7 +214,7 @@
 | 0 | Shared Layouts | 3 | ✅ 3 |
 | 2 | Orders | 12 | ✅ 12 |
 | 3 | Products | 8 | ✅ 8 |
-| 4 | Catalog | 12 | 0 |
+| 4 | Catalog | 12 | ✅ 12 |
 | 5 | Users | 20 | 0 |
 | 6 | Finance | 8 | 0 |
 | 7 | Reports | 5 | 0 |
@@ -222,4 +222,4 @@
 | 9 | Content | 8 | 0 |
 | 10 | Delivery & Misc | 3 | 0 |
 | 11 | Seller Panel | 30 | 0 |
-| **Total** | | **121** | **23** |
+| **Total** | | **121** | **35** |

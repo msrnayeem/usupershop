@@ -2,141 +2,120 @@
 @section('content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="m-0"><i class='fas fa-hand-point-right'></i> Manage Categories</h5>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Categories</li>
-                        </ol>
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-tags" style="color:#6366f1;margin-right:8px;"></i>
+                    @if (isset($editData)) Edit Category @else Add Category @endif
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('home') }}" style="color:#6366f1;text-decoration:none;">Home</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    <a href="{{ route('categories.view') }}" style="color:#6366f1;text-decoration:none;">Categories</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    @if (isset($editData)) Edit @else Add @endif
+                </p>
             </div>
-            <!-- /.container-fluid -->
+            <a class="btn btn-sm btn-primary" href="{{ route('categories.view') }}" style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#6366f1;border:none;border-radius:8px;font-size:13px;font-weight:600;color:#fff;text-decoration:none;">
+                <i class="fas fa-list"></i> Categories List
+            </a>
         </div>
-        <!-- /.content-header -->
 
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <!-- Main row -->
                 <div class="row">
-                    <!-- Left col -->
                     <section class="col-md-12">
-                        <!-- Custom tabs (Charts with tabs)-->
                         <div class="card">
                             <div class="card-header">
-                                <h5>
-                                    @if (isset($editData))
-                                        Edit Category
-                                    @else
-                                        Add Category
-                                    @endif
-
-                                    <a class="btn btn-sm btn-primary float-right" href="{{ route('categories.view') }}"><i
-                                            class="fas fa-list"></i> Categories List</a>
-                                </h5>
+                                <span class="card-title">
+                                    <i class="fas fa-edit" style="color:#6366f1;margin-right:6px;"></i>
+                                    Category Details
+                                </span>
                             </div>
-                            <!-- /.card-header -->
                             <div class="card-body">
-                                <form method="post"
-                                    action="{{ @$editData ? route('categories.update', $editData->id) : route('categories.store') }}"
-                                    id="myForm" enctype="multipart/form-data">
+                                <form method="post" action="{{ @$editData ? route('categories.update', $editData->id) : route('categories.store') }}" id="myForm" enctype="multipart/form-data">
                                     @csrf
                                     <div class="form-row">
                                         <div class="form-group col-md-4">
-                                            <label for="name">Category Name</label>
-                                            <input type="text" name="name" value="{{ @$editData->name }}"
-                                                class="form-control" id="name" placeholder="Enter category name">
-                                            <span
-                                                style="color: red;">{{ $errors->has('name') ? $errors->first('name') : '' }}</span>
+                                            <label for="name">Category Name (English)</label>
+                                            <input type="text" name="name" value="{{ @$editData->name }}" class="form-control" id="name" placeholder="Enter category name" required>
+                                            <span style="color: red;">{{ $errors->has('name') ? $errors->first('name') : '' }}</span>
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label for="name">Category Name Bangla</label>
-                                            <input type="text" name="name_bn" value="{{ @$editData->name_bn }}"
-                                                class="form-control" id="name_bn" placeholder="Enter category name">
-                                            <span
-                                                style="color: red;">{{ $errors->has('name_bn') ? $errors->first('name_bn') : '' }}</span>
+                                            <label for="name_bn">Category Name (Bangla)</label>
+                                            <input type="text" name="name_bn" value="{{ @$editData->name_bn }}" class="form-control" id="name_bn" placeholder="Enter category name in Bangla" required>
+                                            <span style="color: red;">{{ $errors->has('name_bn') ? $errors->first('name_bn') : '' }}</span>
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label>Image <span class="text-danger">(Must upload 120px x 120px
-                                                    image)</span></label>
+                                            <label>Image <span class="text-danger">(Recommended 120px x 120px)</span></label>
                                             <input type="file" name="image" id="image" class="form-control">
                                         </div>
 
-                                        <div class="form-group col-md-2">
-                                            <img id="showImage" style="width: 100px;height:105px; border:1px solid #000"
+                                        <div class="form-group col-md-2" style="display:flex;align-items:flex-end;">
+                                            <img id="showImage" style="width: 80px;height:80px;border-radius:8px;border:1px solid #e2e8f0;object-fit:cover;"
                                                 src="{{ !empty($editData->image) ? url('upload/category_images/' . $editData->image) : url('frontend/no-image-icon.jpg') }}">
                                         </div>
                                         <div class="form-group col-md-2"></div>
 
-                                        <div class="form-group col-md-3">
-                                            <label class="container">Is Show Top Menu
-                                                <input type="checkbox" name="is_show" value="1"
-                                                    style="height:15px;width:15px;">
-                                                <span class="checkmark"></span>
-                                            </label>
+                                        <div class="form-group col-md-3" style="display:flex;align-items:center;padding-top:30px;">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" name="is_show" value="1" class="custom-control-input" id="is_show" {{ @$editData->is_show == 1 ? 'checked' : '' }}>
+                                                <label class="custom-control-label" for="is_show" style="font-weight:600;color:#0f172a;cursor:pointer;">Show in Top Menu</label>
+                                            </div>
                                         </div>
 
                                         <!-- SEO Fields -->
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-5">
                                             <label for="meta_title">Meta Title</label>
-                                            <input type="text" name="meta_title" value="{{ @$editData->meta_title }}"
-                                                class="form-control" id="meta_title" placeholder="Enter meta title for SEO">
+                                            <input type="text" name="meta_title" value="{{ @$editData->meta_title }}" class="form-control" id="meta_title" placeholder="Enter meta title for SEO">
                                         </div>
 
                                         <div class="form-group col-md-6">
                                             <label for="meta_description">Meta Description</label>
-                                            <textarea name="meta_description" class="form-control" id="meta_description"
-                                                placeholder="Enter meta description for SEO">{{ @$editData->meta_description }}</textarea>
+                                            <textarea name="meta_description" class="form-control" id="meta_description" placeholder="Enter meta description for SEO" rows="2">{{ @$editData->meta_description }}</textarea>
                                         </div>
 
                                         <div class="form-group col-md-6">
                                             <label for="meta_keywords">Meta Keywords</label>
-                                           <textarea name="meta_keywords" class="form-control" id="meta_keywords"
-                                                placeholder="Enter meta Keywords for SEO">{{ @$editData->meta_keywords }}</textarea>
+                                            <textarea name="meta_keywords" class="form-control" id="meta_keywords" placeholder="Enter meta keywords for SEO" rows="2">{{ @$editData->meta_keywords }}</textarea>
                                         </div>
 
-                                        <div class="form-group col-md-6">
-                                            <button type="submit"
-                                                class="btn btn-primary">{{ @$editData ? 'Update' : 'Submit' }}</button>
+                                        <div class="form-group col-md-12 text-right" style="margin-top:20px;border-top:1px solid #e2e8f0;padding-top:20px;">
+                                            <button type="submit" class="btn btn-primary" style="background:#6366f1;border:none;padding:9px 24px;border-radius:8px;font-weight:600;">
+                                                <i class="fas fa-save mr-1"></i> {{ @$editData ? 'Update' : 'Save' }} Category
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
-                            <!-- /.card-body -->
                         </div>
-                        <!-- /.card -->
-                        <!-- /.card -->
                     </section>
-                    <!-- /.Left col -->
                 </div>
-                <!-- /.row (main row) -->
             </div>
-            <!-- /.container-fluid -->
         </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
 
     <script type="text/javascript">
         $(function() {
+            // Live preview
+            $('#image').change(function(e) {
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    $('#showImage').attr('src', event.target.result);
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            });
+
             $('#myForm').validate({
                 rules: {
                     name: {
                         required: true
                     },
-                },
-                messages: {
-
+                    name_bn: {
+                        required: true
+                    }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {

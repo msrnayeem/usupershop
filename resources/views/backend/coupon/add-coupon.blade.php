@@ -1,188 +1,111 @@
 @extends('backend.layouts.master')
 @section('content')
-    <style>
-        .select2-container--default .select2-selection--single,
-        .select2-container--default .select2-selection--multiple {
-            height: 38px;
-        }
-
-        .select2-container--default .select2-selection--multiple .select2-selection__choice {
-            background-color: #007bff;
-            border-color: #006fe6;
-            color: #fff;
-            padding: 0 10px;
-            margin-top: 6px;
-        }
-
-        .select2-container--default .select2-selection--single .select2-selection__arrow b {
-            margin-left: -5px;
-            margin-top: 5px;
-        }
-        
-        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-            color: #fff;
-            margin-right: 5px;
-        }
-    </style>
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="m-0"><i class='fas fa-hand-point-right'></i> Add Coupon</h5>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Coupons</li>
-                            &nbsp;&nbsp;&nbsp;
-                            <a class="btn btn-sm btn-primary float-right" href="{{ route('coupons.view') }}"><i
-                                    class="fas fa-list"></i> All Coupon</a>
-                        </ol>
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-ticket-alt" style="color:#6366f1;margin-right:8px;"></i>
+                    @if (isset($editData)) Edit Coupon @else Add Coupon @endif
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('home') }}" style="color:#6366f1;text-decoration:none;">Home</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    <a href="{{ route('coupons.view') }}" style="color:#6366f1;text-decoration:none;">Coupons</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    @if (isset($editData)) Edit @else Add @endif
+                </p>
             </div>
-            <!-- /.container-fluid -->
+            <a class="btn btn-sm btn-primary" href="{{ route('coupons.view') }}" style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#6366f1;border:none;border-radius:8px;font-size:13px;font-weight:600;color:#fff;text-decoration:none;">
+                <i class="fas fa-list"></i> All Coupons
+            </a>
         </div>
-        <!-- /.content-header -->
 
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <!-- Main row -->
                 <div class="row">
-                    <!-- Left col -->
                     <section class="col-md-12">
-                        <!-- Custom tabs (Charts with tabs)-->
                         <div class="card">
+                            <div class="card-header">
+                                <span class="card-title">
+                                    <i class="fas fa-edit" style="color:#6366f1;margin-right:6px;"></i>
+                                    Coupon Details
+                                </span>
+                            </div>
                             <div class="card-body">
-                                <form method="post"
-                                    action="{{ @$editData ? route('coupons.update', $editData->id) : route('coupons.store') }}"
-                                    id="myForm">
+                                <form method="post" action="{{ @$editData ? route('coupons.update', $editData->id) : route('coupons.store') }}" id="myForm">
                                     @csrf
                                     <div class="form-row">
                                         <div class="form-group col-md-4">
-                                            <label for="name">Coupon Name</label>
-                                            <input type="text" name="name" value="{{ @$editData->name }}"
-                                                class="form-control" id="name" placeholder="Enter title">
-                                            <span
-                                                style="color: red;">{{ $errors->has('name') ? $errors->first('name') : '' }}</span>
+                                            <label for="name">Coupon Title</label>
+                                            <input type="text" name="name" value="{{ @$editData->name }}" class="form-control" id="name" placeholder="Enter coupon title" required>
+                                            <span style="color: red;">{{ $errors->has('name') ? $errors->first('name') : '' }}</span>
                                         </div>
 
                                         <div class="form-group col-md-4">
                                             <label for="promoCode">Promo Code</label>
-                                            <input type="text" name="promoCode" value="{{ @$editData->promoCode }}"
-                                                class="form-control" id="promoCode" placeholder="Enter code">
-                                            <span
-                                                style="color: red;">{{ $errors->has('promoCode') ? $errors->first('promoCode') : '' }}</span>
+                                            <input type="text" name="promoCode" value="{{ @$editData->promoCode }}" class="form-control" id="promoCode" placeholder="Enter promo code" required>
+                                            <span style="color: red;">{{ $errors->has('promoCode') ? $errors->first('promoCode') : '' }}</span>
                                         </div>
 
                                         <div class="form-group col-md-4">
-                                            <label for="canBeUsed">Can be Used</label>
-                                            <input type="number" name="canBeUsed" value="{{ @$editData->canBeUsed }}"
-                                                class="form-control" id="canBeUsed" placeholder="Enter use time">
-                                            <span
-                                                style="color: red;">{{ $errors->has('canBeUsed') ? $errors->first('canBeUsed') : '' }}</span>
+                                            <label for="canBeUsed">Usage Limit (Per User)</label>
+                                            <input type="number" name="canBeUsed" value="{{ @$editData->canBeUsed }}" class="form-control" id="canBeUsed" placeholder="Max usage count" required min="1">
+                                            <span style="color: red;">{{ $errors->has('canBeUsed') ? $errors->first('canBeUsed') : '' }}</span>
                                         </div>
 
                                         <div class="form-group col-md-4">
-                                            <label for="available">Availability</label>
-                                            <input type="number" name="available" value="{{ @$editData->available }}"
-                                                class="form-control" id="available" placeholder="Enter title">
-                                            <span
-                                                style="color: red;">{{ $errors->has('available') ? $errors->first('available') : '' }}</span>
+                                            <label for="available">Total Available Quantity</label>
+                                            <input type="number" name="available" value="{{ @$editData->available }}" class="form-control" id="available" placeholder="Total available coupons" required min="1">
+                                            <span style="color: red;">{{ $errors->has('available') ? $errors->first('available') : '' }}</span>
                                         </div>
 
                                         <div class="form-group col-md-4">
-                                            <label for="availableFor">Available For</label>
-                                            <select name="availableFor" id="availableFor" class="form-control select2">
-                                                @if (!empty($editData))
-                                                    <option value="0"
-                                                        {{ @$editData->availableFor == 0 ? 'Selected' : '' }}>Customer
-                                                    </option>
-                                                    <option value="1"
-                                                        {{ @$editData->availableFor == 1 ? 'Selected' : '' }}>Staff
-                                                    </option>
-                                                    <option value="3"
-                                                        {{ @$editData->availableFor == 3 ? 'Selected' : '' }}>Vendor
-                                                    </option>
-                                                    <option value="4"
-                                                        {{ @$editData->availableFor == 4 ? 'Selected' : '' }}>Seller
-                                                    </option>
-                                                    <option value="2"
-                                                        {{ @$editData->availableFor == 2 ? 'Selected' : '' }}>Both</option>
-                                                @else
-                                                    <option value="0">Customer</option>
-                                                    <option value="1">Staff</option>
-                                                    <option value="3">Vendor</option>
-                                                    <option value="4">Seller</option>
-                                                    <option value="2">Both</option>
-                                                @endif
+                                            <label for="availableFor">User Group Availability</label>
+                                            <select name="availableFor" id="availableFor" class="form-control select2" required>
+                                                <option value="0" {{ @$editData->availableFor == 0 ? 'selected' : '' }}>Customer</option>
+                                                <option value="1" {{ @$editData->availableFor == 1 ? 'selected' : '' }}>Staff</option>
+                                                <option value="3" {{ @$editData->availableFor == 3 ? 'selected' : '' }}>Vendor</option>
+                                                <option value="4" {{ @$editData->availableFor == 4 ? 'selected' : '' }}>Seller</option>
+                                                <option value="2" {{ @$editData->availableFor == 2 ? 'selected' : '' }}>Both</option>
                                             </select>
                                         </div>
 
                                         <div class="form-group col-md-4">
                                             <label for="start_date">Start Date</label>
-                                            <input type="date" name="start_date" value="{{ @$editData->start_date }}"
-                                                class="form-control" id="start_date">
-                                            <span
-                                                style="color: red;">{{ $errors->has('start_date') ? $errors->first('start_date') : '' }}</span>
+                                            <input type="date" name="start_date" value="{{ @$editData->start_date }}" class="form-control" id="start_date" required>
+                                            <span style="color: red;">{{ $errors->has('start_date') ? $errors->first('start_date') : '' }}</span>
                                         </div>
 
                                         <div class="form-group col-md-4">
                                             <label for="end_date">End Date</label>
-                                            <input type="date" name="end_date" value="{{ @$editData->end_date }}"
-                                                class="form-control" id="end_date">
-                                            <span
-                                                style="color: red;">{{ $errors->has('end_date') ? $errors->first('end_date') : '' }}</span>
+                                            <input type="date" name="end_date" value="{{ @$editData->end_date }}" class="form-control" id="end_date" required>
+                                            <span style="color: red;">{{ $errors->has('end_date') ? $errors->first('end_date') : '' }}</span>
                                         </div>
 
                                         <div class="form-group col-md-4">
                                             <label for="discount_type">Discount Type</label>
-                                            <select name="discount_type" id="discount_type" class="form-control select2">
-                                                @if (!empty($editData))
-                                                    <option value="">Select Type</option>
-                                                    <option value="1"
-                                                        {{ @$editData->discount_type == 1 ? 'Selected' : '' }}>Percentage
-                                                    </option>
-                                                    <option value="2"
-                                                        {{ @$editData->discount_type == 2 ? 'Selected' : '' }}>Fixed Amount
-                                                    </option>
-                                                @else
-                                                    <option value="">Select Type</option>
-                                                    <option value="1">Percentage</option>
-                                                    <option value="2">Fixed Amount</option>
-                                                @endif
-
-                                                <span
-                                                    style="color: red;">{{ $errors->has('discount_type') ? $errors->first('discount_type') : '' }}</span>
-
+                                            <select name="discount_type" id="discount_type" class="form-control select2" required>
+                                                <option value="">Select Type</option>
+                                                <option value="1" {{ @$editData->discount_type == 1 ? 'selected' : '' }}>Percentage</option>
+                                                <option value="2" {{ @$editData->discount_type == 2 ? 'selected' : '' }}>Fixed Amount</option>
                                             </select>
                                         </div>
 
                                         <div class="form-group col-md-4">
-                                            <label for="discount_amount">Discount Amount</label>
-                                            <input type="text" name="discount_amount"
-                                                value="{{ @$editData->discount_amount }}" class="form-control"
-                                                id="discount_amount" placeholder="Enter discount">
-                                            <span
-                                                style="color: red;">{{ $errors->has('discount_amount') ? $errors->first('discount_amount') : '' }}</span>
+                                            <label for="discount_amount">Discount Value</label>
+                                            <input type="number" name="discount_amount" value="{{ @$editData->discount_amount }}" class="form-control" id="discount_amount" placeholder="Discount amount" required min="0" step="0.01">
+                                            <span style="color: red;">{{ $errors->has('discount_amount') ? $errors->first('discount_amount') : '' }}</span>
                                         </div>
 
                                         <div class="form-group col-md-4">
-                                            <label for="min_amount">Min Amount</label>
-                                            <input type="text" name="min_amount" value="{{ @$editData->min_amount }}"
-                                                class="form-control" id="min_amount" placeholder="Enter min amount">
-                                            <span
-                                                style="color: red;">{{ $errors->has('min_amount') ? $errors->first('min_amount') : '' }}</span>
+                                            <label for="min_amount">Min Purchase Amount</label>
+                                            <input type="number" name="min_amount" value="{{ @$editData->min_amount }}" class="form-control" id="min_amount" placeholder="Min purchase requirements" required min="0" step="0.01">
+                                            <span style="color: red;">{{ $errors->has('min_amount') ? $errors->first('min_amount') : '' }}</span>
                                         </div>
 
-                                        <!-- New Product Selection Field -->
                                         <div class="form-group col-md-4">
                                             <label for="products">Select Products (Optional)</label>
                                             <select name="products[]" id="products" class="form-control select2" multiple="multiple" data-placeholder="Select products">
@@ -198,51 +121,36 @@
 
                                         <div class="form-group col-md-4">
                                             <label for="status">Publication Status</label>
-                                            <select name="status" id="status" class="form-control select2">
-                                                @if (!empty($editData))
-                                                    <option value="1"
-                                                        {{ @$editData->status == 1 ? 'Selected' : '' }}>
-                                                        Active</option>
-                                                    <option value="0"
-                                                        {{ @$editData->status == 0 ? 'Selected' : '' }}>
-                                                        Inactive</option>
-                                                @else
-                                                    <option value="1">Active</option>
-                                                    <option value="0">Inactive</option>
-                                                @endif
-
-                                                <span
-                                                    style="color: red;">{{ $errors->has('status') ? $errors->first('status') : '' }}</span>
-
+                                            <select name="status" id="status" class="form-control select2" required>
+                                                <option value="1" {{ @$editData->status == 1 ? 'selected' : '' }}>Active</option>
+                                                <option value="0" {{ @$editData->status == 0 ? 'selected' : '' }}>Inactive</option>
                                             </select>
                                         </div>
 
-                                        <div class="form-group offset-md-8 col-md-4 text-right">
-                                            <button type="submit" class="btn btn-primary"><i
-                                                    class="fas fa-check-double"></i>
-                                                {{ @$editData ? 'Update' : 'Submit' }}</button>
+                                        <div class="form-group col-md-12 text-right" style="margin-top:20px;border-top:1px solid #e2e8f0;padding-top:20px;">
+                                            <button type="submit" class="btn btn-primary" style="background:#6366f1;border:none;padding:9px 24px;border-radius:8px;font-weight:600;">
+                                                <i class="fas fa-save mr-1"></i> {{ @$editData ? 'Update' : 'Save' }} Coupon
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
-                            <!-- /.card-body -->
                         </div>
-                        <!-- /.card -->
                     </section>
-                    <!-- /.Left col -->
                 </div>
-                <!-- /.row (main row) -->
             </div>
-            <!-- /.container-fluid -->
         </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
 
     <script type="text/javascript">
         $(function() {
-            // Initialize Select2 for products
+            $('.select2').select2({
+                theme: 'bootstrap4',
+                placeholder: "Select option"
+            });
+
             $('#products').select2({
+                theme: 'bootstrap4',
                 placeholder: "Select products",
                 allowClear: true
             });
@@ -281,10 +189,7 @@
                     },
                     status: {
                         required: true
-                    },
-                },
-                messages: {
-                    // Add custom messages if needed
+                    }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
