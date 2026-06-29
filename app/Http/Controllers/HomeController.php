@@ -54,7 +54,23 @@ class HomeController extends Controller
  $vendors = User::where('usertype', 'vendor')->orderBy('id','DESC');
   $data['upPaid_vendor']  = $vendors->where('payment_status', 0)->count();
   
-           
+         $data['unPaid_dropshipper'] = 0;
+
+        // 14-day order trend for chart
+        $trendRaw = \App\Models\Order::selectRaw('DATE(created_at) as day, COUNT(*) as cnt')
+            ->where('created_at', '>=', now()->subDays(13)->startOfDay())
+            ->groupBy('day')
+            ->orderBy('day')
+            ->pluck('cnt', 'day')
+            ->toArray();
+
+        $trend = [];
+        for ($i = 13; $i >= 0; $i--) {
+            $day = now()->subDays($i)->format('Y-m-d');
+            $trend[] = $trendRaw[$day] ?? 0;
+        }
+        $data['orderTrend'] = $trend;
+
         return view('backend.layouts.home', $data);
     }
 }
