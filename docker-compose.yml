@@ -14,14 +14,8 @@ services:
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
-    networks:
-      - shared-network
-      - mysql_default
 
 networks:
-  shared-network:
-    external: false
-    name: shared-network
-  mysql_default:
+  default:
     external: true
-    name: mysql_default
+    name: shared-network
