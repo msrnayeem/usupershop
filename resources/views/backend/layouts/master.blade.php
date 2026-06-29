@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="{{ asset('backend') }}/plugins/jqvmap/jqvmap.min.css" />
     <link rel="stylesheet" href="{{ asset('backend') }}/plugins/overlayScrollbars/css/OverlayScrollbars.min.css" />
     <link rel="stylesheet" href="{{ asset('backend') }}/plugins/daterangepicker/daterangepicker.css" />
-    <link rel="stylesheet" href="{{ asset('backend') }}/plugins/summernote/summernote-bs4.min.css" />
+    <link rel="stylesheet" href="{{ asset('backend') }}/plugins/summernote/summernote-lite.min.css" />
     <link rel="stylesheet" href="{{ asset('backend') }}/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="{{ asset('backend') }}/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
     <link rel="stylesheet" href="{{ asset('backend') }}/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
@@ -571,18 +571,29 @@
 
         /* Bootstrap compat */
         .row { display: flex; flex-wrap: wrap; margin: 0 -10px; }
-        .col, [class*="col-"] { padding: 0 10px; }
+        .col, [class*="col-"] { padding: 0 10px; width: 100%; }
         .col-12 { flex: 0 0 100%; max-width: 100%; }
-        .col-lg-3 { flex: 0 0 25%; max-width: 25%; }
-        .col-lg-4 { flex: 0 0 33.333%; max-width: 33.333%; }
-        .col-lg-6 { flex: 0 0 50%; max-width: 50%; }
-        .col-lg-8 { flex: 0 0 66.667%; max-width: 66.667%; }
-        .col-lg-9 { flex: 0 0 75%; max-width: 75%; }
-        .col-lg-12 { flex: 0 0 100%; max-width: 100%; }
-        .col-md-4 { flex: 0 0 33.333%; max-width: 33.333%; }
-        .col-md-6 { flex: 0 0 50%; max-width: 50%; }
-        .col-md-12 { flex: 0 0 100%; max-width: 100%; }
         .col-6 { flex: 0 0 50%; max-width: 50%; }
+
+        @media (min-width: 768px) {
+            .col-md-4 { flex: 0 0 33.333%; max-width: 33.333%; }
+            .col-md-6 { flex: 0 0 50%; max-width: 50%; }
+            .col-md-12 { flex: 0 0 100%; max-width: 100%; }
+        }
+
+        @media (min-width: 992px) {
+            .col-lg-3 { flex: 0 0 25%; max-width: 25%; }
+            .col-lg-4 { flex: 0 0 33.333%; max-width: 33.333%; }
+            .col-lg-6 { flex: 0 0 50%; max-width: 50%; }
+            .col-lg-8 { flex: 0 0 66.667%; max-width: 66.667%; }
+            .col-lg-9 { flex: 0 0 75%; max-width: 75%; }
+            .col-lg-12 { flex: 0 0 100%; max-width: 100%; }
+        }
+
+        @media (max-width: 480px) {
+            .col-6 { flex: 0 0 100%; max-width: 100%; }
+        }
+
         .mb-2 { margin-bottom: 8px; }
         .mb-3 { margin-bottom: 16px; }
         .mb-4 { margin-bottom: 24px; }
@@ -599,14 +610,6 @@
         .text-center { text-align: center; }
         .float-right, .float-sm-right { float: right; }
         .w-100 { width: 100%; }
-
-        @media (max-width: 768px) {
-            .col-lg-3, .col-lg-4, .col-lg-6, .col-md-4, .col-md-6 { flex: 0 0 100%; max-width: 100%; }
-            .col-6 { flex: 0 0 50%; max-width: 50%; }
-        }
-        @media (max-width: 480px) {
-            .col-6 { flex: 0 0 100%; max-width: 100%; }
-        }
 
         /* Notifyjs dark */
         .notifyjs-corner { z-index: 10000 !important; }
@@ -722,7 +725,7 @@
 <script src="{{ asset('backend') }}/plugins/moment/moment.min.js"></script>
 <script src="{{ asset('backend') }}/plugins/daterangepicker/daterangepicker.js"></script>
 <script src="{{ asset('backend') }}/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-<script src="{{ asset('backend') }}/plugins/summernote/summernote-bs4.min.js"></script>
+<script src="{{ asset('backend') }}/plugins/summernote/summernote-lite.min.js"></script>
 <script src="{{ asset('backend') }}/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
 <script src="{{ asset('backend') }}/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="{{ asset('backend') }}/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
