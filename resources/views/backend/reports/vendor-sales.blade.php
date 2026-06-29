@@ -1,76 +1,79 @@
 @extends('backend.layouts.master')
 @section('content')
-    <style>
-        .table-bordered td, .table-bordered th{
-            text-align: center;
-        }
-    </style>
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Main content -->
-        <div class="content">
-            <div class="container-fluid">
-                <!-- Main row -->
-                <div class="row">
-                    <!-- Left col -->
-                    <div class="col-md-12 mt-2">
-                        <!-- Custom tabs (Charts with tabs)-->
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="my-0" style="font-weight: 600;">{{ $pageTitle }}</h5>
-                            </div>
-
-                            <div class="card-body">
-                                <table id="dataTables" class="table table-bordered table-striped nowrap dt-responsive"
-                                    style="width: 100%">
-                                    <thead>
-                                        <tr>
-                                            <th width="50px" class="text-center">SL.</th>
-                                            <th class="text-left">User</th>
-                                            <th class="text-left">From User</th>
-                                            <th class="text-left">Note</th>
-                                            <th class="text-right" style="width: 150px;">Amount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse ($sales as $i => $data)
-                                            <tr>
-                                                <td width="50px" class="text-center">{{ ++$i }}</td>
-                                                <td class="text-left">{{ $data->user->name }}</td>
-                                                <td class="text-left">{{ $data->from_user->name }}</td>
-                                                <td class="text-left">{{ $data->note }}</td>
-                                                <td class="text-right" style="width: 150px;">{{ $data->credit }}</td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="5" class="text-center">Data Not Found!</td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-                        <!-- /.card -->
-                    </div>
-                    <!-- /.Left col -->
-                </div>
-                <!-- /.row (main row) -->
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-store" style="color:#6366f1;margin-right:8px;"></i>
+                    {{ $pageTitle }}
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('home') }}" style="color:#6366f1;text-decoration:none;">Home</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    Reports
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    Vendor Sales Reports
+                </p>
             </div>
-            <!-- /.container-fluid -->
         </div>
-        <!-- /.content -->
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <i class="fas fa-list" style="color:#6366f1;margin-right:6px;"></i>
+                            Sales Records
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="dataTables" class="table table-bordered table-striped nowrap dt-responsive" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th width="8%" class="text-center">SL.</th>
+                                        <th>Vendor User</th>
+                                        <th>From Buyer User</th>
+                                        <th>Note / Particulars</th>
+                                        <th class="text-right" style="width: 150px;">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($sales as $i => $data)
+                                        <tr>
+                                            <td class="text-center">{{ ++$i }}</td>
+                                            <td style="font-weight:700;color:#0f172a;">{{ $data->user->name ?? 'N/A' }}</td>
+                                            <td style="font-weight:600;color:#475569;">{{ $data->from_user->name ?? 'N/A' }}</td>
+                                            <td style="font-size:13px;color:#64748b;">{{ $data->note }}</td>
+                                            <td class="text-right" style="font-weight:700;color:#16a34a;width:150px;">৳{{ number_format($data->credit ?? 0, 2) }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="text-center py-5 text-muted">
+                                                <i class="fas fa-file-invoice-dollar fa-3x mb-2" style="opacity:0.8;"></i>
+                                                <p style="font-weight:600;margin-bottom:0;color:#1e293b;">No Vendor Sales Data Found</p>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-    <!-- /.content-wrapper -->
 @endsection
 
 @push('scripts')
     <script>
         $(document).ready(function(){
-            $("#dataTables").DataTable();
+            $("#dataTables").DataTable({
+                responsive: true
+            });
         });
     </script>
 @endpush
-
-
