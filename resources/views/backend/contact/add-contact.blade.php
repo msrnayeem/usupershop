@@ -2,210 +2,223 @@
 @section('content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="m-0"><i class='fas fa-hand-point-right'></i> Manage Contacts</h5>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Contacts</li>
-                        </ol>
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-address-book" style="color:#6366f1;margin-right:8px;"></i>
+                    @if (isset($editData)) Edit Contact Details @else Add Contact Details @endif
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('home') }}" style="color:#6366f1;text-decoration:none;">Home</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    <a href="{{ route('contacts.view') }}" style="color:#6366f1;text-decoration:none;">Contacts</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    @if (isset($editData)) Edit @else Add @endif
+                </p>
             </div>
-            <!-- /.container-fluid -->
+            <a class="btn btn-sm btn-primary" href="{{ route('contacts.view') }}" style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#6366f1;border:none;border-radius:8px;font-size:13px;font-weight:600;color:#fff;text-decoration:none;">
+                <i class="fas fa-list"></i> Contacts List
+            </a>
         </div>
-        <!-- /.content-header -->
 
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <!-- Main row -->
-                <div class="row">
-                    <!-- Left col -->
-                    <section class="col-md-12">
-                        <!-- Custom tabs (Charts with tabs)-->
-                        <div class="card">
-                            <div class="card-header">
-                                <h5>
-                                    @if (isset($editData))
-                                        Edit Contact
-                                    @else
-                                        Add Contact
-                                    @endif
-                                    <a class="btn btn-sm btn-primary float-right" href="{{ route('contacts.view') }}"><i
-                                            class="fas fa-list"></i> Contacts List</a>
-                                </h5>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <form method="post"
-                                    action="{{ @$editData ? route('contacts.update', $editData->id) : route('contacts.store') }}"
-                                    id="myForm" enctype="multipart/form-data">
-                                    @csrf
-                                    <div class="form-row">
-                                        <div class="form-group col-md-4">
-                                            <label for="address">Address</label>
-                                            <input type="text" name="address" value="{{ @$editData->address }}"
-                                                class="form-control" id="address" placeholder="Enter contact address">
-                                            <span
-                                                style="color: red;">{{ $errors->has('address') ? $errors->first('address') : '' }}</span>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="mobile">Mobile No</label>
-                                            <input type="text" name="mobile" value="{{ @$editData->mobile }}"
-                                                class="form-control" id="mobile" placeholder="Enter contact mobile">
-                                            <span
-                                                style="color: red;">{{ $errors->has('mobile') ? $errors->first('mobile') : '' }}</span>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="email">Email</label>
-                                            <input type="text" name="email" value="{{ @$editData->email }}"
-                                                class="form-control" id="email" placeholder="Enter contact email">
-                                            <span
-                                                style="color: red;">{{ $errors->has('email') ? $errors->first('email') : '' }}</span>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="facebook">Facebook</label>
-                                            <input type="text" name="facebook" value="{{ @$editData->facebook }}"
-                                                class="form-control" id="facebook" placeholder="Enter facebook link">
-                                            <span
-                                                style="color: red;">{{ $errors->has('facebook') ? $errors->first('facebook') : '' }}</span>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="facebook_icon">Facebook icon</label>
-                                            <input type="file" name="facebook_icon" value="{{ @$editData->facebook_icon }}"
-                                                class="form-control" id="facebook_icon" placeholder="Enter facebook icon">
-                                            <span
-                                                style="color: red;">{{ $errors->has('facebook_icon') ? $errors->first('facebook_icon') : '' }}</span>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="youtube">Youtube</label>
-                                            <input type="text" name="youtube" value="{{ @$editData->youtube }}"
-                                                class="form-control" id="youtube" placeholder="Enter youtube link">
-                                            <span
-                                                style="color: red;">{{ $errors->has('youtube') ? $errors->first('youtube') : '' }}</span>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="youtube_icon">Youtube icon</label>
-                                            <input type="file" name="youtube_icon" value="{{ @$editData->youtube_icon }}"
-                                                class="form-control" id="youtube_icon" placeholder="Enter youtube icon">
-                                            <span
-                                                style="color: red;">{{ $errors->has('youtube_icon') ? $errors->first('youtube_icon') : '' }}</span>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="twitter">Twitter</label>
-                                            <input type="text" name="twitter" value="{{ @$editData->twitter }}"
-                                                class="form-control" id="twitter" placeholder="Enter twitter link">
-                                            <span
-                                                style="color: red;">{{ $errors->has('twitter') ? $errors->first('twitter') : '' }}</span>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="twitter_icon">Twitter icon</label>
-                                            <input type="file" name="twitter_icon" value="{{ @$editData->twitter_icon }}"
-                                                class="form-control" id="twitter_icon" placeholder="Enter twitter icon">
-                                            <span
-                                                style="color: red;">{{ $errors->has('twitter_icon') ? $errors->first('twitter_icon') : '' }}</span>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="instagram">Instragram </label>
-                                            <input type="text" name="instagram" value="{{ @$editData->instagram }}"
-                                                class="form-control" id="instagram" placeholder="Enter instagram link">
-                                            <span
-                                                style="color: red;">{{ $errors->has('instagram') ? $errors->first('instagram') : '' }}</span>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="instagram">Instragram icon</label>
-                                            <input type="file" name="instagram_icon" value="{{ @$editData->instagram_icon }}"
-                                                class="form-control" id="instagram_icon" placeholder="Enter instagram icon">
-                                            <span
-                                                style="color: red;">{{ $errors->has('instagram_icon') ? $errors->first('instagram_icon') : '' }}</span>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="telegram">Telegram </label>
-                                            <input type="text" name="telegram" value="{{ @$editData->telegram }}"
-                                                class="form-control" id="telegram" placeholder="Enter telegram link">
-                                            <span
-                                                style="color: red;">{{ $errors->has('telegram') ? $errors->first('telegram') : '' }}</span>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="telegram_icon">Telegram icon</label>
-                                            <input type="file" name="telegram_icon" value="{{ @$editData->telegram_icon }}"
-                                                class="form-control" id="telegram_icon" placeholder="Enter telegram icon">
-                                            <span
-                                                style="color: red;">{{ $errors->has('telegram_icon') ? $errors->first('telegram_icon') : '' }}</span>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="whatsapp">Whatsapp </label>
-                                            <input type="text" name="whatsapp" value="{{ @$editData->whatsapp }}"
-                                                class="form-control" id="whatsapp" placeholder="Enter whatsapp link">
-                                            <span
-                                                style="color: red;">{{ $errors->has('whatsapp') ? $errors->first('whatsapp') : '' }}</span>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label for="whatsapp_icon">Whatsapp icon</label>
-                                            <input type="file" name="whatsapp_icon" value="{{ @$editData->whatsapp_icon }}"
-                                                class="form-control" id="whatsapp_icon" placeholder="Enter whatsapp icon">
-                                            <span
-                                                style="color: red;">{{ $errors->has('whatsapp_icon') ? $errors->first('whatsapp_icon') : '' }}</span>
-                                        </div>
-                                        <div class="form-group col-md-6" style="padding-top: 30px; float:right;">
-                                            <button type="submit"
-                                                class="btn btn-primary float-right">{{ @$editData ? 'Update' : 'Submit' }}</button>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <i class="fas fa-cog" style="color:#6366f1;margin-right:6px;"></i>
+                            Company Coordinates Configuration
+                        </span>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <form method="post"
+                            action="{{ @$editData ? route('contacts.update', $editData->id) : route('contacts.store') }}"
+                            id="myForm" enctype="multipart/form-data">
+                            @csrf
+                            <div class="row">
+                                {{-- Core Contact --}}
+                                <div class="col-md-4 form-group">
+                                    <label for="address" style="font-weight:600;color:#334155;font-size:13px;">Physical Address <span class="text-danger">*</span></label>
+                                    <input type="text" name="address" value="{{ @$editData->address }}"
+                                        class="form-control" id="address" placeholder="Office physical coordinates" required>
+                                    <span style="color: red;">{{ $errors->has('address') ? $errors->first('address') : '' }}</span>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label for="mobile" style="font-weight:600;color:#334155;font-size:13px;">Mobile No <span class="text-danger">*</span></label>
+                                    <input type="text" name="mobile" value="{{ @$editData->mobile }}"
+                                        class="form-control" id="mobile" placeholder="Customer care support phone" required>
+                                    <span style="color: red;">{{ $errors->has('mobile') ? $errors->first('mobile') : '' }}</span>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label for="email" style="font-weight:600;color:#334155;font-size:13px;">Support Email <span class="text-danger">*</span></label>
+                                    <input type="email" name="email" value="{{ @$editData->email }}"
+                                        class="form-control" id="email" placeholder="support@brand.com" required>
+                                    <span style="color: red;">{{ $errors->has('email') ? $errors->first('email') : '' }}</span>
+                                </div>
+
+                                {{-- Facebook --}}
+                                <div class="col-md-6 form-group mt-3">
+                                    <div style="background:#f8fafc;padding:15px;border-radius:10px;border:1px solid #e2e8f0;">
+                                        <label for="facebook" style="font-weight:700;color:#1877f2;font-size:13px;"><i class="fab fa-facebook mr-1"></i> Facebook Link</label>
+                                        <input type="url" name="facebook" value="{{ @$editData->facebook }}"
+                                            class="form-control mb-3" id="facebook" placeholder="https://www.facebook.com/brand" required>
+                                        
+                                        <div style="display:flex;gap:12px;align-items:center;">
+                                            <div class="custom-file" style="flex:1;">
+                                                <input type="file" name="facebook_icon" id="facebook_icon" class="custom-file-input" accept="image/*" onchange="previewIcon(this, 'show_facebook_icon')">
+                                                <label class="custom-file-label" for="facebook_icon">Custom Icon</label>
+                                            </div>
+                                            <div style="width:40px;height:40px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                                <img id="show_facebook_icon" style="max-height:30px;max-width:30px;object-fit:contain;"
+                                                    src="{{ !empty($editData->facebook_icon) ? url('upload/contact_icon/' . $editData->facebook_icon) : url('frontend/no-image-icon.jpg') }}"
+                                                    onerror="this.src='{{ url('frontend/no-image-icon.jpg') }}'">
+                                            </div>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
+
+                                {{-- Youtube --}}
+                                <div class="col-md-6 form-group mt-3">
+                                    <div style="background:#f8fafc;padding:15px;border-radius:10px;border:1px solid #e2e8f0;">
+                                        <label for="youtube" style="font-weight:700;color:#ff0000;font-size:13px;"><i class="fab fa-youtube mr-1"></i> YouTube Channel</label>
+                                        <input type="url" name="youtube" value="{{ @$editData->youtube }}"
+                                            class="form-control mb-3" id="youtube" placeholder="https://youtube.com/@channel" required>
+                                        
+                                        <div style="display:flex;gap:12px;align-items:center;">
+                                            <div class="custom-file" style="flex:1;">
+                                                <input type="file" name="youtube_icon" id="youtube_icon" class="custom-file-input" accept="image/*" onchange="previewIcon(this, 'show_youtube_icon')">
+                                                <label class="custom-file-label" for="youtube_icon">Custom Icon</label>
+                                            </div>
+                                            <div style="width:40px;height:40px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                                <img id="show_youtube_icon" style="max-height:30px;max-width:30px;object-fit:contain;"
+                                                    src="{{ !empty($editData->youtube_icon) ? url('upload/contact_icon/' . $editData->youtube_icon) : url('frontend/no-image-icon.jpg') }}"
+                                                    onerror="this.src='{{ url('frontend/no-image-icon.jpg') }}'">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Twitter --}}
+                                <div class="col-md-4 form-group mt-3">
+                                    <div style="background:#f8fafc;padding:15px;border-radius:10px;border:1px solid #e2e8f0;">
+                                        <label for="twitter" style="font-weight:700;color:#000;font-size:13px;"><i class="fab fa-twitter mr-1"></i> Twitter Profile</label>
+                                        <input type="url" name="twitter" value="{{ @$editData->twitter }}"
+                                            class="form-control mb-3" id="twitter" placeholder="https://twitter.com/brand" required>
+                                        
+                                        <div style="display:flex;gap:12px;align-items:center;">
+                                            <div class="custom-file" style="flex:1;">
+                                                <input type="file" name="twitter_icon" id="twitter_icon" class="custom-file-input" accept="image/*" onchange="previewIcon(this, 'show_twitter_icon')">
+                                                <label class="custom-file-label" for="twitter_icon">Custom Icon</label>
+                                            </div>
+                                            <div style="width:40px;height:40px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                                <img id="show_twitter_icon" style="max-height:30px;max-width:30px;object-fit:contain;"
+                                                    src="{{ !empty($editData->twitter_icon) ? url('upload/contact_icon/' . $editData->twitter_icon) : url('frontend/no-image-icon.jpg') }}"
+                                                    onerror="this.src='{{ url('frontend/no-image-icon.jpg') }}'">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Instagram --}}
+                                <div class="col-md-4 form-group mt-3">
+                                    <div style="background:#f8fafc;padding:15px;border-radius:10px;border:1px solid #e2e8f0;">
+                                        <label for="instagram" style="font-weight:700;color:#e1306c;font-size:13px;"><i class="fab fa-instagram mr-1"></i> Instagram Link</label>
+                                        <input type="url" name="instagram" value="{{ @$editData->instagram }}"
+                                            class="form-control mb-3" id="instagram" placeholder="https://instagram.com/profile">
+                                        
+                                        <div style="display:flex;gap:12px;align-items:center;">
+                                            <div class="custom-file" style="flex:1;">
+                                                <input type="file" name="instagram_icon" id="instagram_icon" class="custom-file-input" accept="image/*" onchange="previewIcon(this, 'show_instagram_icon')">
+                                                <label class="custom-file-label" for="instagram_icon">Custom Icon</label>
+                                            </div>
+                                            <div style="width:40px;height:40px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                                <img id="show_instagram_icon" style="max-height:30px;max-width:30px;object-fit:contain;"
+                                                    src="{{ !empty($editData->instagram_icon) ? url('upload/contact_icon/' . $editData->instagram_icon) : url('frontend/no-image-icon.jpg') }}"
+                                                    onerror="this.src='{{ url('frontend/no-image-icon.jpg') }}'">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Telegram --}}
+                                <div class="col-md-4 form-group mt-3">
+                                    <div style="background:#f8fafc;padding:15px;border-radius:10px;border:1px solid #e2e8f0;">
+                                        <label for="telegram" style="font-weight:700;color:#0088cc;font-size:13px;"><i class="fab fa-telegram mr-1"></i> Telegram Link</label>
+                                        <input type="url" name="telegram" value="{{ @$editData->telegram }}"
+                                            class="form-control mb-3" id="telegram" placeholder="https://t.me/channel">
+                                        
+                                        <div style="display:flex;gap:12px;align-items:center;">
+                                            <div class="custom-file" style="flex:1;">
+                                                <input type="file" name="telegram_icon" id="telegram_icon" class="custom-file-input" accept="image/*" onchange="previewIcon(this, 'show_telegram_icon')">
+                                                <label class="custom-file-label" for="telegram_icon">Custom Icon</label>
+                                            </div>
+                                            <div style="width:40px;height:40px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                                <img id="show_telegram_icon" style="max-height:30px;max-width:30px;object-fit:contain;"
+                                                    src="{{ !empty($editData->telegram_icon) ? url('upload/contact_icon/' . $editData->telegram_icon) : url('frontend/no-image-icon.jpg') }}"
+                                                    onerror="this.src='{{ url('frontend/no-image-icon.jpg') }}'">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Whatsapp --}}
+                                <div class="col-md-4 form-group mt-3">
+                                    <div style="background:#f8fafc;padding:15px;border-radius:10px;border:1px solid #e2e8f0;">
+                                        <label for="whatsapp" style="font-weight:700;color:#22c55e;font-size:13px;"><i class="fab fa-whatsapp mr-1"></i> WhatsApp link</label>
+                                        <input type="url" name="whatsapp" value="{{ @$editData->whatsapp }}"
+                                            class="form-control mb-3" id="whatsapp" placeholder="https://wa.me/8801816622128">
+                                        
+                                        <div style="display:flex;gap:12px;align-items:center;">
+                                            <div class="custom-file" style="flex:1;">
+                                                <input type="file" name="whatsapp_icon" id="whatsapp_icon" class="custom-file-input" accept="image/*" onchange="previewIcon(this, 'show_whatsapp_icon')">
+                                                <label class="custom-file-label" for="whatsapp_icon">Custom Icon</label>
+                                            </div>
+                                            <div style="width:40px;height:40px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                                <img id="show_whatsapp_icon" style="max-height:30px;max-width:30px;object-fit:contain;"
+                                                    src="{{ !empty($editData->whatsapp_icon) ? url('upload/contact_icon/' . $editData->whatsapp_icon) : url('frontend/no-image-icon.jpg') }}"
+                                                    onerror="this.src='{{ url('frontend/no-image-icon.jpg') }}'">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 text-right mt-4" style="border-top:1px solid #e2e8f0;padding-top:20px;margin-bottom:0;">
+                                    <button type="submit" class="btn btn-primary px-4" style="background:#6366f1;border:none;font-weight:600;padding:10px 24px;border-radius:8px;">
+                                        <i class="fas fa-save mr-1"></i> {{ @$editData ? 'Update Coordinates' : 'Save Coordinates' }}
+                                    </button>
+                                </div>
                             </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-                        <!-- /.card -->
-                    </section>
-                    <!-- /.Left col -->
+                        </form>
+                    </div>
                 </div>
-                <!-- /.row (main row) -->
             </div>
-            <!-- /.container-fluid -->
         </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
 
     <script type="text/javascript">
+        function previewIcon(input, targetId) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#' + targetId).attr('src', e.target.result);
+                };
+                reader.readAsDataURL(input.files[0]);
+                $(input).siblings('.custom-file-label').addClass("selected").html(input.files[0].name);
+            }
+        }
+
         $(function() {
             $('#myForm').validate({
                 rules: {
-                    address: {
-                        required: true
-                    },
-                    mobile: {
-                        required: true
-                    },
-                    email: {
-                        required: true
-                    },
-                    facebook: {
-                        required: true
-                    },
-                    youtube: {
-                        required: true
-                    },
-                    twitter: {
-                        required: true
-                    },
-                    google_plus: {
-                        required: true
-                    }
-                },
-                messages: {
-
+                    address: { required: true },
+                    mobile: { required: true },
+                    email: { required: true },
+                    facebook: { required: true },
+                    youtube: { required: true },
+                    twitter: { required: true }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
