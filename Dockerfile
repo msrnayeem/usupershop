@@ -26,7 +26,7 @@ WORKDIR /var/www/html
 # Copy Composer from official image
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy project files
+# Copy project files (vendor directory must be present locally)
 COPY . /var/www/html
 
 # Set correct permissions

@@ -28,7 +28,9 @@ class AddPerformanceIndexes extends Migration
             $this->addIndexSafe($table, 'orders', 'user_id');
             $this->addIndexSafe($table, 'orders', 'delivery_status');
             $this->addIndexSafe($table, 'orders', 'payment_method');
-            if (!$this->indexExists('orders', 'orders_user_status_index')) {
+            if (!$this->indexExists('orders', 'orders_user_status_index')
+                && Schema::hasColumn('orders', 'user_id')
+                && Schema::hasColumn('orders', 'delivery_status')) {
                 $table->index(['user_id', 'delivery_status'], 'orders_user_status_index');
             }
         });
@@ -72,6 +74,9 @@ class AddPerformanceIndexes extends Migration
 
     private function addIndexSafe(Blueprint $table, string $tableName, string $column): void
     {
+        if (!Schema::hasColumn($tableName, $column)) {
+            return; // column doesn't exist, skip
+        }
         if (!$this->indexExists($tableName, "{$tableName}_{$column}_index")) {
             try {
                 $table->index($column, "{$tableName}_{$column}_index");
