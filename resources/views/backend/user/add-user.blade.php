@@ -27,57 +27,73 @@
             <div class="container-fluid">
                 <div class="row">
                     <section class="col-md-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <span class="card-title">
-                                    <i class="fas fa-user-edit" style="color:#6366f1;margin-right:6px;"></i>
-                                    User Details Form
-                                </span>
-                            </div>
-                            <div class="card-body">
-                                <form method="post" action="{{ route('users.store') }}" id="myForm">
-                                    @csrf
-                                    <div class="form-row">
-                                        <div class="form-group col-md-4">
-                                            <label for="role">User Role</label>
-                                            <select name="role" id="role" class="form-control select2" required>
-                                                <option value="">Select Role</option>
-                                                <option value="admin">Admin</option>
-                                                <option value="user">User</option>
-                                            </select>
+                        <form method="post" action="{{ route('users.store') }}" id="myForm">
+                            @csrf
+                            <div class="row">
+                                <!-- Column 1: Profile Info -->
+                                <div class="col-lg-4 col-md-12">
+                                    <div class="card mb-4" style="border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); height: calc(100% - 24px);">
+                                        <div class="card-header" style="background:#f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 12px 12px 0 0;">
+                                            <h3 class="card-title" style="font-size:15px; font-weight:700; color:#0f172a; margin:0;">
+                                                <i class="fas fa-user" style="color:#6366f1; margin-right:6px;"></i> Profile Info
+                                            </h3>
                                         </div>
-
-                                        <div class="form-group col-md-4">
-                                            <label for="name">Name</label>
-                                            <input type="text" name="name" class="form-control" id="name" placeholder="Enter full name" required>
-                                            <span style="color: red;">{{ $errors->has('name') ? $errors->first('name') : '' }}</span>
+                                        <div class="card-body" style="padding: 20px;">
+                                            <div class="form-group">
+                                                <label for="name" style="font-weight:600; color:#334155;">Full Name <span class="text-danger">*</span></label>
+                                                <input type="text" name="name" class="form-control" id="name" placeholder="Enter full name" required>
+                                                <span style="color: red;">{{ $errors->has('name') ? $errors->first('name') : '' }}</span>
+                                            </div>
+                                            <div class="form-group mb-0">
+                                                <label for="role" style="font-weight:600; color:#334155;">User Role <span class="text-danger">*</span></label>
+                                                <select name="role" id="role" class="form-control select2" required style="width:100%;">
+                                                    <option value="">Select Role</option>
+                                                    <option value="admin">Admin</option>
+                                                    <option value="user">User</option>
+                                                </select>
+                                            </div>
                                         </div>
+                                    </div>
+                                </div>
 
-                                        <div class="form-group col-md-4">
-                                            <label for="email">Email</label>
-                                            <input type="email" name="email" class="form-control" id="email" placeholder="Enter email address" required>
-                                            <span style="color: red;">{{ $errors->has('email') ? $errors->first('email') : '' }}</span>
+                                <!-- Column 2: Credentials -->
+                                <div class="col-lg-4 col-md-12">
+                                    <div class="card mb-4" style="border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); height: calc(100% - 24px);">
+                                        <div class="card-header" style="background:#f8fafc; border-bottom: 1px solid #e2e8f0; border-radius: 12px 12px 0 0;">
+                                            <h3 class="card-title" style="font-size:15px; font-weight:700; color:#0f172a; margin:0;">
+                                                <i class="fas fa-key" style="color:#6366f1; margin-right:6px;"></i> Credentials
+                                            </h3>
                                         </div>
-
-                                        <div class="form-group col-md-6">
-                                            <label for="password">Password</label>
-                                            <input type="password" name="password" class="form-control" id="password" placeholder="Password (min 6 characters)" required>
+                                        <div class="card-body" style="padding: 20px;">
+                                            <div class="form-group">
+                                                <label for="email" style="font-weight:600; color:#334155;">Email Address <span class="text-danger">*</span></label>
+                                                <input type="email" name="email" class="form-control" id="email" placeholder="Enter email address" required>
+                                                <span style="color: red;">{{ $errors->has('email') ? $errors->first('email') : '' }}</span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="password" style="font-weight:600; color:#334155;">Password <span class="text-danger">*</span></label>
+                                                <input type="password" name="password" class="form-control" id="password" placeholder="Password (min 6 chars)" required>
+                                            </div>
+                                            <div class="form-group mb-0">
+                                                <label for="password2" style="font-weight:600; color:#334155;">Confirm Password <span class="text-danger">*</span></label>
+                                                <input type="password" name="password2" class="form-control" id="password2" placeholder="Confirm password" required>
+                                            </div>
                                         </div>
+                                    </div>
+                                </div>
 
-                                        <div class="form-group col-md-6">
-                                            <label for="password2">Confirm Password</label>
-                                            <input type="password" name="password2" class="form-control" id="password2" placeholder="Re-type password" required>
-                                        </div>
-
-                                        <div class="form-group col-md-12 text-right" style="margin-top:20px;border-top:1px solid #e2e8f0;padding-top:20px;">
-                                            <button type="submit" class="btn btn-primary" style="background:#6366f1;border:none;padding:9px 24px;border-radius:8px;font-weight:600;">
-                                                <i class="fas fa-save mr-1"></i> Save User
+                                <!-- Column 3: Action -->
+                                <div class="col-lg-4 col-md-12">
+                                    <div class="card mb-4" style="border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); background: #f8fafc;">
+                                        <div class="card-body p-3">
+                                            <button type="submit" class="btn btn-primary btn-block" style="background:#6366f1; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center; gap:8px; width:100%;">
+                                                <i class="fas fa-save"></i> Save User
                                             </button>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
                             </div>
-                        </div>
+                        </form>
                     </section>
                 </div>
             </div>
