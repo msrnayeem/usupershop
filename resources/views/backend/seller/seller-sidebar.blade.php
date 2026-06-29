@@ -3,7 +3,6 @@
 
     $routeName = Route::currentRouteName();
 
-    // Helper function to check if current route starts with a prefix of route names
     function isMenuOpen(array $routes, $currentRoute)
     {
         foreach ($routes as $r) {
@@ -54,9 +53,9 @@
             {{-- Refer --}}
             <li class="nav-item {{ isMenuOpen(['sellers.refer.'], $routeName) ? 'menu-open' : '' }}">
                 <a href="#" class="nav-link {{ isMenuOpen(['sellers.refer.'], $routeName) ? 'active' : '' }}">
-                    <i class="nav-icon fas fa-copy"></i>
+                    <i class="nav-icon fas fa-share-alt"></i>
                     <p>
-                        Refer
+                        Refer System
                         <i class="fas fa-angle-left right"></i>
                     </p>
                 </a>
@@ -65,18 +64,18 @@
                         <a href="{{ route('sellers.refer.list') }}"
                             class="nav-link {{ $routeName === 'sellers.refer.list' ? 'active' : '' }}">
                             <i class="far fa-circle nav-icon"></i>
-                            <p>Refer List</p>
+                            <p>Referrals List</p>
                         </a>
                     </li>
                 </ul>
             </li>
 
             {{-- Profile --}}
-            <li class="nav-item {{ isMenuOpen(['sellers.'], $routeName) ? 'menu-open' : '' }}">
-                <a href="#" class="nav-link {{ isMenuOpen(['sellers.'], $routeName) ? 'active' : '' }}">
-                    <i class="nav-icon fas fa-user"></i>
+            <li class="nav-item {{ isMenuOpen(['sellers.view.profile', 'sellers.password.view', 'sellers.edit.profile'], $routeName) ? 'menu-open' : '' }}">
+                <a href="#" class="nav-link {{ isMenuOpen(['sellers.view.profile', 'sellers.password.view', 'sellers.edit.profile'], $routeName) ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-user-circle"></i>
                     <p>
-                        Manage Profile
+                        My Account
                         <i class="fas fa-angle-left right"></i>
                     </p>
                 </a>
@@ -85,7 +84,7 @@
                         <a href="{{ route('sellers.view.profile') }}"
                             class="nav-link {{ $routeName === 'sellers.view.profile' ? 'active' : '' }}">
                             <i class="far fa-circle nav-icon"></i>
-                            <p>Your Profile</p>
+                            <p>Profile Details</p>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -99,11 +98,9 @@
             </li>
 
             {{-- Products --}}
-            <li
-                class="nav-item {{ isMenuOpen(['sellers.', 'vendor.', 'dropshipper.product.'], $routeName) ? 'menu-open' : '' }}">
-                <a href="#"
-                    class="nav-link {{ isMenuOpen(['sellers.', 'vendor.', 'dropshipper.product.'], $routeName) ? 'active' : '' }}">
-                    <i class="nav-icon fas fa-boxes"></i>
+            <li class="nav-item {{ isMenuOpen(['sellers.shopkeeper_product', 'sellers.seller_product', 'vendor.productview', 'vendor.addproduct', 'dropshipper.product.list'], $routeName) ? 'menu-open' : '' }}">
+                <a href="#" class="nav-link {{ isMenuOpen(['sellers.shopkeeper_product', 'sellers.seller_product', 'vendor.productview', 'vendor.addproduct', 'dropshipper.product.list'], $routeName) ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-cubes"></i>
                     <p>
                         Manage Products
                         <i class="fas fa-angle-left right"></i>
@@ -115,14 +112,14 @@
                             <a href="{{ route('sellers.shopkeeper_product') }}"
                                 class="nav-link {{ $routeName === 'sellers.shopkeeper_product' ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Usupershop Product</p>
+                                <p>Usupershop Catalog</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('sellers.seller_product') }}"
                                 class="nav-link {{ $routeName === 'sellers.seller_product' ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>My Products</p>
+                                <p>My Active Products</p>
                             </a>
                         </li>
                     @endif
@@ -132,14 +129,14 @@
                             <a href="{{ route('vendor.productview') }}"
                                 class="nav-link {{ $routeName === 'vendor.productview' ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Product Lists</p>
+                                <p>Product Catalog</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('vendor.addproduct') }}"
                                 class="nav-link {{ $routeName === 'vendor.addproduct' ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Add Product</p>
+                                <p>Add New Product</p>
                             </a>
                         </li>
                     @endif
@@ -149,7 +146,7 @@
                             <a href="{{ route('dropshipper.product.list') }}"
                                 class="nav-link {{ $routeName === 'dropshipper.product.list' ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Product Lists</p>
+                                <p>Product Catalog</p>
                             </a>
                         </li>
                     @endif
@@ -159,7 +156,7 @@
             {{-- Orders --}}
             <li class="nav-item {{ isMenuOpen(['seller.orders.'], $routeName) ? 'menu-open' : '' }}">
                 <a href="#" class="nav-link {{ isMenuOpen(['seller.orders.'], $routeName) ? 'active' : '' }}">
-                    <i class="nav-icon fas fa-shopping-cart"></i>
+                    <i class="nav-icon fas fa-shopping-bag"></i>
                     <p>
                         Manage Orders
                         <i class="fas fa-angle-left right"></i>
@@ -184,28 +181,28 @@
                         <a href="{{ route('seller.orders.packaging.list') }}"
                             class="nav-link {{ $routeName === 'seller.orders.packaging.list' ? 'active' : '' }}">
                             <i class="far fa-circle nav-icon"></i>
-                            <p>packaging Orders</p>
+                            <p>Packaging Orders</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('seller.orders.shipment.list') }}"
                             class="nav-link {{ $routeName === 'seller.orders.shipment.list' ? 'active' : '' }}">
                             <i class="far fa-circle nav-icon"></i>
-                            <p>shipment Orders</p>
+                            <p>Shipment Orders</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('seller.orders.cancel.list') }}"
                             class="nav-link {{ $routeName === 'seller.orders.cancel.list' ? 'active' : '' }}">
                             <i class="far fa-circle nav-icon"></i>
-                            <p>Cancel Orders</p>
+                            <p>Cancelled Orders</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('seller.orders.return.list') }}"
                             class="nav-link {{ $routeName === 'seller.orders.return.list' ? 'active' : '' }}">
                             <i class="far fa-circle nav-icon"></i>
-                            <p>Return Orders</p>
+                            <p>Returned Orders</p>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -221,9 +218,9 @@
             {{-- Reports --}}
             <li class="nav-item {{ isMenuOpen(['seller.reports.'], $routeName) ? 'menu-open' : '' }}">
                 <a href="#" class="nav-link {{ isMenuOpen(['seller.reports.'], $routeName) ? 'active' : '' }}">
-                    <i class="nav-icon fas fa-chart-line"></i>
+                    <i class="nav-icon fas fa-chart-bar"></i>
                     <p>
-                        Reports
+                        Reports & Statistics
                         <i class="fas fa-angle-left right"></i>
                     </p>
                 </a>
@@ -250,7 +247,7 @@
                         <a href="{{ route('seller.reports.refer') }}"
                             class="nav-link {{ $routeName === 'seller.reports.refer' ? 'active' : '' }}">
                             <i class="far fa-circle nav-icon"></i>
-                            <p>Refer Commission</p>
+                            <p>Referral Commission</p>
                         </a>
                     </li>
                 </ul>
@@ -261,7 +258,7 @@
                 <a href="#" class="nav-link {{ isMenuOpen(['manage.wallets'], $routeName) ? 'active' : '' }}">
                     <i class="nav-icon fas fa-wallet"></i>
                     <p>
-                        Manage Wallets
+                        My Wallet Status
                         <i class="fas fa-angle-left right"></i>
                     </p>
                 </a>
@@ -270,21 +267,21 @@
                         <a href="{{ route('manage.wallets.payment') }}"
                             class="nav-link {{ $routeName === 'manage.wallets.payment' ? 'active' : '' }}">
                             <i class="far fa-circle nav-icon"></i>
-                            <p>Payment</p>
+                            <p>Payout Methods</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('manage.wallets') }}"
                             class="nav-link {{ $routeName === 'manage.wallets' ? 'active' : '' }}">
                             <i class="far fa-circle nav-icon"></i>
-                            <p>Wallet</p>
+                            <p>Withdraw Balance</p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('manage.wallets.verified') }}"
                             class="nav-link {{ $routeName === 'manage.wallets.verified' ? 'active' : '' }}">
                             <i class="far fa-circle nav-icon"></i>
-                            <p>Verified</p>
+                            <p>Account Verification</p>
                         </a>
                     </li>
                 </ul>
@@ -296,8 +293,8 @@
         <li class="nav-item">
             <a href="{{ route('logout') }}"
                 onclick="event.preventDefault();document.getElementById('logout-form').submit();" class="nav-link">
-                <i class="nav-icon fas fa-lock"></i>
-                <p>Logout</p>
+                <i class="nav-icon fas fa-sign-out-alt"></i>
+                <p>Log out</p>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
             </a>
         </li>
