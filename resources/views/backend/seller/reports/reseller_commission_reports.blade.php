@@ -1,75 +1,74 @@
 @extends('backend.seller.seller-master')
 @section('content')
-    <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-chart-bar" style="color:#6366f1;margin-right:8px;"></i>
+                    {{ $pageTitle ?? 'Reseller Commission Report' }}
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('seller.dashboard') }}" style="color:#6366f1;text-decoration:none;">Dashboard</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    Commission Earnings Report
+                </p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="{{ route('seller.reports.reseller_commission.pdf') }}" class="btn btn-danger btn-sm" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;">
+                    <i class="fas fa-file-pdf"></i> Export PDF
+                </a>
+                <a href="{{ route('seller.reports.reseller_commission.excel') }}" class="btn btn-success btn-sm" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;">
+                    <i class="fas fa-file-excel"></i> Export Excel
+                </a>
+            </div>
+        </div>
 
-        <!-- Main content -->
-        <section class="content pt-3">
+        <section class="content">
             <div class="container-fluid">
-                <!-- Small boxes (Stat box) -->
-                <div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12">
-                        <!-- Custom tabs (Charts with tabs)-->
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">
-                                    <i class="fas fa-chart-pie mr-1"></i>
-                                    {{ $pageTitle }}
-                                </h3>
-                                <div class="card-tools">
-                                    <div class="btn-group">
-                                        <a href="{{ route('seller.reports.reseller_commission.pdf') }}" class="btn btn-sm btn-danger">
-                                            <i class="fas fa-file-pdf"></i> PDF
-                                        </a>
-                                        <a href="{{ route('seller.reports.reseller_commission.excel') }}" class="btn btn-sm btn-success">
-                                            <i class="fas fa-file-excel"></i> Excel
-                                        </a>
-                                    </div>
-                                </div>
-
-                            </div>
-                            
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                         <thead>
-                                             <tr>
-                                                 <th class="text-center" style="width: 50px;">SL</th>
-                                                 <th class="text-left">Date</th>
-                                                 <th class="text-left">Order No</th>
-                                                 <th class="text-left">Customer</th>
-                                                 <th class="text-right" style="width: 200px;">Amount</th>
-                                             </tr>
-                                         </thead>
-                                         <tbody>
-                                             @forelse ($data as $i => $value)
-                                                 <tr>
-                                                     <td class="text-center">{{ ++$i }}</td>
-                                                     <td class="text-left">{{ date('d-M-Y', strtotime($value->entry_date)) }}</td>
-                                                     <td class="text-left">#{{ $value->order->order_no ?? 'N/A' }}</td>
-                                                     <td class="text-left">{{ $value->order->users->name ?? 'Unknown' }}</td>
-                                                     <td class="text-right">{{ number_format($value->credit_balance, 2) }}</td>
-                                                 </tr>
-                                             @empty
-                                                 <tr>
-                                                     <td colspan="5" class="text-center">No Data..</td>
-                                                 </tr>
-                                             @endforelse
-                                         </tbody>
-                                     </table>
-                                </div>
-                            </div>
-                            <!-- /.card-body -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title font-weight-bold text-dark"><i class="fas fa-percent mr-1 text-primary"></i> Reseller Commission Earnings by Order</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="text-center" style="width:60px;">SL</th>
+                                        <th>Date</th>
+                                        <th>Order No</th>
+                                        <th>Customer</th>
+                                        <th class="text-right" style="width:160px;">Commission</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($data as $i => $value)
+                                        <tr>
+                                            <td class="text-center" style="font-weight:700;color:#64748b;">{{ ++$i }}</td>
+                                            <td style="color:#475569;font-size:13px;">{{ date('d M Y', strtotime($value->entry_date)) }}</td>
+                                            <td>
+                                                <span class="badge badge-light" style="font-family:monospace;font-size:13px;font-weight:700;border:1px solid #e2e8f0;color:#0f172a;padding:4px 8px;border-radius:4px;">
+                                                    #{{ $value->order->order_no ?? 'N/A' }}
+                                                </span>
+                                            </td>
+                                            <td style="font-weight:600;color:#0f172a;">{{ $value->order->users->name ?? 'Unknown' }}</td>
+                                            <td class="text-right" style="font-weight:800;color:#22c55e;font-size:14px;">৳{{ number_format($value->credit_balance, 2) }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted py-4">
+                                                <i class="fas fa-inbox" style="font-size:24px;opacity:0.3;display:block;margin-bottom:8px;"></i>
+                                                No commission records found.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
-                        <!-- /.card -->
-                        <!-- /.card -->
                     </div>
                 </div>
-                <!-- /.row (main row) -->
             </div>
-            <!-- /.container-fluid -->
         </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
 @endsection

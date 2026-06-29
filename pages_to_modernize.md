@@ -168,42 +168,42 @@
 
 ---
 
-## 🟡 Phase 11 — Seller Panel (Separate Layout)
+## ✅ Phase 11 — Seller Panel (Separate Layout) (Done)
 
 > Modernize `seller/seller-master.blade.php` and `seller/seller-sidebar.blade.php` first, then update all pages below.
 
 | # | Status | File |
 |---|--------|------|
-| 90 | `[ ]` | `seller/seller-master.blade.php` ← **do first** |
-| 91 | `[ ]` | `seller/seller-sidebar.blade.php` |
-| 92 | `[ ]` | `seller/seller-home.blade.php` |
-| 93 | `[ ]` | `seller/product/seller_product.blade.php` |
-| 94 | `[ ]` | `seller/product/add_vendor_product.blade.php` |
-| 95 | `[ ]` | `seller/product/vendor_product.blade.php` |
-| 96 | `[ ]` | `seller/product/shopkeeper_product.blade.php` |
-| 97 | `[ ]` | `seller/order/order-list.blade.php` |
-| 98 | `[ ]` | `seller/order/pending-list.blade.php` |
-| 99 | `[ ]` | `seller/order/approved-list.blade.php` |
-| 100 | `[ ]` | `seller/order/delivered-list.blade.php` |
-| 101 | `[ ]` | `seller/order/cancel-list.blade.php` |
-| 102 | `[ ]` | `seller/order/return-list.blade.php` |
-| 103 | `[ ]` | `seller/order/order-details.blade.php` |
-| 104 | `[ ]` | `seller/order/pending-order-details.blade.php` |
-| 105 | `[ ]` | `seller/order/delivered-order-details.blade.php` |
-| 106 | `[ ]` | `seller/order/print-seller.blade.php` |
-| 107 | `[ ]` | `seller/order/track.blade.php` |
-| 108 | `[ ]` | `seller/user/view-profile.blade.php` |
-| 109 | `[ ]` | `seller/user/edit-profile.blade.php` |
-| 110 | `[ ]` | `seller/user/edit-user.blade.php` |
-| 111 | `[ ]` | `seller/user/edit-password.blade.php` |
-| 112 | `[ ]` | `seller/user/wallets.blade.php` |
-| 113 | `[ ]` | `seller/user/wallets_verify.blade.php` |
-| 114 | `[ ]` | `seller/user/transaction.blade.php` |
-| 115 | `[ ]` | `seller/user/payment_setting.blade.php` |
-| 116 | `[ ]` | `seller/reports/refer_commissions.blade.php` |
-| 117 | `[ ]` | `seller/reports/refer_list.blade.php` |
-| 118 | `[ ]` | `seller/reports/reseller_commission_reports.blade.php` |
-| 119 | `[ ]` | `seller/reports/vendor_sales_reports.blade.php` |
+| 90 | `[x]` | `seller/seller-master.blade.php` ← **do first** |
+| 91 | `[x]` | `seller/seller-sidebar.blade.php` |
+| 92 | `[x]` | `seller/seller-home.blade.php` |
+| 93 | `[x]` | `seller/product/seller_product.blade.php` |
+| 94 | `[x]` | `seller/product/add_vendor_product.blade.php` |
+| 95 | `[x]` | `seller/product/vendor_product.blade.php` |
+| 96 | `[x]` | `seller/product/shopkeeper_product.blade.php` |
+| 97 | `[x]` | `seller/order/order-list.blade.php` |
+| 98 | `[x]` | `seller/order/pending-list.blade.php` |
+| 99 | `[x]` | `seller/order/approved-list.blade.php` |
+| 100 | `[x]` | `seller/order/delivered-list.blade.php` |
+| 101 | `[x]` | `seller/order/cancel-list.blade.php` |
+| 102 | `[x]` | `seller/order/return-list.blade.php` |
+| 103 | `[x]` | `seller/order/order-details.blade.php` |
+| 104 | `[x]` | `seller/order/pending-order-details.blade.php` |
+| 105 | `[x]` | `seller/order/delivered-order-details.blade.php` |
+| 106 | `[x]` | `seller/order/print-seller.blade.php` |
+| 107 | `[x]` | `seller/order/track.blade.php` |
+| 108 | `[x]` | `seller/user/view-profile.blade.php` |
+| 109 | `[x]` | `seller/user/edit-profile.blade.php` |
+| 110 | `[x]` | `seller/user/edit-user.blade.php` |
+| 111 | `[x]` | `seller/user/edit-password.blade.php` |
+| 112 | `[x]` | `seller/user/wallets.blade.php` |
+| 113 | `[x]` | `seller/user/wallets_verify.blade.php` |
+| 114 | `[x]` | `seller/user/transaction.blade.php` |
+| 115 | `[x]` | `seller/user/payment_setting.blade.php` |
+| 116 | `[x]` | `seller/reports/refer_commissions.blade.php` |
+| 117 | `[x]` | `seller/reports/refer_list.blade.php` |
+| 118 | `[x]` | `seller/reports/reseller_commission_reports.blade.php` |
+| 119 | `[x]` | `seller/reports/vendor_sales_reports.blade.php` |
 
 ---
 
@@ -221,5 +221,5 @@
 | 8 | Settings | 12 | ✅ 12 |
 | 9 | Content | 8 | ✅ 8 |
 | 10 | Delivery & Misc | 3 | ✅ 3 |
-| 11 | Seller Panel | 30 | 0 |
-| **Total** | | **121** | **91** |
+| 11 | Seller Panel | 30 | ✅ 30 |
+| **Total** | | **121** | **121** |
