@@ -124,22 +124,22 @@
 
 ---
 
-## ⚙️ Phase 8 — Settings & Config
+## ✅ Phase 8 — Settings & Config (Done)
 
 | # | Status | Route Name | View File |
 |---|--------|-----------|-----------|
-| 67 | `[ ]` | `settings.view` | `settings/view-setting.blade.php` |
-| 68 | `[ ]` | `settings.commission.index` | `settings/commission-setting.blade.php` |
-| 69 | `[ ]` | `settings.notification` | `settings/notification-settings.blade.php` |
-| 70 | `[ ]` | `settings.invoice` | `settings/invoice-settings.blade.php` |
-| 71 | `[ ]` | `settings.livechat` | `settings/livechat-settings.blade.php` |
-| 72 | `[ ]` | `settings.seo` | `settings/seo-settings.blade.php` |
-| 73 | `[ ]` | `smsgateways.view` | `sms-gateway/view-smsgateway.blade.php` |
-| 74 | `[ ]` | `smsgateways.test.page` | `sms-gateway/add-smsgateway.blade.php` |
-| 75 | `[ ]` | `sms.templates.view` | `sms-gateway/sms-templates.blade.php` |
-| 76 | `[ ]` | `couriers.settings` | `courier/settings.blade.php` |
-| 77 | `[ ]` | `couriers.index` | `courier/index.blade.php` |
-| 78 | `[ ]` | `color-settings.index` | `color-settings/index.blade.php` |
+| 67 | `[x]` | `settings.view` | `settings/view-setting.blade.php` |
+| 68 | `[x]` | `settings.commission.index` | `settings/commission-setting.blade.php` |
+| 69 | `[x]` | `settings.notification` | `settings/notification-settings.blade.php` |
+| 70 | `[x]` | `settings.invoice` | `settings/invoice-settings.blade.php` |
+| 71 | `[x]` | `settings.livechat` | `settings/livechat-settings.blade.php` |
+| 72 | `[x]` | `settings.seo` | `settings/seo-settings.blade.php` |
+| 73 | `[x]` | `smsgateways.view` | `sms-gateway/view-smsgateway.blade.php` |
+| 74 | `[x]` | `smsgateways.test.page` | `sms-gateway/add-smsgateway.blade.php` |
+| 75 | `[x]` | `sms.templates.view` | `sms-gateway/sms-templates.blade.php` |
+| 76 | `[x]` | `couriers.settings` | `couriers/settings.blade.php` |
+| 77 | `[x]` | `couriers.index` | `couriers/index.blade.php` |
+| 78 | `[x]` | `color-settings.index` | `color-settings/index.blade.php` |
 
 ---
 
@@ -218,8 +218,8 @@
 | 5 | Users | 20 | ✅ 20 |
 | 6 | Finance | 8 | ✅ 8 |
 | 7 | Reports | 5 | ✅ 5 |
-| 8 | Settings | 12 | 0 |
+| 8 | Settings | 12 | ✅ 12 |
 | 9 | Content | 8 | 0 |
 | 10 | Delivery & Misc | 3 | 0 |
 | 11 | Seller Panel | 30 | 0 |
-| **Total** | | **121** | **68** |
+| **Total** | | **121** | **80** |
