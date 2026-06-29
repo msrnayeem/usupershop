@@ -127,7 +127,6 @@
 .item-meta { font-size:14px; color: #888; }
 .item-qty { font-size: 13px; font-weight: 700; color: #1e25fa; white-space: nowrap; }
 
-/* ── Back btn ─────────────────────────────── */
 .back-btn {
     display: inline-flex; align-items: center; gap: 8px;
     background: #1e25fa; color: #fff; padding: 10px 22px;
@@ -135,14 +134,18 @@
     transition: background .2s;
 }
 .back-btn:hover { background: #1318c7; color: #fff; }
+.col-center {
+    float: none !important;
+    margin: 0 auto !important;
+}
 </style>
 @endsection
 
 @section('content')
 <div class="track-page">
 <div class="container">
-<div class="row justify-content-center">
-<div class="col-lg-9 col-md-11">
+<div class="row">
+<div class="col-lg-9 col-md-11 col-center">
 
 @php
     $statusOrder = ['pending'=>0,'confirmed'=>1,'packaging'=>2,'shipment'=>3,'delivered'=>4,'return'=>5];
@@ -300,9 +303,9 @@
     @foreach($orderItems as $item)
     <div class="item-row">
         @if(!empty($item->product->image))
-            <img src="{{ url('upload/product_images/'.$item- loading="lazy">product->image) }}"
+            <img src="{{ url('uploads/products/thumbnail/'.$item->product->thumb_image) }}"
                  onerror="this.src='{{ asset('frontend/no-image-icon.jpg') }}'"
-                 class="item-img" alt="">
+                 loading="lazy" class="item-img" alt="">
         @else
             <img src="{{ asset('frontend/no-image-icon.jpg') }}" class="item-img" alt="">
         @endif
@@ -327,10 +330,9 @@
 </div>
 @endif
 
-{{-- ── Back ───────────────────────────────── --}}
 <div>
-    <a href="javascript:void(0)" onclick="history.back(); return false;" class="back-btn">
-        ← Back
+    <a href="{{ route('frontend.home') }}" class="back-btn">
+        🏠 Return to Homepage
     </a>
     @auth
     <a href="{{ route('dashboard') }}" class="back-btn" style="background:#00a855; margin-left:10px;">

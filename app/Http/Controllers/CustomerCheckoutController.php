@@ -337,7 +337,7 @@ class CustomerCheckoutController extends Controller
                     return response()->json([
                         'status'  => true,
                         'type'    => 'success',
-                        'url'     => route('order.track') . '?invoice=' . $order->invoice_no,
+                        'url'     => \Illuminate\Support\Facades\URL::temporarySignedRoute('guest.order.confirmation', now()->addMinutes(60), ['order' => $order->id]),
                         'message' => 'অর্ডার সফলভাবে সম্পন্ন হয়েছে! আপনার Invoice: ' . $order->invoice_no,
                     ]);
                 }
@@ -388,7 +388,7 @@ class CustomerCheckoutController extends Controller
             return response()->json([
                 'status'  => true,
                 'type'    => 'success',
-                'url'     => route('order.track') . '?invoice=' . $order->invoice_no,
+                'url'     => \Illuminate\Support\Facades\URL::temporarySignedRoute('guest.order.confirmation', now()->addMinutes(60), ['order' => $order->id]),
                 'message' => 'অর্ডার সফলভাবে সম্পন্ন হয়েছে!',
             ]);
 

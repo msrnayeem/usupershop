@@ -211,6 +211,48 @@ class CheckoutController extends Controller
         $data['logo'] = Logo::first();
         $data['contact'] = Contact::first();
         $data['categories'] = Product::select('category_id')->groupBy('category_id')->get();
+        
+        // Fetch Cart Data for new Checkout UI
+        $cookie_id = request()->cookie('customer_cookie_id');
+        $cart_data = \App\Models\Cart::with(['product', 'product_color.color', 'product_size.size', 'product.variants'])->where('cookie_id', $cookie_id)->get();
+        
+        if ($cart_data->isEmpty()) {
+            return redirect()->route('shopping.cart')->with('error', 'Your cart is empty!');
+        }
+
+        $order_total_amount = 0;
+        foreach ($cart_data as $cart) {
+            $product = $cart->product;
+            if (!$product) continue;
+            
+            $variantPrice = $product->price;
+            if ($cart->color_id || $cart->size_id) {
+                $prductColor = \App\Models\ProductColor::find($cart->color_id);
+                $productSize = \App\Models\ProductSize::find($cart->size_id);
+                $variant = \App\Models\ProductVariant::where('product_id', $product->id)
+                    ->when($cart->color_id, fn($q) => $q->where('color_id', $prductColor?->color_id))
+                    ->when($cart->size_id, fn($q) => $q->where('size_id', $productSize?->size_id))
+                    ->first();
+                if ($variant && $variant->additional_price) {
+                    $variantPrice += $variant->additional_price;
+                }
+            }
+            if (!empty($product->discount)) {
+                if ($product->discount_type == 1) {
+                    $variantPrice -= ($variantPrice * $product->discount / 100);
+                } else {
+                    $variantPrice -= $product->discount;
+                }
+            }
+            if (auth()->check() && auth()->user()->usertype == 'dropshipper' && $cart->drop_selling_price > 0) {
+                $variantPrice = $cart->drop_selling_price;
+            }
+            $order_total_amount += ($variantPrice * $cart->qty);
+        }
+
+        $data['cart_data'] = $cart_data;
+        $data['order_total_amount'] = $order_total_amount;
+
         return view('frontend.single_page.customer-checkout', $data);
     }
 

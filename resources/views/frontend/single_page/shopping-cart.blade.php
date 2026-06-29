@@ -265,25 +265,75 @@
 @endsection
 @section('content')
     <!-- =============== HEADER : END =================== -->
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class=" breadcrumb" style="padding: 10px 0px;">
-                    <div class="breadcrumb-inner">
-                        <ul class="list-inline list-unstyled">
-                            <li><a href="{{ url('/') }}">Home</a></li>
-                            <li class='active'>Shopping Cart</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div><!-- /.breadcrumb -->
+
+    <style>
+        .checkout-steps {
+            background: #fff;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            margin-top: 65px; /* Offset for the fixed mobile header */
+            font-family: 'Hind Siliguri', sans-serif;
+            justify-content: space-between;
+        }
+        .checkout-steps .stp {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .checkout-steps .sc {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+        .checkout-steps .sc.on { background: #e8001d; color: #fff; }
+        .checkout-steps .sc.off { background: #eee; color: #aaa; }
+        .checkout-steps .sl {
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .checkout-steps .sl.on { color: #e8001d; }
+        .checkout-steps .sl.off { color: #bbb; }
+        .checkout-steps .sl-line {
+            flex: 1;
+            height: 2px;
+            background: #eee;
+            margin: 0 10px;
+        }
+
+        @media (max-width: 480px) {
+            .checkout-steps { padding: 10px; }
+            .checkout-steps .sl { display: none; /* Hide text on very small screens to save space */ }
+            .checkout-steps .stp { gap: 0; }
+            .checkout-steps .sl-line { margin: 0 5px; }
+        }
+        @media (min-width: 400px) and (max-width: 480px) {
+            .checkout-steps .sl { display: block; font-size: 11px; }
+            .checkout-steps .stp { gap: 4px; }
+        }
+    </style>
 
     <div class="body-content outer-top-xs">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
+                    <div class="checkout-steps" style="border-radius: 12px;">
+                        <div class="stp"><div class="sc on">1</div><div class="sl on">Cart</div></div>
+                        <div class="sl-line"></div>
+                        <div class="stp"><div class="sc off">2</div><div class="sl off">Checkout</div></div>
+                        <div class="sl-line"></div>
+                        <div class="stp"><div class="sc off">3</div><div class="sl off">Done</div></div>
+                    </div>
+                    
                     <div class="shopping-cart-table">
                         <div class="cart-wrapper">
                             @php
@@ -302,230 +352,19 @@
                             </div>
 
                             <br>
-
-                            <div class="row OrderCheckout">
-                                <!-- Left Side: Coupon Section -->
-                                <div class="col-md-6 col-sm-12 estimate-ship-tax">
-                                    <table class="table">
-                                        <tbody>
-                                            <tr style="width:100%; ">
-                                                <div class="col-md-12 form-group mt-3">
-                                                    <label class="form-label english_lang" for="name">Full Name <span
-                                                            class="text-danger">*</span></label>
-                                                    <label class="form-label bangla_lang" for="name"
-                                                        style="display: none;">পুরো নাম <span
-                                                            class="text-danger">*</span></label>
-                                                    <input type="text" name="name" id="name"
-                                                        class="form-control name">
-                                                    <span class="text-danger name_error"></span>
-                                                </div>
-                                            </tr>
-                                            <tr>
-                                                <div class="col-md-6 form-group">
-                                                    <label class="english_lang" for="email">Email <span
-                                                            class="text-danger">*</span></label>
-                                                    <label class="bangla_lang" for="email" style="display: none;">ইমেইল
-                                                        <span class="text-danger">*</span></label>
-                                                    <input type="email" name="email" id="email"
-                                                        class="form-control email">
-                                                    <span class="text-danger email_error"></span>
-                                                </div>
-                                            </tr>
-
-                                            <tr>
-                                                <div class="col-md-6 form-group">
-                                                    <label for="mobile" class="english_lang">Phone No <span
-                                                            class="text-danger">*</span></label>
-                                                    <label for="mobile" class="bangla_lang" style="display: none;">
-                                                        মোবাইল নম্বর <span class="text-danger">*</span></label>
-                                                    <input type="text" name="mobile" id="mobile"
-                                                        class="form-control mobile">
-                                                    <span class="text-danger mobile_error"></span>
-                                                </div>
-                                            </tr>
-                                            <tr>
-                                                <div class="col-md-12 form-group">
-                                                    <label for="address" class="english_lang">Full Address <span
-                                                            class="text-danger">*</span></label>
-                                                    <label for="address" class="bangla_lang" style="display: none;">পূর্ণ
-                                                        ঠিকানা <span class="text-danger">*</span></label>
-
-                                                    <textarea name="address" id="address" class="form-control address" rows="4"></textarea>
-                                                    <span class="text-danger address_error"></span>
-                                                </div>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                <!-- Right Side: Checkout Form -->
-                                <div class="col-md-6 col-sm-12 cart-shopping-total">
-                                    <div class="card-body" style="margin-top:20px;">
-                                        <table class="table">
-
-                                            <tr>
-                                                <th style="border-top: none;">
-                                                    <span class="estimate-title english_lang">Discount Code</span>
-                                                    <span class="estimate-title bangla_lang"
-                                                        style="display: none;">ডিসকাউন্ট
-                                                        কোড</span>
-                                                    <p class="english_lang">Enter your coupon code if you have one..</p>
-                                                    <p class="bangla_lang" style="display: none;">আপনার কুপন কোড থাকলে তা
-                                                        লিখুন..
-                                                    </p>
-                                                </th>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <form method="post" action="{{ route('save.coupon') }}">
-                                                        @csrf
-                                                        <div class="form-group" style="position: relative;">
-                                                            <input type="text"
-                                                                class="form-control unicase-form-control text-input"
-                                                                id="coupon_code" name="coupon_code"
-                                                                placeholder="Coupon Code...">
-                                                            <input type="hidden" name="totalAmm" class="totalAmm"
-                                                                value="0">
-
-                                                            <input type="submit" value="APPLY"
-                                                                class="btn-upper btn btn-primary"
-                                                                style="position: absolute; right: 0; top: 1px; padding: 9px 15px;">
-                                                        </div>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                            <!-- Delivery Zone Selection -->
-
-                                            <tr>
-                                                <th>
-                                                    <label for="address" class="english_lang">Delivery Area <span
-                                                            class="text-danger">*</span></label>
-                                                    <label for="address" class="bangla_lang"
-                                                        style="display: none;">ডেলিভারি এলাকা <span
-                                                            class="text-danger">*</span></label>
-                                                    @foreach ($deliveryArea as $i => $deliveryzone)
-                                                        <div>
-                                                            <label for="zone_{{ $deliveryzone->id }}"
-                                                                style="width:200px; color:#3a39399f;">
-                                                                {{ $deliveryzone->zone_area ?? '' }}
-                                                                ({{ $deliveryzone->zone_charge ?? '' }})
-                                                            </label>
-                                                            <input type="radio" id="zone_{{ $deliveryzone->id }}"
-                                                                name="zone_charge"
-                                                                value="{{ $deliveryzone->zone_charge }}"
-                                                                class="unicase-form-control"
-                                                                area-id="{{ $deliveryzone->id }}">
-
-
-                                                        </div>
-                                                    @endforeach
-                                                    <input type="hidden" name="delivery_area_id"
-                                                        class="delivery_area_id" value="0">
-                                                    <div class="alert alert-danger delivery_area_error_alert"
-                                                        style="display: none;">
-                                                        <span class="delivery_area_error"></span>
-                                                    </div>
-                                                </th>
-                                            </tr>
-
-                                            <!-- Totals Section -->
-                                            <tr style="width: 300px;">
-                                                <th style="width: 300px; text-align: left;">
-                                                    <div class="cart-sub-total english_lang">
-                                                        Subtotal<span class="inner-left-md " style="float: right;">&#2547;
-                                                            <span class="total_subtotal_amount">0.00</span>
-                                                        </span>
-                                                    </div>
-
-                                                    @if (Session::get('coupon_discount'))
-                                                        <div class="cart-sub-total">
-                                                            Coupon Discount<span class="inner-left-md"
-                                                                style="float: right;">&#2547;
-                                                                {{ Session::get('coupon_discount') }}</span>
-                                                        </div>
-                                                    @endif
-
-                                                    <div class="cart-sub-total">
-                                                        Delivery Charge<span class="inner-left-md" id="delCharge"
-                                                            style="float: right;">&#2547; 0.00</span>
-                                                    </div>
-                                                    <input type="hidden" class="form-control" name="delivery_charge"
-                                                        id="delivery_charge" value="" />
-                                                    <?php
-                                                    $cDiss = Session::get('coupon_discount');
-                                                    ?>
-
-                                                    <div class="cart-grand-total" style="font-weight: bold;">
-                                                        Grand Total <span class="inner-left-md grand_total"
-                                                            style="float: right;">&#2547;
-                                                            <span class="grand_total_text">0.00</span></span>
-                                                    </div>
-
-                                                    <input type="hidden" name="order_total" class="order_total_amount"
-                                                        value="0">
-                                                    <input type="hidden" name="grand_total" class="grand_total_amount"
-                                                        value="0">
-                                                </th>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <div class="alert alert-danger text-center"
-                                                        style="margin-bottom: 0px;">
-                                                        <strong>Pay your delivery charge to confirm the order.</strong>
-                                                        <br>
-                                                        <strong>অর্ডার কনফার্ম করার জন্য আপনার ডেলিভারি চার্জ পেমেন্ট
-                                                            করুন</strong>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>
-                                                    <div class="payment-options">
-                                                        <div class="payment-item">
-                                                            <label for="cash_on_delivery">
-                                                                <img class="img-fluid"
-                                                                    src="{{ asset('/') }}frontend/cash-on-delivery.png"
-                                                                    alt="cash on delivery" style="margin-top: 10px;">
-                                                            </label>
-                                                            <input type="radio" id="cash_on_delivery"
-                                                                class="payment_method" name="payment_method"
-                                                                value="cod">
-                                                        </div>
-
-                                                        <div class="payment-item">
-                                                            <label for="bkash">
-                                                                <img class="img-fluid"
-                                                                    src="{{ asset('/') }}frontend/bkash.png"
-                                                                    alt="bKash">
-                                                            </label>
-                                                            <input type="radio" id="bkash" class="payment_method"
-                                                                name="payment_method" value="bkash">
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <!-- Proceed to Checkout Button -->
-
-                                            <tr>
-                                                <td>
-                                                    <div class="cart-checkout-btn pull-right">
-                                                        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; align-items: center;">
-                                                            <button type="button" class="btn btn-primary checkout-btn"
-                                                                style="padding: 10px 15px;" onclick="checkoutBtn('guest');">Order as Guest</button>
-                                                            <a href="{{ route('customer.login') }}" class="btn btn-outline-success"
-                                                                style="padding: 10px 15px;">Login / Register</a>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </table>
+                            <div class="row">
+                                <div class="col-md-12 text-right" style="margin-top: 20px;">
+                                    <div style="background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.05);display:inline-block;min-width:300px;">
+                                        <div style="font-size:16px;font-weight:700;color:#333;margin-bottom:15px;display:flex;justify-content:space-between;">
+                                            <span>Cart Total:</span>
+                                            <span style="color:#e8001d;font-size:20px;">&#2547; <span class="total_subtotal_amount">0.00</span></span>
+                                        </div>
+                                        <a href="{{ route('customer.checkout') }}" class="btn btn-primary" style="width:100%;font-size:16px;font-weight:700;padding:12px;background:#00a855;border-color:#00a855;border-radius:8px;">
+                                            Proceed to Checkout ➡️
+                                        </a>
                                     </div>
-
                                 </div>
-                            </div>
+                            </div></div>
                         </div>
                     </div>
                 </div>
