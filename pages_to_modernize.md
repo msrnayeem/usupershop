@@ -70,30 +70,30 @@
 
 ---
 
-## 🟪 Phase 5 — Users
+## ✅ Phase 5 — Users (Done)
 
 | # | Status | Route Name | View File |
 |---|--------|-----------|-----------|
-| 34 | `[ ]` | `users.add` | `user/add-user.blade.php` |
-| 35 | `[ ]` | `users.view` | `user/view-user.blade.php` |
-| 36 | `[ ]` | `users.edit` | `user/edit-user.blade.php` |
-| 37 | `[ ]` | `profiles.view` | `user/view-profile.blade.php` |
-| 38 | `[ ]` | `profiles.password.view` | `user/edit-password.blade.php` |
-| 39 | `[ ]` | `profiles.edit` | `user/edit-profile.blade.php` |
-| 40 | `[ ]` | `customers.view` | `customer/view-customer.blade.php` |
-| 41 | `[ ]` | `customers.draft.view` | `customer/draft-customer.blade.php` |
-| 42 | `[ ]` | `sellers.view` | `shopseller/view-seller.blade.php` |
-| 43 | `[ ]` | `sellers.blocked` | `seller/blocked-accounts.blade.php` |
-| 44 | `[ ]` | `sellers.draft.view` | `shopseller/draft-seller.blade.php` |
-| 45 | `[ ]` | `sellers.profile` | `shopseller/profile-seller.blade.php` |
-| 46 | `[ ]` | `vendors.view` | `vendor/view-vendor.blade.php` |
-| 47 | `[ ]` | `vendors.draft.view` | `vendor/draft-vendor.blade.php` |
-| 48 | `[ ]` | `vendors.profile.verify` | `vendor/vendor-profile-verify.blade.php` |
-| 49 | `[ ]` | `dropshippers.view` | `dropshipper/view-dropshipper.blade.php` |
-| 50 | `[ ]` | `dropshippers.draft.view` | `dropshipper/draft-dropshipper.blade.php` |
-| 51 | `[ ]` | `staff.index` | `staff/index.blade.php` |
-| 52 | `[ ]` | `staff.create` | `staff/create.blade.php` |
-| 53 | `[ ]` | `staff.edit` | `staff/edit.blade.php` |
+| 34 | `[x]` | `users.add` | `user/add-user.blade.php` |
+| 35 | `[x]` | `users.view` | `user/view-user.blade.php` |
+| 36 | `[x]` | `users.edit` | `user/edit-user.blade.php` |
+| 37 | `[x]` | `profiles.view` | `user/view-profile.blade.php` |
+| 38 | `[x]` | `profiles.password.view` | `user/edit-password.blade.php` |
+| 39 | `[x]` | `profiles.edit` | `user/edit-profile.blade.php` |
+| 40 | `[x]` | `customers.view` | `customer/view-customer.blade.php` |
+| 41 | `[x]` | `customers.draft.view` | `customer/draft-customer.blade.php` |
+| 42 | `[x]` | `sellers.view` | `shopseller/view-seller.blade.php` |
+| 43 | `[x]` | `sellers.blocked` | `seller/blocked-accounts.blade.php` |
+| 44 | `[x]` | `sellers.draft.view` | `shopseller/draft-seller.blade.php` |
+| 45 | `[x]` | `sellers.profile` | `shopseller/profile-seller.blade.php` |
+| 46 | `[x]` | `vendors.view` | `vendor/view-vendor.blade.php` |
+| 47 | `[x]` | `vendors.draft.view` | `vendor/draft-vendor.blade.php` |
+| 48 | `[x]` | `vendors.profile.verify` | `vendor/vendor-profile-verify.blade.php` |
+| 49 | `[x]` | `dropshippers.view` | `dropshipper/view-dropshipper.blade.php` |
+| 50 | `[x]` | `dropshippers.draft.view` | `dropshipper/draft-vendor.blade.php` |
+| 51 | `[x]` | `staff.index` | `staff/index.blade.php` |
+| 52 | `[x]` | `staff.create` | `staff/create.blade.php` |
+| 53 | `[x]` | `staff.edit` | `staff/edit.blade.php` |
 
 ---
 
@@ -215,11 +215,11 @@
 | 2 | Orders | 12 | ✅ 12 |
 | 3 | Products | 8 | ✅ 8 |
 | 4 | Catalog | 12 | ✅ 12 |
-| 5 | Users | 20 | 0 |
+| 5 | Users | 20 | ✅ 20 |
 | 6 | Finance | 8 | 0 |
 | 7 | Reports | 5 | 0 |
 | 8 | Settings | 12 | 0 |
 | 9 | Content | 8 | 0 |
 | 10 | Delivery & Misc | 3 | 0 |
 | 11 | Seller Panel | 30 | 0 |
-| **Total** | | **121** | **35** |
+| **Total** | | **121** | **55** |

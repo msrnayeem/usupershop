@@ -2,52 +2,45 @@
 @section('content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="m-0"><i class='fas fa-hand-point-right'></i> Manage Users</h5>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Users</li>
-                        </ol>
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-user-plus" style="color:#6366f1;margin-right:8px;"></i>
+                    Add User
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('home') }}" style="color:#6366f1;text-decoration:none;">Home</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    <a href="{{ route('users.view') }}" style="color:#6366f1;text-decoration:none;">Users</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    Add User
+                </p>
             </div>
-            <!-- /.container-fluid -->
+            <a class="btn btn-sm btn-primary" href="{{ route('users.view') }}" style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#6366f1;border:none;border-radius:8px;font-size:13px;font-weight:600;color:#fff;text-decoration:none;">
+                <i class="fas fa-list"></i> User List
+            </a>
         </div>
-        <!-- /.content-header -->
 
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <!-- Main row -->
                 <div class="row">
-                    <!-- Left col -->
                     <section class="col-md-12">
-                        <!-- Custom tabs (Charts with tabs)-->
                         <div class="card">
                             <div class="card-header">
-                                <h5>
-                                    Add User
-                                    <a class="btn btn-sm btn-primary float-right" href="{{ route('users.view') }}"><i
-                                            class="fas fa-list"></i> User List</a>
-                                </h5>
+                                <span class="card-title">
+                                    <i class="fas fa-user-edit" style="color:#6366f1;margin-right:6px;"></i>
+                                    User Details Form
+                                </span>
                             </div>
-                            <!-- /.card-header -->
                             <div class="card-body">
                                 <form method="post" action="{{ route('users.store') }}" id="myForm">
                                     @csrf
                                     <div class="form-row">
                                         <div class="form-group col-md-4">
                                             <label for="role">User Role</label>
-                                            <select name="role" id="role" class="form-control">
+                                            <select name="role" id="role" class="form-control select2" required>
                                                 <option value="">Select Role</option>
                                                 <option value="admin">Admin</option>
                                                 <option value="user">User</option>
@@ -56,56 +49,50 @@
 
                                         <div class="form-group col-md-4">
                                             <label for="name">Name</label>
-                                            <input type="text" name="name" class="form-control" id="name"
-                                                placeholder="Enter name">
-                                            <span
-                                                style="color: red;">{{ $errors->has('name') ? $errors->first('name') : '' }}</span>
+                                            <input type="text" name="name" class="form-control" id="name" placeholder="Enter full name" required>
+                                            <span style="color: red;">{{ $errors->has('name') ? $errors->first('name') : '' }}</span>
                                         </div>
 
                                         <div class="form-group col-md-4">
                                             <label for="email">Email</label>
-                                            <input type="email" name="email" class="form-control" id="email"
-                                                placeholder="Enter email">
-                                            <span
-                                                style="color: red;">{{ $errors->has('email') ? $errors->first('email') : '' }}</span>
-                                        </div>
-
-                                        <div class="form-group col-md-4">
-                                            <label for="password">Password</label>
-                                            <input type="password" name="password" class="form-control" id="password">
-                                        </div>
-
-                                        <div class="form-group col-md-4">
-                                            <label for="password">Confirm Password</label>
-                                            <input type="password" name="password2" class="form-control" id="password2">
+                                            <input type="email" name="email" class="form-control" id="email" placeholder="Enter email address" required>
+                                            <span style="color: red;">{{ $errors->has('email') ? $errors->first('email') : '' }}</span>
                                         </div>
 
                                         <div class="form-group col-md-6">
-                                            <input type="submit" value="submit" class="btn btn-primary">
+                                            <label for="password">Password</label>
+                                            <input type="password" name="password" class="form-control" id="password" placeholder="Password (min 6 characters)" required>
+                                        </div>
+
+                                        <div class="form-group col-md-6">
+                                            <label for="password2">Confirm Password</label>
+                                            <input type="password" name="password2" class="form-control" id="password2" placeholder="Re-type password" required>
+                                        </div>
+
+                                        <div class="form-group col-md-12 text-right" style="margin-top:20px;border-top:1px solid #e2e8f0;padding-top:20px;">
+                                            <button type="submit" class="btn btn-primary" style="background:#6366f1;border:none;padding:9px 24px;border-radius:8px;font-weight:600;">
+                                                <i class="fas fa-save mr-1"></i> Save User
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
-                            <!-- /.card-body -->
                         </div>
-                        <!-- /.card -->
-                        <!-- /.card -->
                     </section>
-                    <!-- /.Left col -->
                 </div>
-                <!-- /.row (main row) -->
             </div>
-            <!-- /.container-fluid -->
         </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
 
     <script type="text/javascript">
         $(function() {
+            $('.select2').select2({
+                theme: 'bootstrap4'
+            });
+
             $('#myForm').validate({
                 rules: {
-                    usertype: {
+                    role: {
                         required: true
                     },
                     name: {
@@ -113,7 +100,7 @@
                     },
                     email: {
                         required: true,
-                        email: true,
+                        email: true
                     },
                     password: {
                         required: true,
@@ -122,18 +109,17 @@
                     password2: {
                         required: true,
                         equalTo: '#password'
-                    },
+                    }
                 },
                 messages: {
-                    usertype: {
+                    role: {
                         required: "Please select user role"
                     },
                     name: {
                         required: "Please enter username"
                     },
                     email: {
-                        required: "Please enter a email address",
-                        email: "Please enter a vaild email address"
+                        required: "Please enter a valid email address"
                     },
                     password: {
                         required: "Please provide a password",

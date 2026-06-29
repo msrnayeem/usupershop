@@ -2,90 +2,73 @@
 @section('content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="m-0"><i class='fas fa-hand-point-right'></i> Manage Password</h5>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Password</li>
-                        </ol>
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-lock" style="color:#ef4444;margin-right:8px;"></i>
+                    Change Password
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('home') }}" style="color:#6366f1;text-decoration:none;">Home</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    Password
+                </p>
             </div>
-            <!-- /.container-fluid -->
         </div>
-        <!-- /.content-header -->
 
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <!-- Main row -->
                 <div class="row">
-                    <!-- Left col -->
                     <section class="col-md-12">
-                        <!-- Custom tabs (Charts with tabs)-->
                         <div class="card">
                             <div class="card-header">
-                                <h5>Change Password</h5>
+                                <span class="card-title">
+                                    <i class="fas fa-key" style="color:#6366f1;margin-right:6px;"></i>
+                                    Security Credentials Form
+                                </span>
                             </div>
-                            <!-- /.card-header -->
                             <div class="card-body">
                                 <form method="post" action="{{ route('profiles.password.update') }}" id="myForm">
                                     @csrf
                                     <div class="form-row">
                                         <div class="form-group col-md-4">
                                             <label for="current_password">Current Password</label>
-                                            <input type="password" name="current_password" class="form-control"
-                                                id="current_password">
+                                            <input type="password" name="current_password" class="form-control" id="current_password" required>
                                         </div>
 
                                         <div class="form-group col-md-4">
                                             <label for="new_password">New Password</label>
-                                            <input type="password" name="new_password" class="form-control"
-                                                id="new_password">
+                                            <input type="password" name="new_password" class="form-control" id="new_password" required>
                                         </div>
 
                                         <div class="form-group col-md-4">
-                                            <label for="again_new_password">Again New Password</label>
-                                            <input type="password" name="again_new_password" class="form-control">
+                                            <label for="again_new_password">Confirm New Password</label>
+                                            <input type="password" name="again_new_password" id="again_new_password" class="form-control" required>
                                         </div>
 
-                                        <div class="form-group col-md-6">
-                                            <input type="submit" value="update" class="btn btn-primary">
+                                        <div class="form-group col-md-12 text-right" style="margin-top:20px;border-top:1px solid #e2e8f0;padding-top:20px;">
+                                            <button type="submit" class="btn btn-primary" style="background:#6366f1;border:none;padding:9px 24px;border-radius:8px;font-weight:600;">
+                                                <i class="fas fa-save mr-1"></i> Update Password
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
-                            <!-- /.card-body -->
                         </div>
-                        <!-- /.card -->
-                        <!-- /.card -->
                     </section>
-                    <!-- /.Left col -->
                 </div>
-                <!-- /.row (main row) -->
             </div>
-            <!-- /.container-fluid -->
         </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
 
     <script type="text/javascript">
         $(function() {
             $('#myForm').validate({
                 rules: {
-
                     current_password: {
-                        required: true,
+                        required: true
                     },
                     new_password: {
                         required: true,
@@ -94,11 +77,11 @@
                     again_new_password: {
                         required: true,
                         equalTo: '#new_password'
-                    },
+                    }
                 },
                 messages: {
                     current_password: {
-                        required: "Please provide current password",
+                        required: "Please provide current password"
                     },
                     new_password: {
                         required: "Please provide new password",

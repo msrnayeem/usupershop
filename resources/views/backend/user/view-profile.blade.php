@@ -2,80 +2,64 @@
 @section('content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="m-0"><i class='fas fa-hand-point-right'></i> Manage Profile</h5>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Profile</li>
-                        </ol>
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-user-circle" style="color:#6366f1;margin-right:8px;"></i>
+                    My Profile
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('home') }}" style="color:#6366f1;text-decoration:none;">Home</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    Profile
+                </p>
             </div>
-            <!-- /.container-fluid -->
+            <a class="btn btn-sm btn-primary" href="{{ route('profiles.edit') }}" style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#6366f1;border:none;border-radius:8px;font-size:13px;font-weight:600;color:#fff;text-decoration:none;">
+                <i class="fas fa-user-edit"></i> Edit Profile
+            </a>
         </div>
-        <!-- /.content-header -->
 
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <!-- Main row -->
-                <div class="row">
-                    <!-- Left col -->
-                    <section class="col-md-4 offset-md-4">
-                        <!-- Profile Image -->
-                        <div class="card card-primary card-outline">
-                            <div class="card-body box-profile">
-                                <div class="text-center">
-                                    <img class="profile-user-img img-fluid img-circle"
+                <div class="row justify-content-center">
+                    <section class="col-md-6">
+                        <div class="card border-0" style="border:1px solid #e2e8f0 !important;border-radius:10px;box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                            <div class="card-body" style="padding:30px;">
+                                <div class="text-center mb-4">
+                                    <img style="width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid #f1f5f9;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);"
                                         src="{{ !empty($user->image) ? url('public/upload/user_images/' . $user->image) : url('public/upload/profile.jpg') }}"
                                         alt="User profile picture">
+                                    <h5 class="mt-3 mb-1" style="font-weight:800;color:#0f172a;">{{ $user->name }}</h5>
+                                    <p class="text-muted" style="font-size:13px;margin:0;"><i class="fas fa-map-marker-alt text-danger mr-1"></i> {{ $user->address ?? 'No address set' }}</p>
                                 </div>
-                                <h3 class="profile-username text-center">{{ $user->name }}</h3>
-                                <p class="text-muted text-center">{{ $user->address }}
-                                <p>
-                                <table width="100%" class="table table-bordered">
+
+                                <table class="table table-bordered" style="font-size:14px;border-radius:8px;overflow:hidden;margin-bottom:0;">
                                     <tbody>
                                         <tr>
-                                            <td>Phone No</td>
-                                            <td>{{ $user->mobile }}</td>
+                                            <td style="background:#f8fafc;font-weight:600;color:#475569;" width="35%">Phone No</td>
+                                            <td>{{ $user->mobile ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Email</td>
+                                            <td style="background:#f8fafc;font-weight:600;color:#475569;">Email</td>
                                             <td>{{ $user->email }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Gender</td>
-                                            <td>{{ $user->gender }}</td>
+                                            <td style="background:#f8fafc;font-weight:600;color:#475569;">Gender</td>
+                                            <td>{{ $user->gender ?? 'N/A' }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Create Date</td>
-                                            <td>{{ $user->created_at }}</td>
+                                            <td style="background:#f8fafc;font-weight:600;color:#475569;">Created At</td>
+                                            <td>{{ $user->created_at ? \Carbon\Carbon::parse($user->created_at)->format('d M Y, h:i A') : 'N/A' }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
-                                <a href="{{ route('profiles.edit') }}" class="btn btn-primary btn-block mt-3"><b>Edit
-                                        Profile</b></a>
                             </div>
-                            <!-- /.card-body -->
                         </div>
-                        <!-- /.card -->
                     </section>
-                    <!-- /.Left col -->
                 </div>
-                <!-- /.row (main row) -->
             </div>
-            <!-- /.container-fluid -->
         </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
 @endsection

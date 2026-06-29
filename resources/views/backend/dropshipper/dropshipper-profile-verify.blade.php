@@ -2,94 +2,88 @@
 @section('content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="m-0"><i class='fas fa-hand-point-right'></i> Profile Dropshipper</h5>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Dropshipper</li>
-                        </ol>
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-id-card" style="color:#6366f1;margin-right:8px;"></i>
+                    Dropshipper Verification
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('home') }}" style="color:#6366f1;text-decoration:none;">Home</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    Dropshipper Profile
+                </p>
             </div>
-            <!-- /.container-fluid -->
+            <a class="btn btn-sm btn-primary" href="{{ route('dropshippers.view') }}" style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#6366f1;border:none;border-radius:8px;font-size:13px;font-weight:600;color:#fff;text-decoration:none;">
+                <i class="fas fa-arrow-left"></i> Back to Dropshippers
+            </a>
         </div>
-        <!-- /.content-header -->
 
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <!-- Main row -->
                 <div class="row">
-                    <!-- Left col -->
                     <section class="col-md-12">
-                        <!-- Custom tabs (Charts with tabs)-->
                         <div class="card">
-
+                            <div class="card-header">
+                                <span class="card-title">
+                                    <i class="fas fa-user-check" style="color:#6366f1;margin-right:6px;"></i>
+                                    Verification Documents (NID / Passport)
+                                </span>
+                            </div>
                             <div class="card-body">
                                 <div class="msg"></div>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-striped nowrap dt-responsive"
-                                        style="width: 100%">
-                                        <thead>
+                                <table class="table table-bordered table-striped nowrap dt-responsive" style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">NID Number</th>
+                                            <th class="text-center">Birth Date</th>
+                                            <th class="text-center">Front Image</th>
+                                            <th class="text-center">Back Image</th>
+                                            <th class="text-center" width="12%">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if ($profiles!=null)
                                             <tr>
-                                               
-                                                <th>NID Number</th>
-                                                <th>Birth Date</th>
-                                                <th>Front Image</th>
-                                                <th>Back Image</th>
-                                                <th width="12%">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @if ($profiles!=null)
-                                                <tr>
-                                                    <td>{{ $profiles->nid_no ?? '' }}</td>
-                                                    <td>{{ $profiles->birthdate ?? '' }}</td>
-                                                    <td>
+                                                <td class="text-center" style="font-weight:600;color:#0f172a;">{{ $profiles->nid_no ?? 'N/A' }}</td>
+                                                <td class="text-center">{{ $profiles->birthdate ?? 'N/A' }}</td>
+                                                <td class="text-center">
+                                                    <a href="{{ asset('public/upload/profile_verify/' . ($profiles->front_image ?? 'default.jpg')) }}" target="_blank">
                                                         <img src="{{ asset('public/upload/profile_verify/' . ($profiles->front_image ?? 'default.jpg')) }}" 
-                                                             class="img-responsive"
-                                                             alt="NID Front" style="width:60px;"
+                                                             class="img-thumbnail" alt="NID Front" style="width:120px;height:80px;object-fit:cover;"
                                                              onerror="this.onerror=null;this.src='{{ asset('frontend/assets/images/no-image.png') }}'">
-                                                    </td>
-                                                    <td>
+                                                    </a>
+                                                </td>
+                                                <td class="text-center">
+                                                    <a href="{{ asset('public/upload/profile_verify/' . ($profiles->back_image ?? 'default.jpg')) }}" target="_blank">
                                                         <img src="{{ asset('public/upload/profile_verify/' . ($profiles->back_image ?? 'default.jpg')) }}" 
-                                                             class="img-responsive"
-                                                             alt="NID Back" style="width:60px;"
+                                                             class="img-thumbnail" alt="NID Back" style="width:120px;height:80px;object-fit:cover;"
                                                              onerror="this.onerror=null;this.src='{{ asset('frontend/assets/images/no-image.png') }}'">
-                                                    </td>
-                                                    <td>
-                                                        <a href="{{ route('vendors_profile.delete',$profiles->user_id) }}" class="btn btn-sm btn-danger">Delete</a>
-                                                    </td>
-                                                </tr>
-                                            @endif
-                                        </tbody>
-                                    </table>
-                                </div>
-
+                                                    </a>
+                                                </td>
+                                                <td class="text-center">
+                                                    <a href="{{ route('vendors_profile.delete',$profiles->user_id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete verification profile?')">
+                                                        <i class="fas fa-trash-alt mr-1"></i> Delete
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @else
+                                            <tr>
+                                                <td colspan="5" class="text-center py-4 text-muted">
+                                                    <i class="fas fa-exclamation-triangle fa-2x mb-2" style="color:#94a3b8;"></i>
+                                                    <p style="margin:0;font-weight:600;">No Verification Documents Found</p>
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
                             </div>
-                            <!-- /.card-body -->
                         </div>
-                        <!-- /.card -->
-                        <!-- /.card -->
                     </section>
-                    <!-- /.Left col -->
                 </div>
-                <!-- /.row (main row) -->
             </div>
-            <!-- /.container-fluid -->
         </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
-
-    <script></script>
 @endsection

@@ -2,83 +2,60 @@
 @section('content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="m-0"><i class='fas fa-hand-point-right'></i> Manage Draft Sellers</h5>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Draft Sellers</li>
-                        </ol>
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-user-clock" style="color:#eab308;margin-right:8px;"></i>
+                    Draft Sellers List
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('home') }}" style="color:#6366f1;text-decoration:none;">Home</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    Draft Sellers
+                </p>
             </div>
-            <!-- /.container-fluid -->
         </div>
-        <!-- /.content-header -->
 
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <!-- Main row -->
                 <div class="row">
-                    <!-- Left col -->
                     <section class="col-md-12">
-                        <!-- Custom tabs (Charts with tabs)-->
                         <div class="card">
-                            <!-- <div class="card-header">
-                                <h3>
-                                    Draft Sellers List
-                                    <a class="btn btn-sm btn-primary float-right" href="{{ route('users.add') }}"><i
-                                            class="fas fa-plus-circle"></i> Add Customer</a>
-                                </h3>
-                            </div>-->
-                            <!-- /.card-header -->
+                            <div class="card-header">
+                                <span class="card-title">
+                                    <i class="fas fa-list" style="color:#6366f1;margin-right:6px;"></i>
+                                    Manage Draft Sellers
+                                </span>
+                            </div>
                             <div class="card-body">
                                 <div class="msg"></div>
-                                <table id="shopSellerDraftTbl" class="table table-bordered table-striped nowrap dt-responsive"
-                                    style="width: 100%">
+                                <table id="shopSellerDraftTbl" class="table table-bordered table-striped nowrap dt-responsive" style="width: 100%">
                                     <thead>
                                         <tr>
-                                            <th width="6%">SN</th>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Phone No</th>
-                                            <th>Address</th>
-                                            <th>Acc. Type</th>
-                                            <th>Signup Status</th>
-                                            <th>Payment</th>
-                                            <th>Commission</th>
-                                            <th>Status</th>
-                                            <th width="12%">Action</th>
+                                            <th width="6%" class="text-center">SN</th>
+                                            <th class="text-center">Name</th>
+                                            <th class="text-center">Email</th>
+                                            <th class="text-center">Phone No</th>
+                                            <th class="text-center">Address</th>
+                                            <th class="text-center">Acc. Type</th>
+                                            <th class="text-center">Signup Status</th>
+                                            <th class="text-center">Payment</th>
+                                            <th class="text-center">Commission</th>
+                                            <th class="text-center">Status</th>
+                                            <th width="12%" class="text-center">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-
-                                    </tbody>
+                                    <tbody></tbody>
                                 </table>
                             </div>
-                            <!-- /.card-body -->
                         </div>
-                        <!-- /.card -->
-                        <!-- /.card -->
                     </section>
-                    <!-- /.Left col -->
                 </div>
-                <!-- /.row (main row) -->
             </div>
-            <!-- /.container-fluid -->
         </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
 
     <script>
         $(function() {
@@ -90,79 +67,30 @@
                     url: "{{ route('sellers.draft.list') }}",
                     data: function(data) {
                         let customFilter = {};
-
                         customFilter.usertype = null;
                         data.customFilter = customFilter;
                     },
                     type: "GET",
                 },
-                columns: [{
-                        data: "sn",
-                        searchable: false,
-                        orderable: false
-                    },
-                    {
-                        data: "name",
-                        name: "name"
-                    },
-                    {
-                        data: "email",
-                        name: "email"
-                    },
-                    {
-                        data: "mobile",
-                        name: "mobile"
-                    },
-                    {
-                        data: "address",
-                        name: "address"
-                    },
-                    {
-                        data: "account_type",
-                        name: "account_type"
-                    },
-                    {
-                        data: "difference",
-                        name: "difference",
-                        searchable: false,
-                        orderable: false
-                    },
-                    {
-                        data: "payment_status",
-                        name: "payment_status",
-                        searchable: false,
-                        orderable: false
-                    },
-                    {
-                        data: "commission",
-                        name: "commission",
-                        searchable: false,
-                        orderable: false
-                    },
-                    {
-                        data: "status",
-                        name: "status",
-                        searchable: false,
-                        orderable: false
-                    },
-                    {
-                        data: "action",
-                        name: "action",
-                        searchable: false,
-                        orderable: false
-                    }
+                columns: [
+                    {data: "sn", searchable: false, orderable: false, className: "text-center"},
+                    {data: "name", name: "name", className: "text-center"},
+                    {data: "email", name: "email", className: "text-center"},
+                    {data: "mobile", name: "mobile", className: "text-center"},
+                    {data: "address", name: "address", className: "text-center"},
+                    {data: "account_type", name: "account_type", className: "text-center"},
+                    {data: "difference", name: "difference", searchable: false, orderable: false, className: "text-center"},
+                    {data: "payment_status", name: "payment_status", searchable: false, orderable: false, className: "text-center"},
+                    {data: "commission", name: "commission", searchable: false, orderable: false, className: "text-center"},
+                    {data: "status", name: "status", searchable: false, orderable: false, className: "text-center"},
+                    {data: "action", name: "action", searchable: false, orderable: false, className: "text-center"}
                 ],
-                lengthMenu: [
-                    [15, 50, 100, -1],
-                    [15, 50, 100, "All"]
-                ],
+                lengthMenu: [[15, 50, 100, -1], [15, 50, 100, "All"]],
             });
         });
 
         function sellerApproved(id){
-            //alert(id);
             var commission = $("#commission_"+id).val();
-            //console.log(comission);
             $.ajax({
                 type: 'GET',
                 data: ({
@@ -170,22 +98,20 @@
                     commission:commission
                 }),
                 url: '{{ route("sellers.approved") }}',
-
                 success: function(resData, textStatus, jqXHR) {
                     if (textStatus == 'success') {
                         if (jqXHR.status >= 203) {
-                            $(".msg").html("<div class='alert alert-danger alert-dismissible' role='alert'> <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" + resData.message + "</div>");
+                            $(".msg").html("<div class='alert alert-danger alert-dismissible' role='alert' style='border-radius:8px;background:#fef2f2;color:#b91c1c;border:none;'> <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" + resData.message + "</div>");
                         } else {
-                            $(".msg").html("<div class='alert alert-success alert-dismissible' role='alert'> <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" + resData.message + "</div>");
+                            $(".msg").html("<div class='alert alert-success alert-dismissible' role='alert' style='border-radius:8px;background:#f0fdf4;color:#15803d;border:none;'> <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" + resData.message + "</div>");
                         }
-                        //window.location.reload();
                         var table = $('#shopSellerDraftTbl').DataTable();
-                            table.ajax.reload();
+                        table.ajax.reload();
                     }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     $(".msg").html(
-                        "<div class='alert alert-danger alert-dismissible' role='alert'> <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" + jqXHR.status + ":" + errorThrown + "</div>"
+                        "<div class='alert alert-danger alert-dismissible' role='alert' style='border-radius:8px;background:#fef2f2;color:#b91c1c;border:none;'> <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" + jqXHR.status + ":" + errorThrown + "</div>"
                     );
                 }
             });
