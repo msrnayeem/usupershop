@@ -7593,38 +7593,41 @@ img.desktop-logo {
 /* Add to cart button — always at bottom */
 .pcard-badges {
     display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 8px;
-    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 4px;
+    margin-bottom: 6px;
     align-items: center;
+    overflow: hidden;
+    min-height: 22px;
 }
 .pcard-save-pill {
     background: #fff8e1;
     color: #856404;
     border: 1px solid #ffd54f;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 700;
-    padding: 3px 9px;
+    padding: 2px 6px;
     border-radius: 20px;
     white-space: nowrap;
     font-family: 'Hind Siliguri', sans-serif;
+    flex-shrink: 0;
 }
 .pcard-free-del {
     background: #e8f5e9;
     color: #2e7d32;
     border: 1px solid #a5d6a7;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 700;
-    padding: 3px 9px;
+    padding: 2px 6px;
     border-radius: 20px;
     white-space: nowrap;
     font-family: 'Hind Siliguri', sans-serif;
+    flex-shrink: 0;
 }
 @media (max-width: 400px) {
     .pcard-save-pill, .pcard-free-del {
-        font-size: 13px;
-        padding: 2px 7px;
+        font-size: 10px;
+        padding: 1px 5px;
     }
 }
 

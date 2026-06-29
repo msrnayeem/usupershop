@@ -183,85 +183,10 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div class="row store-products">
+                                    <div class="row store-products" style="display:flex;flex-wrap:wrap;">
                                         @forelse ($allData as $product)
-                                            <div class="col-sm-6 col-md-3 col-xs-6 ">
-                                                <div class="product">
-                                                    <div class="product-image">
-                                                        <div class="image">
-                                                            <a href="{{ route('product.details.info', $product->slug) }}">
-                                                                <button>
-                                                                    @if ($product->image)
-                                                                        <img src="{{ asset('upload/product_images/' . $product->image) }}"
-                                                                            alt="{{ $product->slug }}"
-                                                                            onerror="this.onerror=null;this.src='{{ asset('frontend/no-image-icon.jpg') }}';" />
-                                                                    @else
-                                                                        <img src="{{ asset('frontend/assets/images/no-image.png') }}"
-                                                                            alt="{{ $product->slug }}" />
-                                                                    @endif
-                                                                </button>
-                                                            </a>
-
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="product-info text-left">
-                                                        <h3 class="name english_lang"><a title="{{ $product->name }}"
-                                                                href="{{ route('product.details.info', $product->slug) }}">
-                                                                @php
-                                                                    $myStr = $product->name;
-                                                                    $subStr = substr($myStr, 0, 20);
-                                                                    echo $subStr . '...';
-                                                                @endphp
-                                                            </a>
-                                                        </h3>
-
-                                                        <h3 class="name bangla_lang" style="display: none"><a
-                                                                title="{{ $product->name_bn }}"
-                                                                href="{{ route('product.details.info', $product->slug) }}">
-                                                                @php
-                                                                    $myStr = $product->name_bn;
-                                                                    $subStr = substr($myStr, 0, 30);
-                                                                    echo $subStr . '...';
-                                                                @endphp
-                                                            </a>
-                                                        </h3>
-
-                                                        <div class="product-price">
-                                                            @php
-                                                                if (auth()->check() && auth()->user()->usertype === 'dropshipper' && isset($product->sale_price) && $product->sale_price > 0) {
-                                                                    $displayPrice = $product->sale_price;
-                                                                    $showOriginalPrice = false;
-                                                                } else {
-                                                                    if (!empty($product->discount)) {
-                                                                        $displayPrice =
-                                                                            $product->discount_type == 1
-                                                                                ? $product->price - ($product->price * $product->discount) / 100
-                                                                                : $product->price - $product->discount;
-                                                                    } else {
-                                                                        $displayPrice = $product->price;
-                                                                    }
-                                                                    $showOriginalPrice = !empty($product->discount);
-                                                                }
-                                                            @endphp
-                                                            <span class="price">&#2547; {{ $displayPrice }}</span>
-
-                                                            @if ($showOriginalPrice)
-                                                                <span class="price-before-discount">&#2547;
-                                                                    {{ $product->price }}</span>
-                                                            @endif
-                                                        </div><!-- /.product-price -->
-
-                                                    </div><!-- /.product-info -->
-                                                    <div class="productButtons">
-                                                        <span class="icon productCartBtn" title="Add Cart"
-                                                            data-toggle="modal" data-target="#cartModal"
-                                                            id="{{ $product->id }}"
-                                                            onclick="productView({{ $product->id }})">
-                                                            <i class="fa fa-shopping-cart"></i></span>
-                                                    </div>
-                                                </div>
+                                            <div class="col-sm-6 col-md-3 col-xs-6" style="display:flex;padding:6px;">
+                                                @include('frontend.components.product-card', ['product' => $product])
                                             </div>
                                         @empty
                                             <div class="col-sm-12 col-md-12 col-xs-12 " style="margin: 10px 0px;">

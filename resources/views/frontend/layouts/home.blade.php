@@ -272,15 +272,7 @@
                 <div class="col-xs-12 col-sm-12 col-md-8 sliderFixed">
                     @include('frontend.layouts.slider')
 
-                    {{-- ── Free Delivery Banner ── --}}
-                    <div style="background:linear-gradient(90deg,#00a855,#007a3d);padding:10px 16px;display:flex;align-items:center;gap:10px;border-radius:0 0 10px 10px;margin-bottom:10px;">
-                        <span style="font-size:22px;flex-shrink:0;">🚚</span>
-                        <div style="flex:1;">
-                            <strong style="color:#fff;font-size:13px;display:block;line-height:1.3;">১,০০০ টাকার উপরে অর্ডারে FREE DELIVERY!</strong>
-                            <span style="color:rgba(255,255,255,.88);font-size:13px;">আজই অর্ডার করুন — সারাদেশে দ্রুত ডেলিভারি</span>
-                        </div>
-                        <span style="background:#fff;color:#00a855;font-size:13px;font-weight:800;padding:5px 14px;border-radius:20px;white-space:nowrap;flex-shrink:0;">FREE 🎉</span>
-                    </div>
+
                     {{-- <div class="info-boxes wow fadeInUp">
                         <div class="desktop_show">
                             <div class="info-boxes-inner">

@@ -361,41 +361,40 @@
                 <div class="modal-body" style="padding-bottom: 30px;">
                     <div class="add_to_cart_product_data">
                         <div class="row">
-                            <div class="col-sm-5">
-                                <button class="modal-product-image-btn" style="margin-bottom: 10px;">
-                                    <img src="" class="card-img-top" id="pimage" alt=""
-                                        style="height: 200px;width:160px;"
+                            <div class="col-xs-4 col-sm-5">
+                                <button class="modal-product-image-btn" style="margin-bottom: 10px; width: 100%;">
+                                    <img src="" class="card-img-top img-responsive" id="pimage" alt=""
+                                        style="height: auto; max-height: 200px; width: auto; max-width: 100%; margin: auto;"
                                         onerror="this.src='{{ asset('/frontend/no-image-icon.jpg') }}'">
                                 </button>
                             </div>
-                            <div class="col-sm-7">
-
-                                <table class="table table-bordered">
+                            <div class="col-xs-8 col-sm-7">
+                                <table class="table table-bordered" style="margin-bottom: 10px; font-size: 13px;">
                                     <tbody>
                                         <tr>
-                                            <th>Product Code : </th>
-                                            <th><span id="pcode"></span></th>
+                                            <th style="padding: 6px 8px;">Product Code : </th>
+                                            <td style="padding: 6px 8px;"><span id="pcode"></span></td>
                                         </tr>
                                         <tr>
-                                            <th>Category : </th>
-                                            <th><span id="pcategory"></span></th>
+                                            <th style="padding: 6px 8px;">Category : </th>
+                                            <td style="padding: 6px 8px;"><span id="pcategory"></span></td>
                                         </tr>
                                         <tr>
-                                            <th>Brand : </th>
-                                            <th><span id="pbrand"></span></th>
+                                            <th style="padding: 6px 8px;">Brand : </th>
+                                            <td style="padding: 6px 8px;"><span id="pbrand"></span></td>
                                         </tr>
                                         <tr>
-                                            <th>Stock : </th>
-                                            <th>
+                                            <th style="padding: 6px 8px;">Stock : </th>
+                                            <td style="padding: 6px 8px;">
                                                 <span class="badge badge-pill badge-success" id="aviable"
-                                                    style="background:green; color:white;"></span>
+                                                    style="background:green; color:white; font-size: 11px; padding: 2px 6px;"></span>
                                                 <span class="badge badge-pill badge-danger" id="stockout"
-                                                    style="background:red; color:white;"></span>
-                                            </th>
+                                                    style="background:red; color:white; font-size: 11px; padding: 2px 6px;"></span>
+                                            </td>
                                         </tr>
                                         <tr>
-                                            <th>Price : </th>
-                                            <td id="pprice"></td>
+                                            <th style="padding: 6px 8px;">Price : </th>
+                                            <td id="pprice" style="padding: 6px 8px; font-weight: bold;"></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -403,18 +402,24 @@
                             <div class="col-sm-12">
                                 <div class="row" style="margin-top: 10px;">
                                     <div class="col-sm-6 col-xs-6">
-                                        <div class="form-group">
-                                            <label for="color">Select Color</label>
-                                            <select class="form-control" id="color" name="color">
-                                            </select>
+                                        <div class="form-group custom-select-wrap">
+                                            <label>Select Color</label>
+                                            <div class="custom-select-box" id="colorBox">
+                                                <div class="custom-select-trigger" id="colorTrigger">Select Color <span class="caret-icon">&#9660;</span></div>
+                                                <div class="custom-select-options" id="colorOptions"></div>
+                                            </div>
+                                            <input type="hidden" id="color" name="color" value="">
                                             <span class="text-danger color_id_errors"></span>
                                         </div>
                                     </div>
                                     <div class="col-sm-6 col-xs-6">
-                                        <div class="form-group" id="sizeArea">
-                                            <label for="size">Select Size</label>
-                                            <select class="form-control" id="size" name="size">
-                                            </select>
+                                        <div class="form-group custom-select-wrap" id="sizeArea">
+                                            <label>Select Size</label>
+                                            <div class="custom-select-box" id="sizeBox">
+                                                <div class="custom-select-trigger" id="sizeTrigger">Select Size <span class="caret-icon">&#9660;</span></div>
+                                                <div class="custom-select-options" id="sizeOptions"></div>
+                                            </div>
+                                            <input type="hidden" id="size" name="size" value="">
                                             <span class="text-danger size_id_errors"></span>
                                         </div>
                                     </div>
@@ -561,6 +566,62 @@
     </script>
 
 
+    {{-- ── Custom inline select JS ── --}}
+    <script>
+    $(document).ready(function () {
+
+        /* Toggle open/close */
+        $(document).on('click', '.custom-select-trigger', function (e) {
+            e.stopPropagation();
+            var $box = $(this).closest('.custom-select-box');
+            // Close all other open boxes
+            $('.custom-select-box').not($box).removeClass('open');
+            $box.toggleClass('open');
+        });
+
+        /* Pick an item – color */
+        $(document).on('click', '#colorOptions .cso-item', function (e) {
+            e.stopPropagation();
+            var val  = $(this).data('value');
+            var text = $(this).text();
+            $('#colorOptions .cso-item').removeClass('selected');
+            $(this).addClass('selected');
+            $('#colorTrigger').html(text + ' <span class="caret-icon">&#9660;</span>');
+            $('#color').val(val);
+            $('#colorBox').removeClass('open');
+        });
+
+        /* Pick an item – size */
+        $(document).on('click', '#sizeOptions .cso-item', function (e) {
+            e.stopPropagation();
+            var val  = $(this).data('value');
+            var text = $(this).text();
+            $('#sizeOptions .cso-item').removeClass('selected');
+            $(this).addClass('selected');
+            $('#sizeTrigger').html(text + ' <span class="caret-icon">&#9660;</span>');
+            $('#size').val(val);
+            $('#sizeBox').removeClass('open');
+        });
+
+        /* Close when clicking outside */
+        $(document).on('click', function () {
+            $('.custom-select-box').removeClass('open');
+        });
+
+        /* Reset dropdowns when modal closes */
+        $('#cartModal').on('hidden.bs.modal', function () {
+            $('.custom-select-box').removeClass('open');
+            $('#colorTrigger').html('Select Color <span class="caret-icon">&#9660;</span>');
+            $('#sizeTrigger').html('Select Size <span class="caret-icon">&#9660;</span>');
+            $('#color').val('');
+            $('#size').val('');
+            $('#colorOptions').empty();
+            $('#sizeOptions').empty();
+        });
+    });
+    </script>
+
+
     <script type="text/javascript">
         $.ajaxSetup({
             headers: {
@@ -627,30 +688,28 @@
                         );
                     }
 
-                    //color
-                    $('select[name="color"]').empty();
-                    var select_color_items = `<option value="">Select Color</option>`;
+                    // color — custom dropdown
+                    $('#color').val('');
+                    $('#colorTrigger').html('Select Color <span class="caret-icon">&#9660;</span>');
+                    var colorOpts = '';
                     $.each(data.color, function(key, value) {
-                        select_color_items += '<option value="' + value.id + '">' + value.color.name +
-                            '</option>';
-                    })
-                    $('select[name="color"]').html(select_color_items);
+                        colorOpts += '<div class="cso-item" data-value="' + value.id + '">' + value.color.name + '</div>';
+                    });
+                    $('#colorOptions').html(colorOpts);
 
-                    //size
-                    $('select[name="size"]').empty();
-                    var select_size_items = `<option value="">Select Size</option>`;
-                    $.each(data.size, function(key, value) {
-                        select_size_items += '<option value="' + value.id + '">' + value.size.name +
-                            '</option>';
-
-                        if (data.size == "") {
-                            $('#sizeArea').hide();
-                        } else {
-                            $('#sizeArea').show();
-                        }
-                    })
-
-                    $('select[name="size"]').html(select_size_items);
+                    // size — custom dropdown
+                    $('#size').val('');
+                    $('#sizeTrigger').html('Select Size <span class="caret-icon">&#9660;</span>');
+                    var sizeOpts = '';
+                    if (data.size && data.size.length > 0) {
+                        $('#sizeArea').show();
+                        $.each(data.size, function(key, value) {
+                            sizeOpts += '<div class="cso-item" data-value="' + value.id + '">' + value.size.name + '</div>';
+                        });
+                    } else {
+                        $('#sizeArea').hide();
+                    }
+                    $('#sizeOptions').html(sizeOpts);
                 }
             })
         }

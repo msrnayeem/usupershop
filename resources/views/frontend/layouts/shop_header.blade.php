@@ -966,8 +966,8 @@
                         </div>
                     </div>
                 </aside>
-                <div class="row">
-                    <div class="col-xs-7">
+                <div class="row mobile-header-row">
+                    <div class="mobile-logo-col">
                         <a href="{{ url('/') }}">
                             @if(isset($shop_user) && $shop_user->logo)
                                 <img class="mobile-logo" src="{{ asset('upload/user_images/' . $shop_user->logo) }}"
@@ -978,13 +978,26 @@
                             @endif
                         </a>
                     </div>
-                    <div class="col-xs-5 animate-dropdown top-cart-row">
+                    <div class="mobile-search-col">
+                        <!-- ==================== SEARCH AREA =================== -->
+                        <div class="search-area">
+                            <form action="{{ route('search.product') }}" method="GET">
+                                <div class="control-group" style="position: relative;">
+                                    <input class="search-field" onfocus="showSearchResult()" onblur="hideSearchResult()"
+                                        name="search" id="search" placeholder="Search here..." />
+                                    <button type="button" class="search-button"></button>
+                                </div>
+                            </form>
+                            <div id="suggestProduct"></div>
+                        </div><!-- /.search-area -->
+                    </div>
+                    <div class="mobile-cart-col animate-dropdown top-cart-row">
                         <!-- ================== SHOPPING CART DROPDOWN ================= -->
                         <div class="dropdown dropdown-cart">
                             <a href="#" class="dropdown-toggle lnk-cart" data-toggle="dropdown">
                                 <div class="items-cart-inner">
                                     <div class="basket"
-                                        style="border: none; font-size: 18px; margin-right: 22px; margin-top: 5px;">
+                                        style="border: none; font-size: 18px; margin: 0; position: relative;">
                                         <i class="glyphicon glyphicon-shopping-cart"></i>
                                     </div>
                                     <div class="basket-item-count">
@@ -1019,31 +1032,15 @@
                         <!-- /.top-cart-row -->
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" style="display: none;">
                     <div class="col-xs-2">
                         <div class="mobile_nav">
                             <button class="header-user">
-                                <img src="data:image/png;base64,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"
+                                <img src="data:image/png;base64,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"
                                     alt="user">
                             </button>
                         </div>
                     </div>
-                    <div class="col-xs-10 top-search-holder">
-                        <!-- /.contact-row -->
-                        <!-- ==================== SEARCH AREA =================== -->
-                        <div class="search-area">
-                            <form action="{{ route('search.product') }}" method="GET">
-                                <div class="control-group" style="position: relative;">
-                                    <input class="search-field" onfocus="showSearchResult()" onblur="hideSearchResult()"
-                                        name="search" id="search" placeholder="Search here..." />
-                                    <button type="button" class="search-button"></button>
-                                </div>
-                            </form>
-                            <div id="suggestProduct"></div>
-                        </div><!-- /.search-area -->
-
-                    </div>
-                    <!-- ================= SEARCH AREA : END ================= -->
                 </div>
             </div>
             <div class="row desktop-header">

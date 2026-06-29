@@ -70,6 +70,25 @@
         transition: 0.6s !important;
     }
 
+    /* Override: when productCartBtn is used as the full pcard button */
+    .pcard-cart-btn.productCartBtn {
+        background: #e8001d !important;
+        color: #fff !important;
+        border-radius: 8px !important;
+        padding: 10px !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        width: 100% !important;
+        display: block !important;
+        border: none !important;
+        text-align: center !important;
+        cursor: pointer !important;
+        margin-top: auto !important;
+    }
+    .pcard-cart-btn.productCartBtn:hover {
+        background: #c20019 !important;
+    }
+
     .productCartBtn i {
         font-size: 20px;
         color: var(--add-to-cart-bg);
@@ -90,8 +109,39 @@
         margin-bottom: 15px;
     }
 
-
-
+    /* ── Equal-height carousel cards ───────────────────── */
+    .owl-carousel .owl-item {
+        display: flex !important;
+    }
+    .owl-carousel .owl-item > .item,
+    .owl-carousel .owl-item > .item-carousel {
+        display: flex !important;
+        width: 100% !important;
+    }
+    .owl-carousel .item-carousel,
+    .owl-carousel .item {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    .product-item-carousel {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+    }
+    .pcard {
+        flex: 1 !important;
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    .pcard-info {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    .pcard-cart-btn.productCartBtn {
+        margin-top: auto !important;
+    }
 
     .product button {
         background: #fff;
@@ -125,6 +175,68 @@
     .arrows-modal {
         cursor: pointer;
     }
+
+    /* ── Custom inline select dropdowns (modal) ──────────── */
+    .custom-select-wrap { position: relative; }
+
+    .custom-select-box {
+        position: relative;
+        width: 100%;
+    }
+
+    .custom-select-trigger {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 9px 12px;
+        border: 1.5px solid #e5e5e5;
+        border-radius: 10px;
+        background: #fff;
+        font-size: 14px;
+        cursor: pointer;
+        user-select: none;
+        transition: border-color .2s;
+    }
+
+    .custom-select-box.open .custom-select-trigger {
+        border-color: #0824ac;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .custom-select-options {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border: 1.5px solid #0824ac;
+        border-top: none;
+        border-radius: 0 0 10px 10px;
+        z-index: 9999;
+        max-height: 180px;
+        overflow-y: auto;
+        box-shadow: 0 6px 16px rgba(0,0,0,.12);
+    }
+
+    .custom-select-box.open .custom-select-options { display: block; }
+
+    .cso-item {
+        padding: 10px 14px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background .15s;
+    }
+
+    .cso-item:hover { background: #f0f3ff; }
+
+    .cso-item.selected {
+        background: #0824ac;
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .caret-icon { font-size: 11px; margin-left: 4px; }
 
     #cartModal .modal-product-image-btn {
         width: 100%;
@@ -918,30 +1030,31 @@
             padding-left: 0 !important;
         }
 
-        /* ── Modals — full screen on mobile ──────────────── */
-        .modal-dialog {
-            margin: 0 !important;
-            max-width: 100% !important;
-            width: 100% !important;
+        /* ── Modals — centered on mobile ───────────────────── */
+        .modal-dialog,
+        #cartModal .modal-dialog {
+            margin: 20px auto !important;
+            max-width: 92% !important;
+            width: 92% !important;
+            position: relative !important;
         }
 
         .modal-content {
-            border-radius: 16px 16px 0 0 !important;
-            position: fixed !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            max-height: 92vh !important;
+            border-radius: 16px !important;
+            max-height: 85vh !important;
             overflow-y: auto !important;
+            border: none !important;
+            width: 100% !important;
+            box-shadow: 0 20px 60px rgba(0,0,0,.25) !important;
         }
 
         .modal.fade .modal-dialog {
-            transform: translateY(100%) !important;
+            transform: scale(.92) !important;
+            transition: transform .25s ease !important;
         }
 
         .modal.in .modal-dialog {
-            transform: translateY(0) !important;
-            transition: transform .35s cubic-bezier(.4, 0, .2, 1) !important;
+            transform: scale(1) !important;
         }
 
         /* ── Form inputs ──────────────────────────────────── */
@@ -1344,6 +1457,19 @@
             border-radius: 0 24px 24px 0 !important;
         }
 
+        .search-area .search-button {
+            background: transparent !important;
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            position: absolute !important;
+            right: 12px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            width: 28px !important;
+            height: 28px !important;
+        }
+
         /* ════ PRODUCT LIST — 2 column grid ══════════════════════════════ */
         .content-holder {
             width: 100% !important;
@@ -1389,6 +1515,26 @@
             font-size: 14px !important;
             padding: 9px 8px !important;
             border-radius: 8px !important;
+        }
+
+        .pcard-badges {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            gap: 3px !important;
+            overflow: hidden !important;
+            min-height: 22px !important;
+            align-items: center !important;
+        }
+
+        .pcard-save-pill, .pcard-free-del {
+            font-size: 10px !important;
+            font-weight: 700 !important;
+            padding: 2px 5px !important;
+            border-radius: 20px !important;
+            flex-shrink: 0 !important;
+            white-space: nowrap !important;
+            margin: 0 !important;
         }
 
         /* ════ PRODUCT CARD (list page) ══════════════════════════════════ */
@@ -1784,30 +1930,31 @@
             left: 16px !important;
         }
 
-        /* ════ MODALS — Bottom Sheet ═════════════════════════════════════ */
-        .modal-dialog {
-            margin: 0 !important;
-            max-width: 100% !important;
-            width: 100% !important;
+        /* ════ MODALS — Centered ═══════════════════════════════════════ */
+        .modal-dialog,
+        #cartModal .modal-dialog {
+            margin: 20px auto !important;
+            max-width: 92% !important;
+            width: 92% !important;
+            position: relative !important;
         }
 
         .modal-content {
-            border-radius: 20px 20px 0 0 !important;
-            position: fixed !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            max-height: 90vh !important;
+            border-radius: 16px !important;
+            max-height: 85vh !important;
             overflow-y: auto !important;
+            border: none !important;
+            width: 100% !important;
+            box-shadow: 0 20px 60px rgba(0,0,0,.25) !important;
         }
 
         .modal.fade .modal-dialog {
-            transform: translateY(100%) !important;
-            transition: transform .35s cubic-bezier(.4, 0, .2, 1) !important;
+            transform: scale(.92) !important;
+            transition: transform .25s ease !important;
         }
 
         .modal.in .modal-dialog {
-            transform: translateY(0) !important;
+            transform: scale(1) !important;
         }
 
         .modal-header {
@@ -2540,22 +2687,35 @@ Exact class names from blade templates
             padding: 6px 0 !important;
         }
 
-        /* Row 1: Logo + Cart */
-        .mobile-header .row:first-of-type {
+        /* Row 1: Logo + Search + Cart (Single Row Layout) */
+        .mobile-header-row {
             display: flex !important;
             align-items: center !important;
+            justify-content: space-between !important;
+            width: 100% !important;
             padding: 4px 10px !important;
-            gap: 8px !important;
+            gap: 10px !important;
+            margin: 0 !important;
         }
 
-        .mobile-header .row:first-of-type .col-xs-7 {
-            flex: 1 !important;
-            width: auto !important;
-        }
-
-        .mobile-header .row:first-of-type .col-xs-5 {
+        .mobile-logo-col {
             flex: 0 0 auto !important;
             width: auto !important;
+            padding: 0 !important;
+        }
+
+        .mobile-search-col {
+            flex: 1 1 auto !important;
+            width: auto !important;
+            padding: 0 !important;
+        }
+
+        .mobile-cart-col {
+            flex: 0 0 auto !important;
+            width: auto !important;
+            padding: 0 !important;
+            display: flex !important;
+            justify-content: flex-end !important;
         }
 
         /* Logo image */
@@ -2679,18 +2839,22 @@ Exact class names from blade templates
             background: #fff !important;
         }
 
+        .search-area .search-button,
         .search-button {
             position: absolute !important;
-            right: 10px !important;
+            right: 12px !important;
             top: 50% !important;
             transform: translateY(-50%) !important;
             background: transparent !important;
             border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
             cursor: pointer !important;
             width: 28px !important;
             height: 28px !important;
         }
 
+        .search-area .search-button::after,
         .search-button::after {
             content: '🔍' !important;
             font-size: 14px !important;
@@ -2920,20 +3084,28 @@ Exact class names from blade templates
             text-decoration: line-through !important;
         }
 
+        .pcard-badges {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            gap: 2px !important;
+            overflow: hidden !important;
+        }
+
         .pcard-save-pill {
-            font-size: 12px !important;
+            font-size: 10px !important;
             font-weight: 700 !important;
-            padding: 2px 8px !important;
-            border-radius:
-                20px !important;
+            padding: 2px 4px !important;
+            border-radius: 20px !important;
+            flex-shrink: 0 !important;
         }
 
         .pcard-free-del {
-            font-size: 12px !important;
+            font-size: 10px !important;
             font-weight: 700 !important;
-            padding: 2px 8px !important;
-            border-radius:
-                20px !important;
+            padding: 2px 4px !important;
+            border-radius: 20px !important;
+            flex-shrink: 0 !important;
         }
 
         .pcard-discount-badge {
