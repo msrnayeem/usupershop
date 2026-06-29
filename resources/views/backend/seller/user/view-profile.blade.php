@@ -1,97 +1,66 @@
 @extends('backend.seller.seller-master')
 @section('content')
-    <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h5 class="m-0"><i class='fas fa-hand-point-right'></i> Manage Reseller Profile</h5>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('seller.dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Reseller Profile</li>
-                        </ol>
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-user-circle" style="color:#6366f1;margin-right:8px;"></i>
+                    My Profile
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('seller.dashboard') }}" style="color:#6366f1;text-decoration:none;">Dashboard</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    View Profile
+                </p>
             </div>
-            <!-- /.container-fluid -->
+            <a href="{{ route('sellers.edit.profile') }}" class="btn btn-sm btn-primary" style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#6366f1;border:none;border-radius:8px;font-size:13px;font-weight:600;color:#fff;text-decoration:none;">
+                <i class="fas fa-user-edit"></i> Edit Profile
+            </a>
         </div>
-        <!-- /.content-header -->
 
-        <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
-                <!-- Main row -->
-                <div class="row">
-                    <!-- Left col -->
-                    <section class="col-md-4 offset-md-4">
-                        <!-- Profile Image -->
-                        <div class="card card-primary card-outline">
-                            <div class="card-body box-profile">
-                                <div class="text-center">
-                                    <img class="profile-user-img img-fluid img-circle"
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body text-center" style="padding-top:32px;">
+                                <div style="margin-bottom:20px;">
+                                    <img style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:4px solid #e0e7ff;box-shadow:0 4px 16px rgba(99,102,241,0.15);"
                                         src="{{ !empty($user->image) ? url('public/upload/user_images/' . $user->image) : url('public/upload/profile.jpg') }}"
-                                        alt="User profile picture">
+                                        alt="User Profile Picture">
                                 </div>
-                                <h3 class="profile-username text-center">{{ $user->name }}</h3>
-                                <p class="text-muted text-center">{{ $user->address }}
-                                <p>
-                                <table width="100%" class="table table-bordered">
-                                    <tbody>
-                                        <tr>
-                                            <td>Mobile No</td>
-                                            <td>{{ $user->mobile }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Shop Name</td>
-                                            <td>{{ $user->shop_name }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Account Type</td>
-                                            <td>{{ $user->account_type }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Comission(%)</td>
-                                            <td>{{ $user->commission }}%</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Refer Code</td>
-                                            <td>{{ $user->code }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Email</td>
-                                            <td>{{ $user->email }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Gender</td>
-                                            <td>{{ $user->gender }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Create Date</td>
-                                            <td>{{ $user->created_at }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <a href="{{ route('sellers.edit.profile') }}" class="btn btn-primary btn-block mt-3"><b>Edit
-                                        Profile</b></a>
+                                <h3 style="font-size:20px;font-weight:800;color:#0f172a;margin-bottom:4px;">{{ $user->name }}</h3>
+                                <p style="color:#64748b;font-size:13px;margin-bottom:20px;">{{ $user->address }}</p>
+
+                                <div style="text-align:left;">
+                                    @php
+                                        $rows = [
+                                            ['Mobile No', $user->mobile, 'fas fa-phone'],
+                                            ['Shop Name', $user->shop_name ?? 'N/A', 'fas fa-store'],
+                                            ['Account Type', $user->account_type ?? 'N/A', 'fas fa-id-badge'],
+                                            ['Commission (%)', ($user->commission ?? '0') . '%', 'fas fa-percent'],
+                                            ['Refer Code', $user->code ?? 'N/A', 'fas fa-share-alt'],
+                                            ['Email', $user->email, 'fas fa-envelope'],
+                                            ['Gender', $user->gender ?? 'N/A', 'fas fa-venus-mars'],
+                                            ['Member Since', \Carbon\Carbon::parse($user->created_at)->format('d M Y'), 'fas fa-calendar-alt'],
+                                        ];
+                                    @endphp
+                                    @foreach ($rows as [$label, $value, $icon])
+                                        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9;">
+                                            <span style="font-size:13px;color:#64748b;font-weight:600;display:flex;align-items:center;gap:8px;">
+                                                <i class="{{ $icon }}" style="color:#a5b4fc;width:16px;text-align:center;"></i>
+                                                {{ $label }}
+                                            </span>
+                                            <span style="font-size:13px;font-weight:700;color:#0f172a;">{{ $value }}</span>
+                                        </div>
+                                    @endforeach
+                                </div>
                             </div>
-                            <!-- /.card-body -->
                         </div>
-                        <!-- /.card -->
-                    </section>
-                    <!-- /.Left col -->
+                    </div>
                 </div>
-                <!-- /.row (main row) -->
             </div>
-            <!-- /.container-fluid -->
         </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
 @endsection

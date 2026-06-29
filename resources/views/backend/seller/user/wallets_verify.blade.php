@@ -1,319 +1,173 @@
 @extends('backend.seller.seller-master')
 @section('content')
-    <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header" style="padding-bottom:0px;">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0"><span style="text-transform: capitalize;">{{ Auth::user()->usertype ?? '' }}
-                            </span> Dashboard</h1>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active"><span
-                                    style="text-transform: capitalize;">{{ Auth::user()->usertype ?? '' }} </span> Dashboard
-                            </li>
-                        </ol>
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
+        {{-- Page Header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+            <div>
+                <h1 style="font-size:22px;font-weight:800;color:#0f172a;margin:0;">
+                    <i class="fas fa-shield-alt" style="color:#6366f1;margin-right:8px;"></i>
+                    Wallet Verification
+                </h1>
+                <p style="color:#64748b;font-size:13px;margin:2px 0 0;">
+                    <a href="{{ route('seller.dashboard') }}" style="color:#6366f1;text-decoration:none;">Dashboard</a>
+                    <span style="margin:0 6px;color:#cbd5e1;">/</span>
+                    Verified Wallet Info
+                </p>
             </div>
-            <!-- /.container-fluid -->
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                @if (auth()->check() && auth()->user()->balance >= 200)
+                    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#exampleModal" style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;">
+                        <i class="fas fa-hand-holding-usd"></i> Withdraw Request
+                    </button>
+                @endif
+                <a href="{{ route('transaction.history') }}" class="btn btn-secondary btn-sm" style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;">
+                    <i class="fas fa-history"></i> Transaction History
+                </a>
+            </div>
         </div>
-        <!-- /.content-header -->
 
-        <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
 
-                <!-- Main row -->
-                <div class="row">
-                    <!-- Left col -->
-                    <section class="col-lg-12 connectedSortable">
-                        <!-- Custom tabs (Charts with tabs)-->
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">
-                                    @if (false) {{-- Profile verify is optional --}}
-                                        Verification with NID !!
-                                    @else
-                                        Wallet Info
-                                    @endif
+                @if ($errors->any())
+                    <div class="alert alert-danger border-0" style="border-radius:10px;">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-                                </h3>
-                                @if (auth()->check() && auth()->user()->balance >= 200)
-                                    <button type="button" class="btn btn-info btn-sm text-right" data-toggle="modal"
-                                        data-target="#exampleModal" style="float:right;">
-                                        Withdraw request
-                                    </button>
-                                @endif
-                                <a href="{{ route('transaction.history') }}" style="display: flex;float:right;"
-                                    class="btn btn-sm btn-primary">Transaction Status</a>
-                            </div>
-                            <!-- /.card-header -->
+                @if (session()->has('message'))
+                    <div class="alert alert-{{ session('type') }} border-0" style="border-radius:10px;">{{ session('message') }}</div>
+                @endif
 
-                            <div class="card-body">
-                                <div class="tab-content p-0">
-                                    @if ($errors->any())
-                                        <div class="alert alert-danger">
-                                            <ul>
-                                                @foreach ($errors->all() as $error)
-                                                    <li>{{ $error }}</li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif
-
-                                    @if (session()->has('message'))
-                                        <div class="alert alert-{{ session('type') }}">
-                                            {{ session('message') }}
-                                        </div>
-                                    @endif
-                                    <!-- Morris chart - Sales -->
-
-                                    @if (false) {{-- Profile verify is optional --}}
-                                        <div class="tab-pane active profilevarify">
-                                            <form action="{{ route('nid_profile.update') }}" method="POST"
-                                                enctype="multipart/form-data">
-                                                @csrf
-                                                <div class="form-group row">
-                                                    <label for="colFormLabelSm"
-                                                        class="col-md-3 col-form-label col-form-label-sm text-right">Nid
-                                                        Number
-                                                        :</label>
-                                                    <div class="col-sm-6">
-                                                        <input type="text" name="nid_no"
-                                                            class="form-control form-control-md" id="nid_no"
-                                                            placeholder="Input NID Number">
-                                                    </div>
-                                                </div>
-                                                <input type="hidden" name="user_id" value="{{ auth()->user()->id }}" />
-                                                <div class="form-group row">
-                                                    <label for="colFormLabelSm"
-                                                        class="col-md-3 col-form-label col-form-label-sm text-right">Birth
-                                                        Date:</label>
-                                                    <div class="col-sm-6">
-                                                        <input type="date" name="birthdate"
-                                                            class="form-control form-control-md" id="birthdate"
-                                                            placeholder="" />
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label for="colFormLabelSm"
-                                                        class="col-sm-3 col-form-label col-form-label-sm text-right">
-                                                        NID Front Image :</label>
-                                                    <div class="col-sm-6">
-                                                        <input type="file" name="front_image"
-                                                            class="form-control form-control-md" id="front_image" />
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label for="colFormLabelSm"
-                                                        class="col-sm-3 col-form-label col-form-label-sm text-right">
-                                                        NID Back Image :
-                                                    </label>
-                                                    <div class="col-sm-6">
-                                                        <input type="file" name="back_image"
-                                                            class="form-control form-control-md" id="back_image" />
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group row mb-2">
-                                                    <div class="col-sm-3"></div>
-                                                    <div class="col-sm-4">
-                                                        <button class="btn btn-warning btn-md" type="submit">
-                                                            Submit
-
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    @else
-                                        <div class="card-body">
-                                            <div class="table-responsive">
-                                                <table id="Tbl"
-                                                    class="table table-bordered table-striped dt-responsive"
-                                                    style="width: 100%;text-align:center;">
-                                                    <thead style="width: 100%;">
-                                                        <tr>
-                                                            <th style="width:10%;">User Name</th>
-                                                            <th style="width:10%;">Nid Number.</th>
-                                                            <th style="width:15%;"> Phone No </th>
-                                                            <th style="width:20%">Nid Front Image</th>
-                                                            <th style="width:10%;">Payment Type</th>
-                                                            <th style="width:10%;">Transaction Status</th>
-                                                            <th style="width:20%">Total Balance</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-
-                                                        @if ($profile != null)
-                                                            <tr>
-
-                                                                <td>{{ $profile->name ?? '' }}</td>
-                                                                <td>{{ $profile->nid_no ?? '' }}</td>
-                                                                <td>{{ $profile->mobile_no ?? '' }}</td>
-                                                                <td>
-                                                                    <img src="{{ asset('public/upload/profile_verify/' . $profile->front_image) }}"
-                                                                        width="60" />
-                                                                </td>
-                                                                <td>
-                                                                    {{ $profile->payment_type ?? '' }}
-                                                                </td>
-                                                                <td>
-                                                                    {{ $profile->transaction_status ?? '' }}
-
-                                                                </td>
-                                                                <td>
-
-                                                                    {{ $profile->balance ?? '' }}
-
-                                                                </td>
-                                                            </tr>
-                                                        @endif
-                                                    </tbody>
-                                                </table>
-                                            </div>
-
-                                        </div>
-                                    @endif
-
-
-                                </div>
-                            </div>
-                            <!-- /.card-body -->
+                @if ($profile != null)
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title font-weight-bold text-dark"><i class="fas fa-id-card mr-1 text-primary"></i> Verified Wallet Information</span>
                         </div>
-                        <!-- /.card -->
-                        <!-- /.card -->
-                    </section>
-                    <!-- /.Left col -->
-                </div>
-                <!-- /.row (main row) -->
-            </div>
-            <!-- /.container-fluid -->
-        </section>
-        @php
-            // Fetch all payment methods for logged in user
-            $paymentSetting = \App\Models\PaymentSetting::where('user_id', auth()->id())->get();
-        @endphp
-
-        <main class="content-wrapper">
-            <div class="container-fluid">
-
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Withdraw</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-striped mb-0">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th>Account Holder</th>
+                                            <th>NID Number</th>
+                                            <th>Phone No</th>
+                                            <th>NID Front</th>
+                                            <th>Payment Type</th>
+                                            <th>Status</th>
+                                            <th class="text-right">Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="font-weight:600;color:#0f172a;">{{ $profile->name ?? '' }}</td>
+                                            <td style="font-family:monospace;">{{ $profile->nid_no ?? 'N/A' }}</td>
+                                            <td>{{ $profile->mobile_no ?? '' }}</td>
+                                            <td>
+                                                @if (!empty($profile->front_image))
+                                                    <img src="{{ asset('public/upload/profile_verify/' . $profile->front_image) }}" width="60" style="border-radius:6px;border:1px solid #e2e8f0;">
+                                                @else
+                                                    <span class="text-muted">N/A</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $profile->payment_type ?? 'N/A' }}</td>
+                                            <td>
+                                                <span class="badge badge-{{ $profile->transaction_status === 'Completed' ? 'success' : 'secondary' }}" style="font-size:12px;border-radius:4px;padding:4px 8px;">
+                                                    {{ $profile->transaction_status ?? 'N/A' }}
+                                                </span>
+                                            </td>
+                                            <td class="text-right" style="font-weight:800;font-size:15px;color:#6366f1;">৳{{ number_format($profile->balance ?? 0, 2) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
-
-                            <div class="modal-body">
-
-                                <form method="POST" class="form" action="{{ route('wallet.save') }}">
-                                    @csrf
-
-                                    <div class="form-group">
-                                        <label for="payment_type">Payment Method</label>
-
-                                        <select class="custom-select" name="payment_type" id="payment_type" onchange="updateAccountLabel(this)" style="font-size:14px;border-radius:10px;padding:10px 14px">
-                                            <option value="">-- Payment Method বেছে নিন --</option>
-                                            @foreach ($withdrawalMethods ?? [] as $wm)
-                                                <option value="{{ $wm->name }}"
-                                                    data-label="{{ $wm->account_label }}"
-                                                    data-placeholder="{{ $wm->account_placeholder }}"
-                                                    data-regex="{{ $wm->account_regex }}"
-                                                    data-instructions="{{ $wm->instructions }}"
-                                                    data-color="{{ $wm->logo_color }}"
-                                                    data-emoji="{{ $wm->logo_emoji }}"
-                                                    {{ old('payment_type') == $wm->name ? 'selected' : '' }}>
-                                                    {{ $wm->logo_emoji }} {{ $wm->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <div id="paymentInstructions" style="display:none;margin-top:6px;font-size:13px;color:#555;background:#f8f9fb;padding:8px 12px;border-radius:8px;border-left:3px solid #1e25fa"></div>
-
-                                        @error('payment_type')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="mobile_no">Phone Number</label>
-                                        <input type="text" class="form-control" id="mobile_no" name="mobile_no"
-                                            placeholder="Phone Number" readonly>
-
-                                        @error('mobile_no')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-
-
-                                    <div class="form-group">
-                                        <label for="amount">Amount</label>
-
-                                        <input type="number" class="form-control" id="amount" name="amount"
-                                            step="0.01" placeholder="Enter Request Amount" min="200"
-                                            max="{{ $profile->balance ?? 0 }}" value="{{ $profile->balance ?? 0 }}">
-
-                                        @error('amount')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-
-
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-
-                                </form>
-
-                            </div>
-
                         </div>
                     </div>
-                </div>
-
+                @endif
             </div>
-        </main>
+        </section>
+    </div>
 
-    @endsection
+    {{-- Withdraw Modal --}}
+    @php
+        $paymentSetting = \App\Models\PaymentSetting::where('user_id', auth()->id())->get();
+    @endphp
 
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="border-radius:12px;overflow:hidden;">
+                <div class="modal-header" style="background:#f8fafc;border-bottom:1px solid #e2e8f0;">
+                    <h5 class="modal-title font-weight-bold text-dark" id="exampleModalLabel">
+                        <i class="fas fa-hand-holding-usd mr-2 text-primary"></i> Withdraw Request
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('wallet.save') }}">
+                        @csrf
 
-    @section('custom_js')
-        <script>
-            $('#payment_type').on('change', function() {
+                        <div class="form-group">
+                            <label for="payment_type">Payment Method</label>
+                            <select class="form-control" name="payment_type" id="payment_type">
+                                <option value="">Select Payment Type</option>
+                                @foreach ($paymentSetting as $ps)
+                                    <option value="{{ $ps->method }}" {{ old('payment_type') == $ps->method ? 'selected' : '' }}>
+                                        {{ $ps->method }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('payment_type')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                let method = $(this).val();
+                        <div class="form-group">
+                            <label for="mobile_no">Registered Phone Number</label>
+                            <input type="text" class="form-control" id="mobile_no" name="mobile_no" placeholder="Auto-filled on selection" readonly>
+                            @error('mobile_no')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                if (method === "") {
-                    $('#mobile_no').val("");
-                    return;
+                        <div class="form-group">
+                            <label for="amount">Withdrawal Amount <small class="text-muted">(Min: ৳200)</small></label>
+                            <input type="number" class="form-control" id="amount" name="amount"
+                                step="0.01" placeholder="Enter amount" min="200"
+                                max="{{ $profile->balance ?? 0 }}" value="{{ $profile->balance ?? 0 }}">
+                            @error('amount')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block" style="background:#6366f1;border:none;border-radius:8px;font-weight:700;padding:12px;">
+                            <i class="fas fa-paper-plane mr-1"></i> Submit Request
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('custom_js')
+    <script>
+        $('#payment_type').on('change', function() {
+            let method = $(this).val();
+            if (method === "") { $('#mobile_no').val(""); return; }
+            $.ajax({
+                url: "{{ route('manage.wallets.payment') }}",
+                type: "GET",
+                data: { method_type: method },
+                success: function(res) {
+                    $('#mobile_no').val(res.data ? res.data.number : "");
                 }
-
-                $.ajax({
-                    url: "{{ route('manage.wallets.payment') }}",
-                    type: "GET",
-                    data: {
-                        method_type: method
-                    },
-                    success: function(res) {
-                        if (res.data) {
-                            $('#mobile_no').val(res.data.number);
-                        } else {
-                            $('#mobile_no').val("");
-                        }
-                    }
-                });
-
             });
-        </script>
-    @endsection
+        });
+    </script>
+@endsection
