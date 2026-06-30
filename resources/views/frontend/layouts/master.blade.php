@@ -1398,7 +1398,10 @@
     }
     @media (max-width: 768px) {
         .mobile-bottom-nav { display: block; }
-        body { padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important; }
+        body { 
+            padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
+            padding-top: 54px !important;
+        }
     }
 
     /* Bottom Sheet Category Drawer */

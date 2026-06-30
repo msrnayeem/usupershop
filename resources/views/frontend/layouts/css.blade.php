@@ -2654,6 +2654,8 @@ Exact class names from blade templates
             background: #f4f5f9 !important;
             /* Safe area for bottom nav — mobile only */
             padding-bottom: calc(65px + env(safe-area-inset-bottom, 0px)) !important;
+            /* Offset for the fixed mobile header to prevent content overlap */
+            padding-top: 54px !important;
         }
 
         p,
