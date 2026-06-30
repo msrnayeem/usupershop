@@ -14,9 +14,6 @@
                 Couriers Config
             </p>
         </div>
-        <a class="btn btn-sm btn-primary" href="{{ route('couriers.index') }}" style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#6366f1;border:none;border-radius:8px;font-size:13px;font-weight:600;color:#fff;text-decoration:none;">
-            <i class="fas fa-list"></i> Courier Services List
-        </a>
     </div>
 
     <section class="content">

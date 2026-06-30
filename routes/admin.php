@@ -50,7 +50,6 @@ Route::post('/adminlogin', [LoginController::class, 'Adminlogin'])->name('adminl
 Route::post('/adminlogin/logout', [LoginController::class, 'AdminLogout'])->name('adminlogin.logout');
 Route::group(['middleware' => ['auth', 'admin']], function () {
 
-    Route::resource('couriers', CourierController::class);
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::prefix('users')->group(function () {
         Route::get('/view', [UsersController::class, 'view'])->name('users.view');

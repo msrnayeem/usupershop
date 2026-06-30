@@ -512,26 +512,24 @@
 <div class="sidebar-section-label">Delivery</div>
 <ul class="nav-group">
 
-    <li class="nav-item {{ Str::startsWith($route ?? '', 'areas.division') || request()->routeIs('couriers.*') ? 'menu-open' : '' }}">
+    <li class="nav-item {{ Str::startsWith($route ?? '', 'areas.division') || Str::startsWith($route ?? '', 'couriers') ? 'menu-open' : '' }}">
         <a href="#" class="nav-link" data-toggle="treeview">
             <i class="nav-icon fas fa-shipping-fast"></i>
             <p>Delivery <i class="fas fa-angle-left right"></i></p>
         </a>
         <ul class="nav-treeview">
             <li class="nav-item"><a href="{{ route('areas.division') }}" class="nav-link {{ Str::startsWith($route ?? '', 'areas.division') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Charge Info</p></a></li>
-            <li class="nav-item"><a href="{{ route('couriers.index') }}" class="nav-link {{ request()->routeIs('couriers.*') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Courier Settings</p></a></li>
+            <li class="nav-item">
+                <a href="{{ route('couriers.settings') }}" class="nav-link {{ Str::startsWith($route ?? '', 'couriers') ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p style="display: inline-flex; align-items: center; gap: 6px; margin: 0; width: 100%;">
+                        Courier Settings
+                        @php $activeCouriers = \App\Models\Courier::where('is_active', 1)->count(); @endphp
+                        <span class="badge {{ $activeCouriers ? 'badge-success' : 'badge-secondary' }}" style="font-size: 10px; padding: 2px 6px; border-radius: 4px;">{{ $activeCouriers ? $activeCouriers.' ON' : 'OFF' }}</span>
+                    </p>
+                </a>
+            </li>
         </ul>
-    </li>
-
-    {{-- Courier API --}}
-    <li class="nav-item">
-        <a href="{{ route('couriers.settings') }}" class="nav-link {{ str_starts_with($route ?? '', 'couriers') ? 'active' : '' }}">
-            <i class="nav-icon fas fa-truck"></i>
-            <p>Courier API
-                @php $activeCouriers = \App\Models\Courier::where('is_active',1)->count(); @endphp
-                <span class="badge {{ $activeCouriers ? 'badge-success' : 'badge-secondary' }}">{{ $activeCouriers ? $activeCouriers.' ON' : 'OFF' }}</span>
-            </p>
-        </a>
     </li>
 
     {{-- Contact --}}
