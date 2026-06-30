@@ -1,6 +1,6 @@
 @php
     $route = Route::currentRouteName();
-    $url   = url()->current();
+    $url   = url()->full();
 @endphp
 
 <div class="sidebar-section-label">Main</div>
@@ -378,11 +378,11 @@
             <p>Sellers <i class="fas fa-angle-left right"></i></p>
         </a>
         <ul class="nav-treeview">
-            <li class="nav-item"><a href="{{ route('sellers.view') }}?active" class="nav-link {{ $url == route('sellers.view').'?active' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Active</p></a></li>
-            <li class="nav-item"><a href="{{ route('sellers.view') }}?inactive" class="nav-link {{ $url == route('sellers.view').'?inactive' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Inactive</p></a></li>
-            <li class="nav-item"><a href="{{ route('sellers.view') }}?suspended" class="nav-link {{ $url == route('sellers.view').'?suspended' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Suspended</p></a></li>
-            <li class="nav-item"><a href="{{ route('sellers.view') }}?paid" class="nav-link {{ $url == route('sellers.view').'?paid' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Paid</p></a></li>
-            <li class="nav-item"><a href="{{ route('sellers.view') }}?unpaid" class="nav-link {{ $url == route('sellers.view').'?unpaid' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Unpaid</p></a></li>
+            <li class="nav-item"><a href="{{ route('sellers.view') }}?active" class="nav-link {{ request()->routeIs('sellers.view') && request()->has('active') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Active</p></a></li>
+            <li class="nav-item"><a href="{{ route('sellers.view') }}?inactive" class="nav-link {{ request()->routeIs('sellers.view') && request()->has('inactive') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Inactive</p></a></li>
+            <li class="nav-item"><a href="{{ route('sellers.view') }}?suspended" class="nav-link {{ request()->routeIs('sellers.view') && request()->has('suspended') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Suspended</p></a></li>
+            <li class="nav-item"><a href="{{ route('sellers.view') }}?paid" class="nav-link {{ request()->routeIs('sellers.view') && request()->has('paid') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Paid</p></a></li>
+            <li class="nav-item"><a href="{{ route('sellers.view') }}?unpaid" class="nav-link {{ request()->routeIs('sellers.view') && request()->has('unpaid') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Unpaid</p></a></li>
         </ul>
     </li>
 
@@ -393,11 +393,11 @@
             <p>Vendors <i class="fas fa-angle-left right"></i></p>
         </a>
         <ul class="nav-treeview">
-            <li class="nav-item"><a href="{{ route('vendors.view') }}?active" class="nav-link {{ $url == route('vendors.view').'?active' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Active</p></a></li>
-            <li class="nav-item"><a href="{{ route('vendors.view') }}?inactive" class="nav-link {{ $url == route('vendors.view').'?inactive' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Inactive</p></a></li>
-            <li class="nav-item"><a href="{{ route('vendors.view') }}?suspended" class="nav-link {{ $url == route('vendors.view').'?suspended' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Suspended</p></a></li>
-            <li class="nav-item"><a href="{{ route('vendors.view') }}?paid" class="nav-link {{ $url == route('vendors.view').'?paid' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Paid</p></a></li>
-            <li class="nav-item"><a href="{{ route('vendors.draft.view') }}?unpaid" class="nav-link {{ $url == route('vendors.draft.view').'?unpaid' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Unpaid</p></a></li>
+            <li class="nav-item"><a href="{{ route('vendors.view') }}?active" class="nav-link {{ request()->routeIs('vendors.view') && request()->has('active') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Active</p></a></li>
+            <li class="nav-item"><a href="{{ route('vendors.view') }}?inactive" class="nav-link {{ request()->routeIs('vendors.view') && request()->has('inactive') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Inactive</p></a></li>
+            <li class="nav-item"><a href="{{ route('vendors.view') }}?suspended" class="nav-link {{ request()->routeIs('vendors.view') && request()->has('suspended') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Suspended</p></a></li>
+            <li class="nav-item"><a href="{{ route('vendors.view') }}?paid" class="nav-link {{ request()->routeIs('vendors.view') && request()->has('paid') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Paid</p></a></li>
+            <li class="nav-item"><a href="{{ route('vendors.draft.view') }}?unpaid" class="nav-link {{ request()->routeIs('vendors.draft.view') && request()->has('unpaid') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Unpaid</p></a></li>
         </ul>
     </li>
 
@@ -408,11 +408,11 @@
             <p>Dropshippers <i class="fas fa-angle-left right"></i></p>
         </a>
         <ul class="nav-treeview">
-            <li class="nav-item"><a href="{{ route('dropshippers.view') }}?active" class="nav-link {{ $url == route('dropshippers.view').'?active' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Active</p></a></li>
-            <li class="nav-item"><a href="{{ route('dropshippers.view') }}?inactive" class="nav-link {{ $url == route('dropshippers.view').'?inactive' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Inactive</p></a></li>
-            <li class="nav-item"><a href="{{ route('dropshippers.view') }}?suspended" class="nav-link {{ $url == route('dropshippers.view').'?suspended' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Suspended</p></a></li>
-            <li class="nav-item"><a href="{{ route('dropshippers.view') }}?paid" class="nav-link {{ $url == route('dropshippers.view').'?paid' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Paid</p></a></li>
-            <li class="nav-item"><a href="{{ route('dropshippers.draft.view') }}?unpaid" class="nav-link {{ $url == route('dropshippers.draft.view').'?unpaid' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Unpaid</p></a></li>
+            <li class="nav-item"><a href="{{ route('dropshippers.view') }}?active" class="nav-link {{ request()->routeIs('dropshippers.view') && request()->has('active') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Active</p></a></li>
+            <li class="nav-item"><a href="{{ route('dropshippers.view') }}?inactive" class="nav-link {{ request()->routeIs('dropshippers.view') && request()->has('inactive') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Inactive</p></a></li>
+            <li class="nav-item"><a href="{{ route('dropshippers.view') }}?suspended" class="nav-link {{ request()->routeIs('dropshippers.view') && request()->has('suspended') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Suspended</p></a></li>
+            <li class="nav-item"><a href="{{ route('dropshippers.view') }}?paid" class="nav-link {{ request()->routeIs('dropshippers.view') && request()->has('paid') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Paid</p></a></li>
+            <li class="nav-item"><a href="{{ route('dropshippers.draft.view') }}?unpaid" class="nav-link {{ request()->routeIs('dropshippers.draft.view') && request()->has('unpaid') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Unpaid</p></a></li>
         </ul>
     </li>
 
@@ -468,13 +468,13 @@
     </li>
 
     {{-- Subscriptions --}}
-    <li class="nav-item {{ $route == 'subscriptions.view' ? 'menu-open' : '' }}">
+    <li class="nav-item {{ Str::startsWith($route ?? '', 'subscriptions.') ? 'menu-open' : '' }}">
         <a href="#" class="nav-link" data-toggle="treeview">
             <i class="nav-icon fas fa-crown"></i>
             <p>Subscriptions <i class="fas fa-angle-left right"></i></p>
         </a>
         <ul class="nav-treeview">
-            <li class="nav-item"><a href="{{ route('subscriptions.view') }}" class="nav-link {{ $route == 'subscriptions.view' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Subscription List</p></a></li>
+            <li class="nav-item"><a href="{{ route('subscriptions.view') }}" class="nav-link {{ Str::startsWith($route ?? '', 'subscriptions.') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Subscription List</p></a></li>
         </ul>
     </li>
 
@@ -512,13 +512,13 @@
 <div class="sidebar-section-label">Delivery</div>
 <ul class="nav-group">
 
-    <li class="nav-item {{ $route == 'areas.division' || request()->routeIs('couriers.*') ? 'menu-open' : '' }}">
+    <li class="nav-item {{ Str::startsWith($route ?? '', 'areas.division') || request()->routeIs('couriers.*') ? 'menu-open' : '' }}">
         <a href="#" class="nav-link" data-toggle="treeview">
             <i class="nav-icon fas fa-shipping-fast"></i>
             <p>Delivery <i class="fas fa-angle-left right"></i></p>
         </a>
         <ul class="nav-treeview">
-            <li class="nav-item"><a href="{{ route('areas.division') }}" class="nav-link {{ $route == 'areas.division' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Charge Info</p></a></li>
+            <li class="nav-item"><a href="{{ route('areas.division') }}" class="nav-link {{ Str::startsWith($route ?? '', 'areas.division') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Charge Info</p></a></li>
             <li class="nav-item"><a href="{{ route('couriers.index') }}" class="nav-link {{ request()->routeIs('couriers.*') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Courier Settings</p></a></li>
         </ul>
     </li>
