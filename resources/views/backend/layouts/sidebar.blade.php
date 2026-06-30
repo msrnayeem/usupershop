@@ -563,17 +563,16 @@
         </ul>
     </li>
 
-    {{-- Site Settings --}}
-    <li class="nav-item {{ in_array($route, ['settings.view','settings.commission.index','settings.notification','settings.invoice','settings.livechat','settings.seo']) ? 'menu-open' : '' }}">
+    <li class="nav-item {{ Str::startsWith($route ?? '', 'settings.') ? 'menu-open' : '' }}">
         <a href="#" class="nav-link" data-toggle="treeview">
             <i class="nav-icon fas fa-cog"></i>
             <p>Site Settings <i class="fas fa-angle-left right"></i></p>
         </a>
         <ul class="nav-treeview">
-            <li class="nav-item"><a href="{{ route('settings.view') }}" class="nav-link {{ $route == 'settings.view' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>General</p></a></li>
-            <li class="nav-item"><a href="{{ route('settings.commission.index') }}" class="nav-link {{ $route == 'settings.commission.index' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Commission</p></a></li>
+            <li class="nav-item"><a href="{{ route('settings.view') }}" class="nav-link {{ in_array($route, ['settings.view', 'settings.edit', 'settings.update']) ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>General</p></a></li>
+            <li class="nav-item"><a href="{{ route('settings.commission.index') }}" class="nav-link {{ Str::startsWith($route ?? '', 'settings.commission') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Commission</p></a></li>
             <li class="nav-item">
-                <a href="{{ route('settings.notification') }}" class="nav-link {{ $route == 'settings.notification' ? 'active' : '' }}">
+                <a href="{{ route('settings.notification') }}" class="nav-link {{ Str::startsWith($route ?? '', 'settings.notification') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Notifications
                         @php $notifSetting = \App\Models\Setting::first(); @endphp
@@ -585,9 +584,9 @@
                     </p>
                 </a>
             </li>
-            <li class="nav-item"><a href="{{ route('settings.invoice') }}" class="nav-link {{ $route == 'settings.invoice' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Invoice</p></a></li>
+            <li class="nav-item"><a href="{{ route('settings.invoice') }}" class="nav-link {{ Str::startsWith($route ?? '', 'settings.invoice') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Invoice</p></a></li>
             <li class="nav-item">
-                <a href="{{ route('settings.livechat') }}" class="nav-link {{ $route == 'settings.livechat' ? 'active' : '' }}">
+                <a href="{{ route('settings.livechat') }}" class="nav-link {{ Str::startsWith($route ?? '', 'settings.livechat') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Live Chat
                         @php $lc = \App\Models\Setting::first(); @endphp
@@ -595,7 +594,7 @@
                     </p>
                 </a>
             </li>
-            <li class="nav-item"><a href="{{ route('settings.seo') }}" class="nav-link {{ $route == 'settings.seo' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>SEO</p></a></li>
+            <li class="nav-item"><a href="{{ route('settings.seo') }}" class="nav-link {{ Str::startsWith($route ?? '', 'settings.seo') ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>SEO</p></a></li>
         </ul>
     </li>
 
