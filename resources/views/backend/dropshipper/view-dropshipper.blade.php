@@ -31,22 +31,21 @@
                             </div>
                             <div class="card-body">
                                 <div class="msg"></div>
-                                <div class="table-responsive">
-                                    <table class="dataTables table table-bordered table-striped nowrap dt-responsive" style="width: 100%">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center" style="width: 40px;">SN</th>
-                                                <th class="text-center">Name</th>
-                                                <th class="text-center">Email</th>
-                                                <th class="text-center">Phone No</th>
-                                                <th class="text-center">Shop Name</th>
-                                                <th class="text-center">Address</th>
-                                                <th class="text-center">Registered / Active On</th>
-                                                <th class="text-center">Payment</th>
-                                                <th class="text-center">Status</th>
-                                                <th class="text-center" width="12%">Action</th>
-                                            </tr>
-                                        </thead>
+                                <table class="dataTables table table-bordered table-striped nowrap dt-responsive" style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center all" style="width: 50px;">SN</th>
+                                            <th class="text-center all" style="width: 18%;">Name</th>
+                                            <th class="text-center none">Email</th>
+                                            <th class="text-center" style="width: 15%;">Phone No</th>
+                                            <th class="text-center" style="width: 20%;">Shop Name</th>
+                                            <th class="text-center none">Address</th>
+                                            <th class="text-center none">Registered / Active On</th>
+                                            <th class="text-center" style="width: 12%;">Payment</th>
+                                            <th class="text-center" style="width: 12%;">Status</th>
+                                            <th class="text-center all" style="width: 100px;">Action</th>
+                                        </tr>
+                                    </thead>
                                         <tbody>
                                             @foreach ($vendors as $i => $vendor)
                                                 <tr>
@@ -77,37 +76,51 @@
                                                         @endif
                                                     </td>
                                                     <td class="text-center">
-                                                        <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;">
-                                                            @if ($vendor->status == 0)
-                                                                <a class="btn btn-xs btn-success" href="{{ route('dropshippers.status', ['id' => $vendor->id, 'status' => '1']) }}">Activate</a>
-                                                            @elseif ($vendor->status == 1)
-                                                                <a class="btn btn-xs btn-warning" href="{{ route('dropshippers.status', ['id' => $vendor->id, 'status' => '0']) }}">Deactivate</a>
-                                                            @else
-                                                                <a class="btn btn-xs btn-warning" href="{{ route('dropshippers.status', ['id' => $vendor->id, 'status' => '0']) }}">Deactivate</a>
-                                                            @endif
-
-                                                            <a class="btn btn-xs btn-danger" href="{{ route('dropshippers.status', ['id' => $vendor->id, 'status' => '2']) }}">Suspend</a>
-
-                                                            @if ($vendor->payment_status == 0)
-                                                                <a class="btn btn-xs btn-outline-success" href="{{ route('dropshippers.payment_status', ['id' => $vendor->id, 'payment_status' => '1']) }}">Paid</a>
-                                                            @else
-                                                                <a class="btn btn-xs btn-outline-danger" href="{{ route('dropshippers.payment_status', ['id' => $vendor->id, 'payment_status' => '0']) }}">Unpaid</a>
-                                                            @endif
-
-                                                            <a class="btn btn-xs btn-primary" href="{{ route('dropshippers.edit', $vendor->id) }}">
-                                                                <i class="fas fa-edit"></i> Edit
-                                                            </a>
-
-                                                            <a class="btn btn-xs btn-success" href="{{ route('dropshippers.profile.verify', $vendor->id) }}">
-                                                                <i class="fas fa-id-card"></i> Profile
-                                                            </a>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-xs btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenu{{ $vendor->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="border-radius:6px; padding:5px 12px; font-weight:600; background:#fff; border:1px solid #cbd5e1; color:#475569; display:inline-flex; align-items:center; gap:4px;">
+                                                                Actions
+                                                            </button>
+                                                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu{{ $vendor->id }}" style="border-radius:8px; border:1px solid #e2e8f0; box-shadow:0 4px 12px rgba(0,0,0,0.08); padding:6px 0; min-width:160px;">
+                                                                <a class="dropdown-item" href="{{ route('dropshippers.edit', $vendor->id) }}" style="font-size:13px; padding:8px 16px; color:#334155; display:flex; align-items:center; gap:8px;">
+                                                                    <i class="fas fa-edit" style="color:#6366f1; width:16px;"></i> Edit Profile
+                                                                </a>
+                                                                <a class="dropdown-item" href="{{ route('dropshippers.profile.verify', $vendor->id) }}" style="font-size:13px; padding:8px 16px; color:#334155; display:flex; align-items:center; gap:8px;">
+                                                                    <i class="fas fa-id-card" style="color:#10b981; width:16px;"></i> View Profile
+                                                                </a>
+                                                                
+                                                                <div class="dropdown-divider" style="border-top:1px solid #f1f5f9; margin:6px 0;"></div>
+                                                                
+                                                                @if ($vendor->status == 0)
+                                                                    <a class="dropdown-item" href="{{ route('dropshippers.status', ['id' => $vendor->id, 'status' => '1']) }}" style="font-size:13px; padding:8px 16px; color:#10b981; font-weight:600; display:flex; align-items:center; gap:8px;">
+                                                                        <i class="fas fa-check" style="width:16px;"></i> Activate
+                                                                    </a>
+                                                                @else
+                                                                    <a class="dropdown-item" href="{{ route('dropshippers.status', ['id' => $vendor->id, 'status' => '0']) }}" style="font-size:13px; padding:8px 16px; color:#f59e0b; font-weight:600; display:flex; align-items:center; gap:8px;">
+                                                                        <i class="fas fa-ban" style="width:16px;"></i> Deactivate
+                                                                    </a>
+                                                                @endif
+                                                                <a class="dropdown-item" href="{{ route('dropshippers.status', ['id' => $vendor->id, 'status' => '2']) }}" style="font-size:13px; padding:8px 16px; color:#ef4444; font-weight:600; display:flex; align-items:center; gap:8px;">
+                                                                    <i class="fas fa-times-circle" style="width:16px;"></i> Suspend
+                                                                </a>
+                                                                
+                                                                <div class="dropdown-divider" style="border-top:1px solid #f1f5f9; margin:6px 0;"></div>
+                                                                
+                                                                @if ($vendor->payment_status == 0)
+                                                                    <a class="dropdown-item" href="{{ route('dropshippers.payment_status', ['id' => $vendor->id, 'payment_status' => '1']) }}" style="font-size:13px; padding:8px 16px; color:#10b981; display:flex; align-items:center; gap:8px;">
+                                                                        <i class="fas fa-dollar-sign" style="width:16px;"></i> Mark as Paid
+                                                                    </a>
+                                                                @else
+                                                                    <a class="dropdown-item" href="{{ route('dropshippers.payment_status', ['id' => $vendor->id, 'payment_status' => '0']) }}" style="font-size:13px; padding:8px 16px; color:#ef4444; display:flex; align-items:center; gap:8px;">
+                                                                        <i class="fas fa-exclamation-circle" style="width:16px;"></i> Mark as Unpaid
+                                                                    </a>
+                                                                @endif
+                                                            </div>
                                                         </div>
                                                     </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
-                                    </table>
-                                </div>
+                                </table>
                             </div>
                         </div>
                     </section>
@@ -121,7 +134,8 @@
     <script>
         $(document).ready(function () {
             $('.dataTables').DataTable({
-                responsive: true
+                responsive: true,
+                autoWidth: false
             });
         });
     </script>
