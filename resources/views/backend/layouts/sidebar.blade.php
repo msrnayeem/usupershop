@@ -552,14 +552,14 @@
 <ul class="nav-group">
 
     {{-- Profile --}}
-    <li class="nav-item {{ in_array($route, ['profiles.view','profiles.password.view']) ? 'menu-open' : '' }}">
+    <li class="nav-item {{ Str::startsWith($route ?? '', 'profiles') ? 'menu-open' : '' }}">
         <a href="#" class="nav-link" data-toggle="treeview">
             <i class="nav-icon fas fa-user-circle"></i>
             <p>Profile <i class="fas fa-angle-left right"></i></p>
         </a>
         <ul class="nav-treeview">
-            <li class="nav-item"><a href="{{ route('profiles.view') }}" class="nav-link {{ $route == 'profiles.view' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Your Profile</p></a></li>
-            <li class="nav-item"><a href="{{ route('profiles.password.view') }}" class="nav-link {{ $route == 'profiles.password.view' ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Change Password</p></a></li>
+            <li class="nav-item"><a href="{{ route('profiles.view') }}" class="nav-link {{ in_array($route, ['profiles.view', 'profiles.edit', 'profiles.update']) ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Your Profile</p></a></li>
+            <li class="nav-item"><a href="{{ route('profiles.password.view') }}" class="nav-link {{ in_array($route, ['profiles.password.view', 'profiles.password.update']) ? 'active' : '' }}"><i class="far fa-circle nav-icon"></i><p>Change Password</p></a></li>
         </ul>
     </li>
 
