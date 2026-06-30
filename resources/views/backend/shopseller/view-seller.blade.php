@@ -39,17 +39,17 @@
                                 <table id="shopTblseller" class="dataTables table table-bordered table-striped nowrap dt-responsive" style="width: 100%">
                                     <thead>
                                         <tr>
-                                            <th class="text-center" style="width: 40px;">SN</th>
-                                            <th class="text-center">Name</th>
-                                            <th class="text-center">Email</th>
-                                            <th class="text-center">Phone No</th>
-                                            <th class="text-center">Shop Name</th>
-                                            <th class="text-center">Address</th>
-                                            <th class="text-center">Commission</th>
-                                            <th class="text-center">Registered / Active On</th>
-                                            <th class="text-center">Payment</th>
-                                            <th class="text-center">Status</th>
-                                            <th class="text-center" width="12%">Action</th>
+                                            <th class="text-center all" style="width: 50px;">SN</th>
+                                            <th class="text-center all" style="width: 18%;">Name</th>
+                                            <th class="text-center none">Email</th>
+                                            <th class="text-center" style="width: 15%;">Phone No</th>
+                                            <th class="text-center" style="width: 20%;">Shop Name</th>
+                                            <th class="text-center none">Address</th>
+                                            <th class="text-center none">Commission</th>
+                                            <th class="text-center none">Registered / Active On</th>
+                                            <th class="text-center" style="width: 12%;">Payment</th>
+                                            <th class="text-center" style="width: 12%;">Status</th>
+                                            <th class="text-center all" style="width: 100px;">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -83,44 +83,56 @@
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
-                                                    <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;">
-                                                        @php
-                                                            $reseller = App\Models\User::find($seller->reseller_id);
-                                                        @endphp
-
-                                                        @if ($reseller)
-                                                            <button type="button" class="btn btn-success btn-xs edit-refer" data-toggle="modal" data-target="#sellerReferModal" data-reseller-id="{{ $reseller->id }}" data-reseller-name="{{ $reseller->mobile }}" data-reseller-balance="{{ $reseller->balance }}">
-                                                                <i class="fas fa-money-bill"></i> Refer Bal
-                                                            </button>
-                                                        @endif
-
-                                                        <button type="button" class="btn btn-info btn-xs edit-commission" data-toggle="modal" data-target="#sellerCommissionModal" data-user-id="{{ $seller->id }}" data-commission="{{ str_replace('%', '', $seller->commission) }}">
-                                                            <i class="fas fa-percent"></i> Comm
+                                                    @php
+                                                        $reseller = App\Models\User::find($seller->reseller_id);
+                                                    @endphp
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-xs btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenu{{ $seller->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="border-radius:6px; padding:5px 12px; font-weight:600; background:#fff; border:1px solid #cbd5e1; color:#475569; display:inline-flex; align-items:center; gap:4px;">
+                                                            Actions
                                                         </button>
-
-                                                        @if ($seller->status == 0)
-                                                            <a class="btn btn-xs btn-success" href="{{ route('vendors.status', ['id' => $seller->id, 'status' => '1']) }}">Activate</a>
-                                                        @elseif ($seller->status == 1)
-                                                            <a class="btn btn-xs btn-warning" href="{{ route('vendors.status', ['id' => $seller->id, 'status' => '0']) }}">Deactivate</a>
-                                                        @else
-                                                            <a class="btn btn-xs btn-warning" href="{{ route('vendors.status', ['id' => $seller->id, 'status' => '0']) }}">Deactivate</a>
-                                                        @endif
-
-                                                        <a class="btn btn-xs btn-danger" href="{{ route('vendors.status', ['id' => $seller->id, 'status' => '2']) }}">Suspend</a>
-
-                                                        @if ($seller->payment_status == 0)
-                                                            <a class="btn btn-xs btn-outline-success" href="{{ route('vendors.payment_status', ['id' => $seller->id, 'payment_status' => '1']) }}">Paid</a>
-                                                        @else
-                                                            <a class="btn btn-xs btn-outline-danger" href="{{ route('vendors.payment_status', ['id' => $seller->id, 'payment_status' => '0']) }}">Unpaid</a>
-                                                        @endif
-
-                                                        <a class="btn btn-xs btn-primary" href="{{ route('sellers.edit', $seller->id) }}">
-                                                            <i class="fas fa-edit"></i> Edit
-                                                        </a>
-
-                                                        <a class="btn btn-xs btn-success" href="{{ route('sellers.profile', $seller->id) }}">
-                                                            <i class="fas fa-id-card"></i> Profile
-                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu{{ $seller->id }}" style="border-radius:8px; border:1px solid #e2e8f0; box-shadow:0 4px 12px rgba(0,0,0,0.08); padding:6px 0; min-width:160px;">
+                                                            <a class="dropdown-item" href="{{ route('sellers.edit', $seller->id) }}" style="font-size:13px; padding:8px 16px; color:#334155; display:flex; align-items:center; gap:8px;">
+                                                                <i class="fas fa-edit" style="color:#6366f1; width:16px;"></i> Edit Profile
+                                                            </a>
+                                                            <a class="dropdown-item" href="{{ route('sellers.profile', $seller->id) }}" style="font-size:13px; padding:8px 16px; color:#334155; display:flex; align-items:center; gap:8px;">
+                                                                <i class="fas fa-id-card" style="color:#10b981; width:16px;"></i> View Profile
+                                                            </a>
+                                                            <a class="dropdown-item edit-commission" href="#" data-toggle="modal" data-target="#sellerCommissionModal" data-user-id="{{ $seller->id }}" data-commission="{{ str_replace('%', '', $seller->commission) }}" style="font-size:13px; padding:8px 16px; color:#334155; display:flex; align-items:center; gap:8px;">
+                                                                <i class="fas fa-percent" style="color:#3b82f6; width:16px;"></i> Commission
+                                                            </a>
+                                                            @if ($reseller)
+                                                                <a class="dropdown-item edit-refer" href="#" data-toggle="modal" data-target="#sellerReferModal" data-reseller-id="{{ $reseller->id }}" data-reseller-name="{{ $reseller->mobile }}" data-reseller-balance="{{ $reseller->balance }}" style="font-size:13px; padding:8px 16px; color:#334155; display:flex; align-items:center; gap:8px;">
+                                                                    <i class="fas fa-money-bill" style="color:#8b5cf6; width:16px;"></i> Refer Balance
+                                                                </a>
+                                                            @endif
+                                                            
+                                                            <div class="dropdown-divider" style="border-top:1px solid #f1f5f9; margin:6px 0;"></div>
+                                                            
+                                                            @if ($seller->status == 0)
+                                                                <a class="dropdown-item" href="{{ route('vendors.status', ['id' => $seller->id, 'status' => '1']) }}" style="font-size:13px; padding:8px 16px; color:#10b981; font-weight:600; display:flex; align-items:center; gap:8px;">
+                                                                    <i class="fas fa-check" style="width:16px;"></i> Activate Seller
+                                                                </a>
+                                                            @else
+                                                                <a class="dropdown-item" href="{{ route('vendors.status', ['id' => $seller->id, 'status' => '0']) }}" style="font-size:13px; padding:8px 16px; color:#f59e0b; font-weight:600; display:flex; align-items:center; gap:8px;">
+                                                                    <i class="fas fa-ban" style="width:16px;"></i> Deactivate Seller
+                                                                </a>
+                                                            @endif
+                                                            <a class="dropdown-item" href="{{ route('vendors.status', ['id' => $seller->id, 'status' => '2']) }}" style="font-size:13px; padding:8px 16px; color:#ef4444; font-weight:600; display:flex; align-items:center; gap:8px;">
+                                                                <i class="fas fa-times-circle" style="width:16px;"></i> Suspend Seller
+                                                            </a>
+                                                            
+                                                            <div class="dropdown-divider" style="border-top:1px solid #f1f5f9; margin:6px 0;"></div>
+                                                            
+                                                            @if ($seller->payment_status == 0)
+                                                                <a class="dropdown-item" href="{{ route('vendors.payment_status', ['id' => $seller->id, 'payment_status' => '1']) }}" style="font-size:13px; padding:8px 16px; color:#10b981; display:flex; align-items:center; gap:8px;">
+                                                                    <i class="fas fa-dollar-sign" style="width:16px;"></i> Mark as Paid
+                                                                </a>
+                                                            @else
+                                                                <a class="dropdown-item" href="{{ route('vendors.payment_status', ['id' => $seller->id, 'payment_status' => '0']) }}" style="font-size:13px; padding:8px 16px; color:#ef4444; display:flex; align-items:center; gap:8px;">
+                                                                    <i class="fas fa-exclamation-circle" style="width:16px;"></i> Mark as Unpaid
+                                                                </a>
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -223,7 +235,8 @@
     <script>
         $(document).ready(function () {
             $('.dataTables').DataTable({
-                responsive: true
+                responsive: true,
+                autoWidth: false
             });
         });
 

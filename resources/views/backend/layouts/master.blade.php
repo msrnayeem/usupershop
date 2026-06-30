@@ -384,7 +384,7 @@
             border: 1px solid var(--border);
             border-radius: var(--radius);
             box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
-            overflow: hidden;
+            overflow: visible;
         }
         .card-header {
             padding: 16px 20px;
@@ -613,6 +613,160 @@
 
         /* Notifyjs dark */
         .notifyjs-corner { z-index: 10000 !important; }
+
+        /* Bootstrap modal styling */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1050;
+            display: none;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            outline: 0;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+        }
+        .modal-open {
+            overflow: hidden;
+        }
+        .modal-open .modal {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .modal-dialog {
+            position: relative;
+            width: auto;
+            margin: 1.75rem auto;
+            pointer-events: none;
+            max-width: 500px;
+        }
+        .modal-dialog-centered {
+            display: flex;
+            align-items: center;
+            min-height: calc(100% - 3.5rem);
+        }
+        .modal.fade .modal-dialog {
+            transition: transform 0.3s ease-out;
+            transform: translate(0, -50px);
+        }
+        .modal.show .modal-dialog {
+            transform: none;
+        }
+        .modal-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            pointer-events: auto;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            outline: 0;
+            box-shadow: var(--shadow);
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            border-top-left-radius: var(--radius);
+            border-top-right-radius: var(--radius);
+        }
+        .modal-header .close {
+            padding: 1rem;
+            margin: -1rem -1rem -1rem auto;
+            background: transparent;
+            border: 0;
+            font-size: 1.5rem;
+            line-height: 1;
+            color: var(--text-muted);
+            opacity: 0.5;
+            cursor: pointer;
+            outline: none;
+            transition: opacity 0.2s;
+        }
+        .modal-header .close:hover {
+            opacity: 1;
+        }
+        .modal-body {
+            position: relative;
+            flex: 1 1 auto;
+            padding: 20px;
+        }
+        .modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            border-bottom-right-radius: var(--radius);
+            border-bottom-left-radius: var(--radius);
+            gap: 12px;
+        }
+        .modal-backdrop {
+            display: none !important;
+        }
+
+        /* Bootstrap dropdown styling */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            left: auto;
+            z-index: 1060;
+            display: none;
+            min-width: 160px;
+            padding: 6px 0;
+            margin: 4px 0 0;
+            font-size: 13px;
+            color: var(--text-primary);
+            text-align: left;
+            list-style: none;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow);
+        }
+        .dropdown-menu.show {
+            display: block;
+        }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 8px 16px;
+            clear: both;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-align: inherit;
+            white-space: nowrap;
+            background-color: transparent;
+            border: 0;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.15s, color 0.15s;
+        }
+        .dropdown-item:hover, .dropdown-item:focus {
+            color: var(--text-primary);
+            background-color: var(--bg-card-hover);
+            text-decoration: none;
+        }
+        .dropdown-divider {
+            height: 0;
+            margin: 6px 0;
+            overflow: hidden;
+            border-top: 1px solid var(--border);
+        }
     </style>
     @yield('admin_css')
 </head>
