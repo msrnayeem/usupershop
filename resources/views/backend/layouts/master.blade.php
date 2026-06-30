@@ -588,6 +588,7 @@
             .col-lg-8 { flex: 0 0 66.667%; max-width: 66.667%; }
             .col-lg-9 { flex: 0 0 75%; max-width: 75%; }
             .col-lg-12 { flex: 0 0 100%; max-width: 100%; }
+            .border-lg-right { border-right: 1px solid var(--border) !important; }
         }
 
         @media (max-width: 480px) {

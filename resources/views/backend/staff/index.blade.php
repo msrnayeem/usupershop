@@ -30,48 +30,48 @@
                     </div>
                 @endif
 
-                {{-- Stats Row --}}
-                <div class="row mb-4">
-                    <div class="col-md-3 col-sm-6 col-12">
-                        <div class="card shadow-sm border-0" style="border-radius:12px;background:#fff;border:1px solid #e2e8f0 !important;">
-                            <div class="card-body d-flex align-items-center" style="padding:18px;">
-                                <div style="background:#f1f5f9;color:#6366f1;width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-right:14px;"><i class="fas fa-users"></i></div>
-                                <div>
-                                    <div style="font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Total Staff</div>
-                                    <div style="font-size:20px;font-weight:800;color:#0f172a;margin-top:2px;">{{ $staffList->count() }}</div>
+                {{-- Stats Card --}}
+                <div class="card mb-4" style="border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                    <div class="card-body" style="padding: 16px 10px;">
+                        <div class="row">
+                            <!-- Total Staff -->
+                            <div class="col-lg-3 col-md-6 col-12 mb-3 mb-lg-0 border-lg-right">
+                                <div class="d-flex align-items-center" style="padding: 0 15px;">
+                                    <div style="background:#f1f5f9; color:#6366f1; width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-right:12px;"><i class="fas fa-users"></i></div>
+                                    <div>
+                                        <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Total Staff</div>
+                                        <div style="font-size:20px; font-weight:800; color:#0f172a; margin-top:2px;">{{ $staffList->count() }}</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6 col-12">
-                        <div class="card shadow-sm border-0" style="border-radius:12px;background:#fff;border:1px solid #e2e8f0 !important;">
-                            <div class="card-body d-flex align-items-center" style="padding:18px;">
-                                <div style="background:#fffbeb;color:#d97706;width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-right:14px;"><i class="fas fa-user-tie"></i></div>
-                                <div>
-                                    <div style="font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Managers</div>
-                                    <div style="font-size:20px;font-weight:800;color:#0f172a;margin-top:2px;">{{ $staffList->where('role','manager')->count() }}</div>
+                            <!-- Managers -->
+                            <div class="col-lg-3 col-md-6 col-12 mb-3 mb-lg-0 border-lg-right">
+                                <div class="d-flex align-items-center" style="padding: 0 15px;">
+                                    <div style="background:#fffbeb; color:#d97706; width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-right:12px;"><i class="fas fa-user-tie"></i></div>
+                                    <div>
+                                        <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Managers</div>
+                                        <div style="font-size:20px; font-weight:800; color:#0f172a; margin-top:2px;">{{ $staffList->where('role','manager')->count() }}</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6 col-12">
-                        <div class="card shadow-sm border-0" style="border-radius:12px;background:#fff;border:1px solid #e2e8f0 !important;">
-                            <div class="card-body d-flex align-items-center" style="padding:18px;">
-                                <div style="background:#f0f9ff;color:#0284c7;width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-right:14px;"><i class="fas fa-user"></i></div>
-                                <div>
-                                    <div style="font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Employees</div>
-                                    <div style="font-size:20px;font-weight:800;color:#0f172a;margin-top:2px;">{{ $staffList->where('role','employee')->count() }}</div>
+                            <!-- Employees -->
+                            <div class="col-lg-3 col-md-6 col-12 mb-3 mb-md-0 border-lg-right">
+                                <div class="d-flex align-items-center" style="padding: 0 15px;">
+                                    <div style="background:#f0f9ff; color:#0284c7; width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-right:12px;"><i class="fas fa-user"></i></div>
+                                    <div>
+                                        <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Employees</div>
+                                        <div style="font-size:20px; font-weight:800; color:#0f172a; margin-top:2px;">{{ $staffList->where('role','employee')->count() }}</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6 col-12">
-                        <div class="card shadow-sm border-0" style="border-radius:12px;background:#fff;border:1px solid #e2e8f0 !important;">
-                            <div class="card-body d-flex align-items-center" style="padding:18px;">
-                                <div style="background:#f0fdf4;color:#16a34a;width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-right:14px;"><i class="fas fa-user-check"></i></div>
-                                <div>
-                                    <div style="font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Active Status</div>
-                                    <div style="font-size:20px;font-weight:800;color:#0f172a;margin-top:2px;">{{ $staffList->where('is_active',1)->count() }}</div>
+                            <!-- Active Status -->
+                            <div class="col-lg-3 col-md-6 col-12">
+                                <div class="d-flex align-items-center" style="padding: 0 15px;">
+                                    <div style="background:#f0fdf4; color:#16a34a; width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-right:12px;"><i class="fas fa-user-check"></i></div>
+                                    <div>
+                                        <div style="font-size:11px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Active Status</div>
+                                        <div style="font-size:20px; font-weight:800; color:#0f172a; margin-top:2px;">{{ $staffList->where('is_active',1)->count() }}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -141,7 +141,7 @@
                                             <a href="{{ route('staff.edit', $s->id) }}" class="btn btn-xs btn-info" style="border-radius:6px;padding:4px 8px;font-weight:600;">
                                                 <i class="fas fa-edit"></i> Edit
                                             </a>
-                                            <form action="{{ route('staff.destroy', $s->id) }}" method="POST" style="display:inline" onsubmit="return confirm('Are you sure you want to delete {{ $s->user->name ?? \'\' }}?')">
+                                            <form action="{{ route('staff.destroy', $s->id) }}" method="POST" style="display:inline" onsubmit="return confirm('Are you sure you want to delete {{ $s->user->name ?? '' }}?')">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-xs btn-danger" style="border-radius:6px;padding:4px 8px;">
