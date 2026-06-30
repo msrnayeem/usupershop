@@ -946,6 +946,21 @@ $(document).ready(function () {
         }
     });
 
+    /* ── Auto-expand active submenus and auto-scroll ── */
+    var $activeSub = $('.nav-treeview .nav-link.active');
+    if ($activeSub.length) {
+        $activeSub.closest('.nav-treeview').closest('.nav-item').addClass('menu-open');
+    }
+
+    var $sidebarScroll = $('.sidebar-scroll');
+    var $activeLink = $('.sidebar-scroll .nav-link.active');
+    if ($activeLink.length && $sidebarScroll.length) {
+        var containerTop = $sidebarScroll.scrollTop();
+        var activeTop = $activeLink.offset().top - $sidebarScroll.offset().top + containerTop;
+        var scrollPosition = activeTop - ($sidebarScroll.height() / 2) + ($activeLink.outerHeight() / 2);
+        $sidebarScroll.scrollTop(Math.max(0, scrollPosition));
+    }
+
     /* ── Select2 ── */
     $('.select2').select2();
 
