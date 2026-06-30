@@ -36,83 +36,191 @@
 .kpi-card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: var(--radius);
-    padding: 20px;
+    border-radius: 14px;
+    padding: 22px 20px;
     display: flex;
-    align-items: flex-start;
-    gap: 16px;
+    align-items: center;
+    gap: 18px;
     position: relative;
     overflow: hidden;
-    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
-    cursor: default;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
 }
 .kpi-card:hover {
-    transform: translateY(-3px);
-    border-color: #cbd5e1;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    transform: translateY(-4px);
 }
 .kpi-card::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    border-radius: var(--radius) var(--radius) 0 0;
+    top: 0; left: 0; bottom: 0;
+    width: 4px;
+    border-radius: 14px 0 0 14px;
+    transition: width 0.3s ease;
 }
-.kpi-card.indigo::before { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
-.kpi-card.green::before  { background: linear-gradient(90deg, #10b981, #34d399); }
-.kpi-card.amber::before  { background: linear-gradient(90deg, #f59e0b, #fcd34d); }
-.kpi-card.red::before    { background: linear-gradient(90deg, #ef4444, #f87171); }
-.kpi-card.blue::before   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
-.kpi-card.purple::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
-.kpi-card.pink::before   { background: linear-gradient(90deg, #ec4899, #f472b6); }
-.kpi-card.teal::before   { background: linear-gradient(90deg, #14b8a6, #2dd4bf); }
-.kpi-card.orange::before { background: linear-gradient(90deg, #f97316, #fb923c); }
-.kpi-card.slate::before  { background: linear-gradient(90deg, #64748b, #94a3b8); }
+.kpi-card:hover::before {
+    width: 6px;
+}
+
+.kpi-card.indigo::before { background: linear-gradient(to bottom, #6366f1, #8b5cf6); }
+.kpi-card.indigo:hover {
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow: 0 12px 20px -8px rgba(99, 102, 241, 0.25), 0 4px 12px -2px rgba(99, 102, 241, 0.15);
+    background: linear-gradient(135deg, #ffffff 0%, rgba(99, 102, 241, 0.02) 100%);
+}
+
+.kpi-card.green::before { background: linear-gradient(to bottom, #10b981, #34d399); }
+.kpi-card.green:hover {
+    border-color: rgba(16, 185, 129, 0.3);
+    box-shadow: 0 12px 20px -8px rgba(16, 185, 129, 0.25), 0 4px 12px -2px rgba(16, 185, 129, 0.15);
+    background: linear-gradient(135deg, #ffffff 0%, rgba(16, 185, 129, 0.02) 100%);
+}
+
+.kpi-card.amber::before { background: linear-gradient(to bottom, #f59e0b, #fcd34d); }
+.kpi-card.amber:hover {
+    border-color: rgba(245, 158, 11, 0.3);
+    box-shadow: 0 12px 20px -8px rgba(245, 158, 11, 0.25), 0 4px 12px -2px rgba(245, 158, 11, 0.15);
+    background: linear-gradient(135deg, #ffffff 0%, rgba(245, 158, 11, 0.02) 100%);
+}
+
+.kpi-card.red::before { background: linear-gradient(to bottom, #ef4444, #f87171); }
+.kpi-card.red:hover {
+    border-color: rgba(239, 68, 68, 0.3);
+    box-shadow: 0 12px 20px -8px rgba(239, 68, 68, 0.25), 0 4px 12px -2px rgba(239, 68, 68, 0.15);
+    background: linear-gradient(135deg, #ffffff 0%, rgba(239, 68, 68, 0.02) 100%);
+}
+
+.kpi-card.blue::before { background: linear-gradient(to bottom, #3b82f6, #60a5fa); }
+.kpi-card.blue:hover {
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 12px 20px -8px rgba(59, 130, 246, 0.25), 0 4px 12px -2px rgba(59, 130, 246, 0.15);
+    background: linear-gradient(135deg, #ffffff 0%, rgba(59, 130, 246, 0.02) 100%);
+}
+
+.kpi-card.purple::before { background: linear-gradient(to bottom, #8b5cf6, #a78bfa); }
+.kpi-card.purple:hover {
+    border-color: rgba(139, 92, 246, 0.3);
+    box-shadow: 0 12px 20px -8px rgba(139, 92, 246, 0.25), 0 4px 12px -2px rgba(139, 92, 246, 0.15);
+    background: linear-gradient(135deg, #ffffff 0%, rgba(139, 92, 246, 0.02) 100%);
+}
+
+.kpi-card.pink::before { background: linear-gradient(to bottom, #ec4899, #f472b6); }
+.kpi-card.pink:hover {
+    border-color: rgba(236, 72, 153, 0.3);
+    box-shadow: 0 12px 20px -8px rgba(236, 72, 153, 0.25), 0 4px 12px -2px rgba(236, 72, 153, 0.15);
+    background: linear-gradient(135deg, #ffffff 0%, rgba(236, 72, 153, 0.02) 100%);
+}
+
+.kpi-card.teal::before { background: linear-gradient(to bottom, #14b8a6, #2dd4bf); }
+.kpi-card.teal:hover {
+    border-color: rgba(20, 184, 166, 0.3);
+    box-shadow: 0 12px 20px -8px rgba(20, 184, 166, 0.25), 0 4px 12px -2px rgba(20, 184, 166, 0.15);
+    background: linear-gradient(135deg, #ffffff 0%, rgba(20, 184, 166, 0.02) 100%);
+}
+
+.kpi-card.orange::before { background: linear-gradient(to bottom, #f97316, #fb923c); }
+.kpi-card.orange:hover {
+    border-color: rgba(249, 115, 22, 0.3);
+    box-shadow: 0 12px 20px -8px rgba(249, 115, 22, 0.25), 0 4px 12px -2px rgba(249, 115, 22, 0.15);
+    background: linear-gradient(135deg, #ffffff 0%, rgba(249, 115, 22, 0.02) 100%);
+}
+
+.kpi-card.slate::before { background: linear-gradient(to bottom, #64748b, #94a3b8); }
+.kpi-card.slate:hover {
+    border-color: rgba(100, 116, 139, 0.3);
+    box-shadow: 0 12px 20px -8px rgba(100, 116, 139, 0.25), 0 4px 12px -2px rgba(100, 116, 139, 0.15);
+    background: linear-gradient(135deg, #ffffff 0%, rgba(100, 116, 139, 0.02) 100%);
+}
 
 .kpi-icon {
     width: 48px; height: 48px;
     border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
     font-size: 20px; flex-shrink: 0;
+    transition: all 0.3s ease;
 }
-.kpi-card.indigo .kpi-icon { background: rgba(99,102,241,0.15);  color: #6366f1; }
-.kpi-card.green  .kpi-icon { background: rgba(16,185,129,0.15);  color: #10b981; }
-.kpi-card.amber  .kpi-icon { background: rgba(245,158,11,0.15);  color: #f59e0b; }
-.kpi-card.red    .kpi-icon { background: rgba(239,68,68,0.15);   color: #ef4444; }
-.kpi-card.blue   .kpi-icon { background: rgba(59,130,246,0.15);  color: #3b82f6; }
-.kpi-card.purple .kpi-icon { background: rgba(139,92,246,0.15);  color: #8b5cf6; }
-.kpi-card.pink   .kpi-icon { background: rgba(236,72,153,0.15);  color: #ec4899; }
-.kpi-card.teal   .kpi-icon { background: rgba(20,184,166,0.15);  color: #14b8a6; }
-.kpi-card.orange .kpi-icon { background: rgba(249,115,22,0.15);  color: #f97316; }
-.kpi-card.slate  .kpi-icon { background: rgba(100,116,139,0.15); color: #64748b; }
+.kpi-card:hover .kpi-icon {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
 
-.kpi-body { flex: 1; min-width: 0; }
+.kpi-card.indigo .kpi-icon { background: rgba(99,102,241,0.08);  color: #6366f1; }
+.kpi-card.indigo:hover .kpi-icon { background: #6366f1; color: #ffffff; }
+
+.kpi-card.green  .kpi-icon { background: rgba(16,185,129,0.08);  color: #10b981; }
+.kpi-card.green:hover .kpi-icon { background: #10b981; color: #ffffff; }
+
+.kpi-card.amber  .kpi-icon { background: rgba(245,158,11,0.08);  color: #f59e0b; }
+.kpi-card.amber:hover .kpi-icon { background: #f59e0b; color: #ffffff; }
+
+.kpi-card.red    .kpi-icon { background: rgba(239,68,68,0.08);   color: #ef4444; }
+.kpi-card.red:hover .kpi-icon { background: #ef4444; color: #ffffff; }
+
+.kpi-card.blue   .kpi-icon { background: rgba(59,130,246,0.08);  color: #3b82f6; }
+.kpi-card.blue:hover .kpi-icon { background: #3b82f6; color: #ffffff; }
+
+.kpi-card.purple .kpi-icon { background: rgba(139,92,246,0.08);  color: #8b5cf6; }
+.kpi-card.purple:hover .kpi-icon { background: #8b5cf6; color: #ffffff; }
+
+.kpi-card.pink   .kpi-icon { background: rgba(236,72,153,0.08);  color: #ec4899; }
+.kpi-card.pink:hover .kpi-icon { background: #ec4899; color: #ffffff; }
+
+.kpi-card.teal   .kpi-icon { background: rgba(20,184,166,0.08);  color: #14b8a6; }
+.kpi-card.teal:hover .kpi-icon { background: #14b8a6; color: #ffffff; }
+
+.kpi-card.orange .kpi-icon { background: rgba(249,115,22,0.08);  color: #f97316; }
+.kpi-card.orange:hover .kpi-icon { background: #f97316; color: #ffffff; }
+
+.kpi-card.slate  .kpi-icon { background: rgba(100,116,139,0.08); color: #64748b; }
+.kpi-card.slate:hover .kpi-icon { background: #64748b; color: #ffffff; }
+
+.kpi-body { flex: 1; min-width: 0; padding-left: 4px; }
 .kpi-label {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: 700;
     color: #64748b;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 4px;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
 }
 .kpi-value {
-    font-size: 28px;
-    font-weight: 800;
+    font-size: 26px;
+    font-weight: 850;
     color: #0f172a;
     line-height: 1;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 .kpi-link {
     font-size: 11px;
-    color: var(--text-muted);
-    text-decoration: none;
+    font-weight: 600;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 3px 10px;
+    border-radius: 20px;
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    transition: color 0.15s;
+    text-decoration: none;
+    transition: all 0.2s;
 }
-.kpi-link:hover { color: var(--accent); }
+.kpi-link i {
+    transition: transform 0.2s;
+}
+.kpi-card:hover .kpi-link i {
+    transform: translateX(3px);
+}
+
+.kpi-card.indigo:hover .kpi-link { background: rgba(99, 102, 241, 0.12); color: #6366f1; }
+.kpi-card.green:hover .kpi-link  { background: rgba(16, 185, 129, 0.12); color: #10b981; }
+.kpi-card.amber:hover .kpi-link  { background: rgba(245, 158, 11, 0.12); color: #f59e0b; }
+.kpi-card.red:hover .kpi-link    { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
+.kpi-card.blue:hover .kpi-link   { background: rgba(59, 130, 246, 0.12); color: #3b82f6; }
+.kpi-card.purple:hover .kpi-link { background: rgba(139, 92, 246, 0.12); color: #8b5cf6; }
+.kpi-card.pink:hover .kpi-link   { background: rgba(236, 72, 153, 0.12); color: #ec4899; }
+.kpi-card.teal:hover .kpi-link   { background: rgba(20, 184, 166, 0.12); color: #14b8a6; }
+.kpi-card.orange:hover .kpi-link { background: rgba(249, 115, 22, 0.12); color: #f97316; }
+.kpi-card.slate:hover .kpi-link  { background: rgba(100, 116, 139, 0.12); color: #64748b; }
 
 /* Section heading */
 .section-heading {
