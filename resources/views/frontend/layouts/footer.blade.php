@@ -155,7 +155,7 @@
                                 <a href="{{ route('pricing.cards') }}" title="Pricing Plans">Pricing Plans <span class="pricing-mini-badge">NEW</span></a>
                             </li>
                             <li>
-                                <a href="{{ route('show.cart') }}" title="My Cart">My Cart</a>
+                                <a href="{{ route('order.track') }}" title="Order Tracking">Order Tracking</a>
                             </li>
                             <li>
                                 <a href="{{ route('customer.checkout') }}" title="Checkout">Checkout</a>

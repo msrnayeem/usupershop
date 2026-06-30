@@ -737,6 +737,48 @@
         padding-bottom: 0px;
     }
 
+    /* Mobile Language Button */
+    .mobile-lang-col {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        padding: 0 4px;
+    }
+    .mobile-lang-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        text-decoration: none !important;
+        background: rgba(255,255,255,0.15);
+        border: 1.5px solid rgba(255,255,255,0.35);
+        border-radius: 10px;
+        padding: 5px 10px;
+        min-width: 44px;
+        gap: 2px;
+        transition: background 0.2s;
+        cursor: pointer;
+        outline: none;
+    }
+    .mobile-lang-btn:hover,
+    .mobile-lang-btn:focus {
+        background: rgba(255,255,255,0.28);
+        color: #fff;
+        text-decoration: none;
+    }
+    .mobile-lang-btn i {
+        font-size: 17px;
+        line-height: 1;
+    }
+    .mobile-lang-text {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        line-height: 1;
+    }
+
     @media (max-width: 776px) {
         .main-header .top-search-holder{
             padding-left: 6px;
@@ -991,7 +1033,7 @@
                                         class="icofont-cart"></i>Special Offer</a>
                             </li>
                             @php
-                                $categories = Helper::get_categories();
+                                $categories = $globalCategories;
                                 $footercontent = Helper::getfootercontacts();
                             @endphp
                             @foreach ($categories as $category)
@@ -1001,6 +1043,11 @@
                                             class="icofont-contacts"></i>{{ $category->name }}</a>
                                 </li>
                             @endforeach
+                            <li>
+                                <a href="{{ route('bangla.language') }}" class="nav-link">
+                                    <i class="icofont-globe"></i> ভাষা পরিবর্তন (Language)
+                                </a>
+                            </li>
                         </ul>
                         <div class="nav-info-group">
                             <div class="nav-info">
@@ -1036,43 +1083,13 @@
                             <div id="suggestProduct"></div>
                         </div><!-- /.search-area -->
                     </div>
-                    <div class="mobile-cart-col animate-dropdown top-cart-row">
-                        <!-- ================== SHOPPING CART DROPDOWN ================= -->
-                        <div class="dropdown dropdown-cart">
-                            <a href="#" class="dropdown-toggle lnk-cart" data-toggle="dropdown">
-                                <div class="items-cart-inner">
-                                    <div class="basket" style="border: none; font-size: 18px; margin: 0; position: relative;">
-                                        <i class="glyphicon glyphicon-shopping-cart"></i>
-                                    </div>
-                                    <div class="basket-item-count">
-                                        <span class="count"></span>
-                                    </div>
-                                </div>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li class="addTotalCartItemSection">
-                                    <div class="cart-item product-summary addToCartProducts">
-                                    </div>
-                                    <!-- /.cart-item -->
-                                    <div class="clearfix"></div>
-                                    {{--  <hr /> --}}
-
-                                    <div class="clearfix cart-total">
-                                        <div class="pull-right">
-                                            <span class="text">Sub Total :</span>TK. <span class="price">0.00</span>
-                                        </div>
-                                        <div class="clearfix"></div>
-                                        <a href="{{ route('show.cart') }}"
-                                            class="btn btn-upper btn-primary btn-block m-t-20">Checkout</a>
-                                    </div>
-                                    <!-- /.cart-total-->
-                                </li>
-                            </ul>
-                            <!-- /.dropdown-menu-->
-                        </div>
-                        <!-- /.dropdown-cart -->
-                        <!-- =============== SHOPPING CART DROPDOWN : END ============== -->
-                        <!-- /.top-cart-row -->
+                    <div class="mobile-lang-col">
+                        <!-- ================== LANGUAGE CHANGE BUTTON ================= -->
+                        <button type="button" class="mobile-lang-btn" id="mobileLangBtn" onclick="toggleMobileLang()" title="ভাষা পরিবর্তন করুন">
+                            <i class="icofont-globe"></i>
+                            <span class="mobile-lang-text" id="mobileLangText">BN</span>
+                        </button>
+                        <!-- /.language button -->
                     </div>
                 </div>
             </div>
@@ -1176,7 +1193,7 @@
 
                                 <?php 
                                     $limit=6;
-                                    $categories = Helper::get_categories();
+                                    $categories = $globalCategories;
                                     $total=count($categories);
                                     foreach ($categories as $key=>$category):
                                     if($key<$limit){
@@ -1471,5 +1488,37 @@
             //console($.cookie('lang'));
         });
 
+        // ── Mobile Language Button: init & toggle ──────────────────────────
+        function initMobileLangBtn() {
+            let lng = $.cookie('lang');
+            let btn = document.getElementById('mobileLangText');
+            if (!btn) return;
+            if (lng === 'bangla') {
+                btn.textContent = 'EN';
+            } else {
+                btn.textContent = 'BN';
+            }
+        }
+        initMobileLangBtn();
+
     })
+
+    function toggleMobileLang() {
+        let currentLang = (typeof $.cookie === 'function') ? $.cookie('lang') : null;
+        let btnText = document.getElementById('mobileLangText');
+
+        if (currentLang === 'bangla') {
+            // Switch to English
+            $.cookie('lang', 'english');
+            $(".english, .bangla_lang").hide();
+            $(".bangla, .english_lang").show();
+            if (btnText) btnText.textContent = 'BN';
+        } else {
+            // Switch to Bangla
+            $.cookie('lang', 'bangla');
+            $(".english, .bangla_lang").show();
+            $(".bangla, .english_lang").hide();
+            if (btnText) btnText.textContent = 'EN';
+        }
+    }
 </script>

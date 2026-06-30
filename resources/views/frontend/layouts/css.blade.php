@@ -2508,6 +2508,16 @@ GLOBAL TYPOGRAPHY — All text must be clearly readable
         line-height: 1.8 !important;
     }
 
+    /* Remove any extra space after footer */
+    footer,
+    .footer,
+    #footer {
+        margin-bottom: 0 !important;
+    }
+    body {
+        margin-bottom: 0 !important;
+    }
+
     /* Header nav */
     .top-menu a,
     .main-nav a,
@@ -2633,10 +2643,7 @@ Exact class names from blade templates
         box-sizing: border-box !important;
     }
 
-    /* Safe area for bottom nav */
-    body {
-        padding-bottom: calc(65px + env(safe-area-inset-bottom, 0px)) !important;
-    }
+    /* Safe area for bottom nav — mobile only (moved into @media block below) */
 
     /* ════ MOBILE ONLY ════════════════════════════════════════ */
     @media (max-width: 767px) {
@@ -2645,6 +2652,8 @@ Exact class names from blade templates
         body {
             font-size: 15px !important;
             background: #f4f5f9 !important;
+            /* Safe area for bottom nav — mobile only */
+            padding-bottom: calc(65px + env(safe-area-inset-bottom, 0px)) !important;
         }
 
         p,
@@ -2687,14 +2696,18 @@ Exact class names from blade templates
             padding: 6px 0 !important;
         }
 
+        .mobile-header {
+            padding: 6px 4px 0 4px !important;
+        }
+
         /* Row 1: Logo + Search + Cart (Single Row Layout) */
         .mobile-header-row {
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
             width: 100% !important;
-            padding: 4px 10px !important;
-            gap: 10px !important;
+            padding: 4px 0 !important;
+            gap: 6px !important;
             margin: 0 !important;
         }
 
@@ -2710,12 +2723,13 @@ Exact class names from blade templates
             padding: 0 !important;
         }
 
-        .mobile-cart-col {
+        .mobile-lang-col {
             flex: 0 0 auto !important;
             width: auto !important;
             padding: 0 !important;
             display: flex !important;
             justify-content: flex-end !important;
+            align-items: center !important;
         }
 
         /* Logo image */
@@ -3262,11 +3276,44 @@ Exact class names from blade templates
             min-height: 36px !important;
         }
 
-        /* ── HIDE FOOTER ─────────────────────────────── */
+        /* ── FOOTER (mobile — compact, visible) ──────── */
         footer,
         .footer,
         #footer {
-            display: none !important;
+            display: block !important;
+        }
+
+        /* Add bottom padding so content doesn't hide behind bottom nav */
+        /* NOTE: body already has 65-68px padding-bottom for bottom nav — no extra needed on footer */
+
+        /* Compact footer top section on mobile */
+        #footer .footer-top {
+            padding: 20px 0 10px !important;
+        }
+
+        #footer .col-sm-3,
+        #footer .col-md-3 {
+            width: 50% !important;
+            float: left !important;
+            margin-bottom: 12px !important;
+            padding: 0 10px !important;
+        }
+
+        #footer h3,
+        #footer .module-title {
+            font-size: 14px !important;
+            margin-bottom: 8px !important;
+        }
+
+        #footer li a,
+        #footer p {
+            font-size: 12px !important;
+            line-height: 1.8 !important;
+        }
+
+        #footer .footer-bottom {
+            padding: 10px 0 !important;
+            font-size: 12px !important;
         }
 
         /* ── WhatsApp float ──────────────────────────── */

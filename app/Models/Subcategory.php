@@ -14,6 +14,11 @@ class Subcategory extends Model
         return $this->belongsTo(Category::class,'category_id','id');
     }
 
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'subcategory_id', 'id')->where('status', 1);
+    }
+
 
     static function queryBuild($columns)
     {

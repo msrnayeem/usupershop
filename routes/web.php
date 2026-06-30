@@ -188,6 +188,8 @@ Route::get('/guest-order-confirmation/{order}', [CustomerCheckoutController::cla
     ->name('guest.order.confirmation')
     ->middleware('signed');
 
+Route::get('/subcategory-wise-product/{subcategory_id}', [FrontendController::class, 'subcategoryWiseProduct'])->name('subcategory.wise.product');
+
 Route::get('/logout2', [CheckoutController::class, 'logout2'])->name('logout2');
 
 

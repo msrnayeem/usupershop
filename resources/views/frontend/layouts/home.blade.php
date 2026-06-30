@@ -307,8 +307,7 @@
                     <div class="owl-carousel owl-theme category-slide-new "style="margin: 0px;">
 
                         @php
-                            $categories = App\Models\Category::orderBy('id', 'ASC')->get();
-                            
+                            $categories = $globalCategories;
                         @endphp
 
                         @foreach ($categories as $key => $category)

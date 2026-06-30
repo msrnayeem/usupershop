@@ -10,6 +10,7 @@ use App\Models\Slider;
 use App\Models\Contact;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Subcategory;
 use App\Models\Division;
 use App\Models\BannerImage;
 use App\Models\ProductSize;
@@ -218,6 +219,21 @@ class FrontendController extends Controller
     {
         $data['category'] = Category::where('id', $category_id)->first();
         $data['products'] = Product::where('category_id', $category_id)->where('status', 1)->orderBy('id', 'DESC')->paginate(20);
+        return view('frontend.single_page.category-wise-product', $data);
+    }
+
+    public function subcategoryWiseProduct($subcategory_id)
+    {
+        $subcategory = Subcategory::where('id', $subcategory_id)->first();
+        if (!$subcategory) {
+            abort(404);
+        }
+        $category = Category::where('id', $subcategory->category_id)->first();
+        if ($category) {
+            $category->name = $subcategory->name; // Override name so the view displays subcategory title
+        }
+        $data['category'] = $category;
+        $data['products'] = Product::where('subcategory_id', $subcategory_id)->where('status', 1)->orderBy('id', 'DESC')->paginate(20);
         return view('frontend.single_page.category-wise-product', $data);
     }
 

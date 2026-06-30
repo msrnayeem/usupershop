@@ -26,6 +26,23 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrap();
 
+        // Share categories and subcategories globally with caching
+        \Illuminate\Support\Facades\View::composer('*', function ($view) {
+            static $categories = null;
+            if ($categories === null) {
+                try {
+                    $categories = \Illuminate\Support\Facades\Cache::remember('global_categories_with_sub', 300, function() {
+                        return \App\Models\Category::with(['subcategories' => function($q) {
+                            $q->withCount('products');
+                        }])->withCount('products')->orderBy('id', 'DESC')->get();
+                    });
+                } catch (\Exception $e) {
+                    $categories = collect();
+                }
+            }
+            $view->with('globalCategories', $categories);
+        });
+
         // Force HTTPS in production
         if (config('app.env') === 'production') {
             URL::forceScheme('https');

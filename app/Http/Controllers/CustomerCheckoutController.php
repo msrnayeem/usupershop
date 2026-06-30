@@ -318,6 +318,9 @@ class CustomerCheckoutController extends Controller
                         'order_payment'  => 'COD',
                     ]);
 
+                    // Reload relations so SMS/WhatsApp can access shipping.mobile etc.
+                    $order->load(['shipping', 'payment', 'users']);
+
                     // ── SMS: Order Confirmed (COD + Free Delivery) ──────────
                     try {
                         $this->sendOrderConfirmedSms($order);
@@ -359,13 +362,17 @@ class CustomerCheckoutController extends Controller
                     ]);
                 }
 
-                // Payment gateway failed — cancel order and redirect home
-                $order->update(['status' => 'canceled']);
+                // Payment gateway failed — keep order as pending (not cancel), inform user
+                \Log::warning('bKash payment URL not received, keeping order pending', [
+                    'order_id'       => $order->id,
+                    'payment_amount' => $payment_amount,
+                    'payment_url'    => $payment_url,
+                ]);
                 return response()->json([
                     'status'  => false,
                     'type'    => 'payment_failed',
                     'url'     => route('frontend.home'),
-                    'message' => 'পেমেন্ট ব্যর্থ হয়েছে। অর্ডারটি বাতিল হয়ে গেছে।',
+                    'message' => 'bKash পেমেন্ট শুরু করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন অথবা আমাদের সাথে যোগাযোগ করুন।',
                 ]);
 
             } catch (\Exception $paymentError) {
@@ -374,13 +381,15 @@ class CustomerCheckoutController extends Controller
                     'payment_method' => $request->payment_method,
                 ]);
 
-                // Cancel order on exception
-                $order->update(['status' => 'canceled']);
+                // Keep order as pending on exception (don't cancel) so admin can review
+                \Log::warning('Keeping order pending after payment exception', [
+                    'order_id' => $order->id,
+                ]);
                 return response()->json([
                     'status'  => false,
                     'type'    => 'payment_failed',
                     'url'     => route('frontend.home'),
-                    'message' => 'পেমেন্ট সম্পন্ন হয়নি। অর্ডারটি বাতিল হয়ে গেছে।',
+                    'message' => 'bKash পেমেন্ট সম্পন্ন হয়নি। অনুগ্রহ করে আবার চেষ্টা করুন অথবা আমাদের সাথে যোগাযোগ করুন।',
                 ]);
             }
 

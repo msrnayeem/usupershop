@@ -1400,12 +1400,322 @@
         .mobile-bottom-nav { display: block; }
         body { padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important; }
     }
+
+    /* Bottom Sheet Category Drawer */
+    .mobile-sheet-backdrop {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.6);
+        z-index: 2000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+    .mobile-sheet-backdrop.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    .mobile-category-sheet {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        background: #fff;
+        border-radius: 24px 24px 0 0;
+        z-index: 2001;
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
+        transform: translateY(100%);
+        visibility: hidden;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s;
+        font-family: 'Hind Siliguri', sans-serif;
+    }
+    .mobile-category-sheet.show {
+        transform: translateY(0);
+        visibility: visible;
+    }
+    .sheet-header {
+        padding: 12px 18px 8px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: #fff;
+        border-radius: 24px 24px 0 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .sheet-handle {
+        width: 40px;
+        height: 4px;
+        background: #ddd;
+        border-radius: 2px;
+        margin-bottom: 12px;
+    }
+    .sheet-title-row {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        position: relative;
+        min-height: 36px;
+        box-sizing: border-box;
+    }
+    .sheet-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0;
+        color: #111;
+        flex: 1;
+    }
+    .sheet-back-btn {
+        background: transparent;
+        border: none;
+        font-size: 16px;
+        color: #333;
+        margin-right: 12px;
+        cursor: pointer;
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .sheet-close-btn {
+        background: #f5f5f5;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        font-size: 20px;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+        margin-left: auto;
+    }
+    .sheet-body {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+    }
+
+    /* Screen 1: Grid View Styles */
+    .category-grid-view {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px 8px;
+        padding: 18px;
+        overflow-y: auto;
+        max-height: calc(80vh - 80px);
+        box-sizing: border-box;
+    }
+    .cat-grid-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        cursor: pointer;
+    }
+    .cat-grid-img-wrap {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+        overflow: hidden;
+        border: 1px solid #f1f3f5;
+    }
+    .cat-grid-img-wrap img {
+        width: 44px;
+        height: 44px;
+        object-fit: contain;
+    }
+    .cat-grid-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #222;
+        line-height: 1.2;
+        margin-bottom: 3px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .cat-grid-count {
+        font-size: 11px;
+        color: #888;
+        font-weight: 500;
+    }
+
+    /* Screen 2: Split View Styles */
+    .category-split-view {
+        display: flex;
+        flex: 1;
+        height: calc(80vh - 80px);
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+    .split-left-col {
+        width: 45%;
+        border-right: 1px solid #eee;
+        overflow-y: auto;
+        background: #f8f9fa;
+        box-sizing: border-box;
+    }
+    .split-right-col {
+        width: 55%;
+        overflow-y: auto;
+        background: #fff;
+        box-sizing: border-box;
+    }
+    .split-cat-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 10px;
+        cursor: pointer;
+        border-bottom: 1px solid #f1f3f5;
+        border-left: 3px solid transparent;
+        transition: all 0.2s;
+        position: relative;
+        box-sizing: border-box;
+    }
+    .split-cat-item.active {
+        background: #fff;
+        border-left-color: #25d366;
+    }
+    .split-cat-img-wrap {
+        width: 32px;
+        height: 32px;
+        margin-right: 8px;
+        flex-shrink: 0;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .split-cat-img-wrap img {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+    }
+    .split-cat-info {
+        flex: 1;
+        min-width: 0;
+        text-align: left;
+    }
+    .split-cat-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #333;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .split-cat-count {
+        font-size: 11px;
+        color: #888;
+        display: block;
+    }
+    .split-cat-arrow {
+        font-size: 11px;
+        color: #ccc;
+        margin-left: 4px;
+    }
+    .split-cat-item.active .split-cat-arrow {
+        color: #25d366;
+    }
+
+    /* Subcategories Right Column panel */
+    .subcategory-panel {
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        box-sizing: border-box;
+    }
+    .subcat-list-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        text-decoration: none !important;
+        transition: background 0.15s;
+        box-sizing: border-box;
+    }
+    .subcat-list-item:active {
+        background: #f1f3f5;
+    }
+    .subcat-list-item.view-all-item {
+        background: #eafbf1;
+        border: 1px solid #d3f4e1;
+    }
+    .subcat-list-img-wrap {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        flex-shrink: 0;
+        overflow: hidden;
+        border: 1px solid #eee;
+    }
+    .subcat-list-img-wrap img {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+    }
+    .subcat-list-info {
+        flex: 1;
+        min-width: 0;
+        text-align: left;
+    }
+    .subcat-list-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #333;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .subcat-list-count {
+        font-size: 11px;
+        color: #888;
+        display: block;
+    }
+    .subcat-arrow {
+        font-size: 12px;
+        color: #aaa;
+        margin-left: 6px;
+    }
+    .no-subcategories {
+        text-align: center;
+        color: #888;
+        padding: 40px 10px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    }
     </style>
 
     <nav class="mobile-bottom-nav" role="navigation" aria-label="Mobile navigation">
         <div class="nav-items">
             <a href="{{ route('frontend.home') }}" class="nav-item {{ request()->routeIs('frontend.home') ? 'active' : '' }}">
                 <span class="ni">🏠</span><span>হোম</span>
+            </a>
+            <a href="javascript:void(0)" class="nav-item" id="mobile-category-trigger">
+                <span class="ni">📁</span><span>ক্যাটাগরি</span>
             </a>
             <a href="{{ route('product.list') }}" class="nav-item {{ request()->routeIs('product.list') ? 'active' : '' }}">
                 <span class="ni">🛍️</span><span>পণ্য</span>
@@ -1417,9 +1727,6 @@
                     <span class="cart-badge">{{ $cartCount > 99 ? '99+' : $cartCount }}</span>
                 @endif
                 <span>কার্ট</span>
-            </a>
-            <a href="{{ route('order.track') }}" class="nav-item {{ request()->routeIs('order.track*') ? 'active' : '' }}">
-                <span class="ni">📍</span><span>ট্র্যাক</span>
             </a>
             @auth
             <a href="{{ auth()->user()->usertype === 'customer' ? route('dashboard') : route('seller.dashboard') }}"
@@ -1433,6 +1740,93 @@
             @endauth
         </div>
     </nav>
+
+    {{-- ── Mobile Category Bottom Sheet Drawer ── --}}
+    <div id="mobile-category-sheet-backdrop" class="mobile-sheet-backdrop"></div>
+    <div id="mobile-category-sheet" class="mobile-category-sheet">
+        <div class="sheet-header">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title-row">
+                <!-- Standard Header -->
+                <h3 class="sheet-title standard-header">Categories</h3>
+                
+                <!-- Split View Header -->
+                <button type="button" class="sheet-back-btn split-header" id="mobile-category-back" style="display: none; border: none; background: transparent;">
+                    <i class="fa fa-chevron-left"></i>
+                </button>
+                <h3 class="sheet-title split-header" id="mobile-selected-category-title" style="display: none;">Categories</h3>
+                
+                <button type="button" class="sheet-close-btn" id="mobile-category-close">&times;</button>
+            </div>
+        </div>
+        <div class="sheet-body">
+            @php
+                $sheetCategories = $globalCategories;
+            @endphp
+            <!-- Screen 1: Grid View -->
+            <div class="category-grid-view" id="category-grid-view">
+                @foreach($sheetCategories as $cat)
+                    <div class="cat-grid-item" data-cat-id="{{ $cat->id }}" data-cat-name="{{ $cat->name }}" data-has-sub="{{ $cat->subcategories->count() > 0 ? 'true' : 'false' }}">
+                        <div class="cat-grid-img-wrap">
+                            <img src="{{ !empty($cat->image) ? url('upload/category_images/' . $cat->image) : url('frontend/no-image-icon.jpg') }}" alt="{{ $cat->name }}">
+                        </div>
+                        <span class="cat-grid-name">{{ $cat->name }}</span>
+                        <span class="cat-grid-count">{{ $cat->products_count }} Products</span>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- Screen 2: Split View -->
+            <div class="category-split-view" id="category-split-view" style="display: none;">
+                <!-- Left Column: Categories List -->
+                <div class="split-left-col">
+                    @foreach($sheetCategories as $cat)
+                        <div class="split-cat-item" id="split-cat-{{ $cat->id }}" data-cat-id="{{ $cat->id }}" data-cat-name="{{ $cat->name }}" data-has-sub="{{ $cat->subcategories->count() > 0 ? 'true' : 'false' }}">
+                            <div class="split-cat-img-wrap">
+                                <img src="{{ !empty($cat->image) ? url('upload/category_images/' . $cat->image) : url('frontend/no-image-icon.jpg') }}" alt="{{ $cat->name }}">
+                            </div>
+                            <div class="split-cat-info">
+                                <span class="split-cat-name">{{ $cat->name }}</span>
+                                <span class="split-cat-count">{{ $cat->products_count }} Products</span>
+                            </div>
+                            <i class="fa fa-chevron-right split-cat-arrow"></i>
+                        </div>
+                    @endforeach
+                </div>
+
+                <!-- Right Column: Subcategories List -->
+                <div class="split-right-col">
+                    @foreach($sheetCategories as $cat)
+                        <div class="subcategory-panel" id="subcategory-panel-{{ $cat->id }}" style="display: none;">
+                            <!-- View All Products link -->
+                            <a href="{{ route('category.wise.product', $cat->id) }}" class="subcat-list-item view-all-item">
+                                <div class="subcat-list-info">
+                                    <span class="subcat-list-name" style="color: #25d366; font-weight: 700;">View all {{ $cat->name }}</span>
+                                    <span class="subcat-list-count">{{ $cat->products_count }} Products</span>
+                                </div>
+                                <i class="fa fa-chevron-right subcat-arrow" style="color: #25d366;"></i>
+                            </a>
+                            
+                            @forelse($cat->subcategories as $subcat)
+                                <a href="{{ route('subcategory.wise.product', $subcat->id) }}" class="subcat-list-item">
+                                    <div class="subcat-list-img-wrap">
+                                        <img src="{{ !empty($cat->image) ? url('upload/category_images/' . $cat->image) : url('frontend/no-image-icon.jpg') }}" alt="{{ $subcat->name }}">
+                                    </div>
+                                    <div class="subcat-list-info">
+                                        <span class="subcat-list-name">{{ $subcat->name }}</span>
+                                        <span class="subcat-list-count">{{ $subcat->products_count }} Products</span>
+                                    </div>
+                                    <i class="fa fa-chevron-right subcat-arrow"></i>
+                                </a>
+                            @empty
+                                <div class="no-subcategories">No subcategories available</div>
+                            @endforelse
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
     // PWA Install prompt (Android Chrome)
@@ -1520,6 +1914,81 @@
     </a>
     @endif
 
+
+    <script>
+        $(document).ready(function() {
+            // Category drawer open/close
+            $('#mobile-category-trigger').click(function(e) {
+                e.preventDefault();
+                $('#mobile-category-sheet-backdrop').addClass('show');
+                $('#mobile-category-sheet').addClass('show');
+                $('body').css('overflow', 'hidden'); // Prevent background scrolling
+                showGridView();
+            });
+
+            function showGridView() {
+                $('.standard-header').show();
+                $('.split-header').hide();
+                $('#category-grid-view').show();
+                $('#category-split-view').hide();
+            }
+
+            function showSplitView(catId, catName) {
+                $('.standard-header').hide();
+                $('.split-header').show();
+                $('#mobile-selected-category-title').text(catName);
+                $('#category-grid-view').hide();
+                $('#category-split-view').css('display', 'flex');
+                
+                // Activate left column item
+                $('.split-cat-item').removeClass('active');
+                $('#split-cat-' + catId).addClass('active');
+                
+                // Show right column subcategory list
+                $('.subcategory-panel').hide();
+                $('#subcategory-panel-' + catId).show();
+            }
+
+            // Click category on Grid View
+            $('.cat-grid-item').click(function() {
+                let catId = $(this).attr('data-cat-id');
+                let catName = $(this).attr('data-cat-name');
+                let hasSub = $(this).attr('data-has-sub') === 'true';
+                if (hasSub) {
+                    showSplitView(catId, catName);
+                } else {
+                    window.location.href = '/category-wise-product/' + catId;
+                }
+            });
+
+            // Click category on Left Column in Split View
+            $('.split-cat-item').click(function() {
+                let catId = $(this).attr('data-cat-id');
+                let catName = $(this).attr('data-cat-name');
+                let hasSub = $(this).attr('data-has-sub') === 'true';
+                if (hasSub) {
+                    showSplitView(catId, catName);
+                } else {
+                    window.location.href = '/category-wise-product/' + catId;
+                }
+            });
+
+            // Back button click (return to grid view)
+            $('#mobile-category-back').click(function() {
+                showGridView();
+            });
+
+            function closeCategorySheet() {
+                $('#mobile-category-sheet-backdrop').removeClass('show');
+                $('#mobile-category-sheet').removeClass('show');
+                $('body').css('overflow', '');
+            }
+
+            $('#mobile-category-close, #mobile-category-sheet-backdrop').click(function() {
+                closeCategorySheet();
+            });
+        });
+    </script>
 
 </body>
 
